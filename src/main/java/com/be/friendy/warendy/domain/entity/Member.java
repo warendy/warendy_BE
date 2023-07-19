@@ -24,24 +24,21 @@ public class Member implements UserDetails {
     private Long id;
 
     private String email;
-
     private String password;
-
     private String nickname;
-
     private String avatar;
-
     private String mbti;
+    private String socialId;
 
     private String role;
+    private String socialType;
 
     private int body;
-
     private int dry;
-
     private int tannin;
-
     private int acidity;
+
+
 
     @CreatedDate
     private LocalDateTime createdAt;
