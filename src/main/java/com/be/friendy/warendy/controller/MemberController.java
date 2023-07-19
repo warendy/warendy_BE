@@ -20,13 +20,13 @@ public class MemberController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@RequestBody MemberSignUpRequest request){
-        var result = this.memberService.register(request);
+        var result = this.memberService.signUp(request);
         return ResponseEntity.ok(result);
     }
 
     @PostMapping("/signin")
     public ResponseEntity<?> signIn(@RequestBody MemberSignInRequest request){
-        var member = this.memberService.authenticate(request);
+        var member = this.memberService.signIn(request);
         var token = this.tokenProvider.generateToken(member.getEmail());
         log.info("user login -> " + request.getEmail());
         return ResponseEntity.ok(token);

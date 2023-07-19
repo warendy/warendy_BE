@@ -24,7 +24,7 @@ public class MemberService implements UserDetailsService {
                 .orElseThrow(() -> new RuntimeException("already exists"));
     }
 
-    public Member register(MemberSignUpRequest member) {
+    public Member signUp(MemberSignUpRequest member) {
         boolean exists = this.memberRepository.existsByEmail(member.getEmail());
         if(exists) {
             throw new RuntimeException("already exists");
@@ -35,7 +35,7 @@ public class MemberService implements UserDetailsService {
 
         return result;
     }
-    public Member authenticate(MemberSignInRequest member) {
+    public Member signIn(MemberSignInRequest member) {
         var user = this.memberRepository.findByEmail(member.getEmail())
                 .orElseThrow(() -> new RuntimeException("user does not exists"));
 
