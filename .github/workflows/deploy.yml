@@ -13,8 +13,8 @@ env:
   spring.security.oauth2.client.registration.kakao.client-secret: ${{ secrets.KAKAO_CLIENT_SECRET }}
   spring.security.oauth2.client.registration.kakao.redirect-uri: ${{ secrets.KAKAO_REDIRECT_URI }}
   spring.jwt.secret-key: ${{ secrets.SPRING_JWT_SECRET_KEY }}
-  spring.datasource.username: ${{ SPRING_DATASOURCE_USERNAME }}
-  spring.datasource.password: ${{ SPRING_DATASOURCE_PASSWORD }}
+  spring.datasource.username: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
+  spring.datasource.password: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
 
 jobs:
   build:
