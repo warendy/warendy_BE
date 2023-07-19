@@ -7,16 +7,18 @@ spring:
   datasource:
     url: jdbc:mysql://warendy-rds.cssg19lmc183.ap-northeast-2.rds.amazonaws.com:3306/warendy
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: admin
-    password: adminwarendy
+    username: username
+    password: password
+  jwt:
+    secret-key: secret-key
   security:
     oauth2:
       client:
         registration:
           kakao:
-            client-id: ${kakao.client-id}
-            client-secret: ${kakao.client-secret}
-            redirect-uri: ${kakao.redirect-uri}
+            client-id: client-id
+            client-secret: client-secret
+            redirect-uri: redirect-uri
             client-authentication-method: client_secret_post
             authorization-grant-type: authorization_code
             scope: profile_nickname, profile_image, account_email
