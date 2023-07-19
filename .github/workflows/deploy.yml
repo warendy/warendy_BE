@@ -9,6 +9,10 @@ env:
 #  RESOURCE_PATH: ./src/main/resources/application.yaml
   CODE_DEPLOY_APPLICATION_NAME: CODE-DEPLOY-WARENDY
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: CODE-DEPLOY-GROUP
+  spring.security.oauth2.client.registration.kakao.client-id: ${{ secrets.KAKAO_CLIENT_ID }}
+  spring.security.oauth2.client.registration.kakao.client-secret: ${{ secrets.KAKAO_CLIENT_SECRET }}
+  spring.security.oauth2.client.registration.kakao.redirect-uri: ${{ secrets.KAKAO_REDIRECT_URI }}
+  spring.jwt.secret-key: ${{ secrets.SPRING_JWT_SECRET_KEY }}
 
 jobs:
   build:
