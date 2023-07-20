@@ -1,4 +1,4 @@
-package com.be.friendy.warendy.exception;
+package com.be.friendy.warendy.exception.handler;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

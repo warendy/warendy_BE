@@ -1,13 +1,16 @@
 package com.be.friendy.warendy.domain.entity;
 
+import com.be.friendy.warendy.domain.type.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Getter
@@ -28,10 +31,10 @@ public class Member implements UserDetails {
     private String nickname;
     private String avatar;
     private String mbti;
-    private String socialId;
 
-    private String role;
-    private String socialType;
+    private String socialId;
+    private Role role;
+    private String oauthType;
 
     private int body;
     private int dry;
@@ -50,7 +53,13 @@ public class Member implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        Role userRole = this.getRole();
+        String authority = userRole.getKey();
+        SimpleGrantedAuthority simpleAuthority = new SimpleGrantedAuthority(authority);
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(simpleAuthority);
+
+        return authorities;
     }
 
     @Override

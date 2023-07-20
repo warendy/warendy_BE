@@ -24,9 +24,10 @@ public class TokenProvider {
 
     private final MemberService memberService;
 
-    @Value("${spring.jwt.secret-key}")
-    private String secretKey;
-    public String generateToken(String username) {
+
+    private static String secretKey = "c09123ualicu(E92mc9123";
+
+    public static String generateToken(String username) {
         Claims claims = Jwts.claims().setSubject(username);
 
         var now = new Date();
@@ -36,7 +37,7 @@ public class TokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(now) // 토큰 생성 시간
                 .setExpiration(expiredDate) // 토큰 만료 시간
-                .signWith(SignatureAlgorithm.HS512, this.secretKey)
+                .signWith(SignatureAlgorithm.HS512, secretKey)
                 .compact();
     }
 
