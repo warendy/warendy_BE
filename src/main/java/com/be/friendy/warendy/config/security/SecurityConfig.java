@@ -41,7 +41,7 @@ public class SecurityConfig {
                 authorize
                         .requestMatchers("/login/**", "/signup/**", "/oauth2/**", "/**")
                         .permitAll() // 해당 경로는 인증 없이 접근 가능
-                        .requestMatchers("/member/**") // 해당 경로는 인증이 필요
+                        .requestMatchers("/members/**") // 해당 경로는 인증이 필요
                         .hasRole("MEMBER") // ROLE 이 MEMBER 가 포함된 경우에만 인증 가능
                     .and()
                         .oauth2Login()

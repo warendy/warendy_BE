@@ -7,6 +7,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,10 +24,10 @@ public class TokenProvider {
 
     private final MemberService memberService;
 
+    @Value("${spring.jwt.secret-key}")
+    private String secretKey;
 
-    private static String secretKey = "c09123ualicu(E92mc9123";
-
-    public static String generateToken(String username) {
+    public String generateToken(String username) {
         Claims claims = Jwts.claims().setSubject(username);
 
         var now = new Date();
@@ -41,11 +42,11 @@ public class TokenProvider {
     }
 
     public Authentication getAuthentication(String jwt) {
-        UserDetails userDetails = this.memberService.loadUserByUsername(this.getUsername(jwt));
+        UserDetails userDetails = this.memberService.loadUserByEmail(this.getEmail(jwt));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    public String getUsername(String token) {
+    public String getEmail(String token) {
         return this.parsedClaims(token).getSubject();
     }
 

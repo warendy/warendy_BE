@@ -33,6 +33,7 @@ public class KakaoUserService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TokenProvider tokenProvider;
 
     @Value("${kakao.redirect-uri}")
     private String redirectUri;
@@ -41,7 +42,6 @@ public class KakaoUserService {
 
     public SignUpRequest kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
-
         String accessToken = getAccessToken(code);
 
         // 2. 토큰으로 카카오 API 호출
@@ -82,7 +82,7 @@ public class KakaoUserService {
         String nickname = jsonNode.get("properties")
                 .get("nickname").asText();
         SignUpRequest member = SignUpRequest.builder()
-                                                        .socialId(id)
+                                                        .email(id)
                                                         .nickname(nickname)
                                                         .build();
         return member;
@@ -91,9 +91,9 @@ public class KakaoUserService {
 
     private Member signupKakaoUser(SignUpRequest kakaoUserInfo) {
         // DB 에 중복된 Kakao Id 가 있는지 확인
-        String sId = kakaoUserInfo.getSocialId();
-
-        Member user = memberRepository.findBySocialId(sId).orElse(null);
+        String sId = kakaoUserInfo.getEmail();
+        String email = sId + "@warendy.com";
+        Member user = memberRepository.findByEmail(email).orElse(null);
 
         if (user == null) {
             // 회원가입
@@ -104,7 +104,7 @@ public class KakaoUserService {
             String encodedPassword = passwordEncoder.encode(password);
 
             SignUpRequest socialUser = SignUpRequest.builder()
-                    .socialId(sId)
+                    .email(email)
                     .nickname(nickName)
                     .oauthType("kakao")
                     .avatar(profileImgUrl)
@@ -148,17 +148,16 @@ public class KakaoUserService {
         return jsonNode.get("access_token").asText();
     }
 
-    private void kakaoUsersAuthorizationInput(Authentication authentication, HttpServletResponse response) {
-        // response header에 token 추가
-        Member userDetailsImpl = ((Member) authentication.getPrincipal());
-        String token = TokenProvider.generateToken(userDetailsImpl.getSocialId());
-        response.addHeader("Authorization", "BEARER" + " " + token);
-    }
-
     private Authentication forceLoginKakaoUser(Member kakaoUser) {
         log.info("userinfo" +kakaoUser);
         Authentication authentication = new UsernamePasswordAuthenticationToken(kakaoUser, null, kakaoUser.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return authentication;
+    }
+    private void kakaoUsersAuthorizationInput(Authentication authentication, HttpServletResponse response) {
+        // response header에 token 추가
+        Member userDetailsImpl = ((Member) authentication.getPrincipal());
+        String token = tokenProvider.generateToken(userDetailsImpl.getEmail());
+        response.addHeader("Authorization", "BEARER" + " " + token);
     }
 }

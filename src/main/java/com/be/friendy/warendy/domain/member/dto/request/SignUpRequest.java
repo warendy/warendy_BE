@@ -22,7 +22,6 @@ public class SignUpRequest {
 
     private Role role;
     private String oauthType;
-    private String socialId;
 
     private int body;
     private int dry;
@@ -34,17 +33,14 @@ public class SignUpRequest {
                 .email(this.email)
                 .password(this.password)
                 .nickname(this.nickname)
-                .socialId(this.socialId)
                 .oauthType(this.oauthType)
                 .avatar(null)
-                .role(Role.USER)
+                .role(Role.MEMBER)
                 .mbti(this.mbti)
                 .body(this.body)
                 .dry(this.dry)
                 .tannin(this.tannin)
                 .acidity(this.acidity)
-                .createdAt(LocalDateTime.now())
-                .modifiedAt(LocalDateTime.now())
                 .build();
     }
 }

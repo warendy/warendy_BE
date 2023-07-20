@@ -9,6 +9,9 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: admin
     password: adminwarendy
+  jwt:
+    secret-key: "c09123ualicu(E92mc9123"
+
   security:
     oauth2:
       client:
