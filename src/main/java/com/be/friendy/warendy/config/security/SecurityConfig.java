@@ -1,10 +1,10 @@
 package com.be.friendy.warendy.config.security;
 
 
-import com.be.friendy.warendy.config.JwtAuthenticationFilter;
+import com.be.friendy.warendy.config.jwt.filter.JwtAuthenticationFilter;
 import com.be.friendy.warendy.exception.handler.OAuthLoginFailureHandler;
 import com.be.friendy.warendy.exception.handler.OAuthLoginSuccessHandler;
-import com.be.friendy.warendy.service.MemberService;
+import com.be.friendy.warendy.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -49,6 +50,8 @@ public class SecurityConfig {
                     .and()
                         .successHandler(oAuthLoginSuccessHandler)
                         .failureHandler(oAuthLoginFailureHandler)
+                    .and()
+                        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and()
                         .addFilterBefore(this.authenticationFilter, UsernamePasswordAuthenticationFilter.class);
             } catch (Exception e) {

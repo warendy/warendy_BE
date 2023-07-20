@@ -1,7 +1,7 @@
-package com.be.friendy.warendy.domain.dto.request;
+package com.be.friendy.warendy.domain.member.dto.request;
 
-import com.be.friendy.warendy.domain.entity.Member;
-import com.be.friendy.warendy.domain.type.Role;
+import com.be.friendy.warendy.domain.member.entity.Member;
+import com.be.friendy.warendy.domain.member.entity.constant.Role;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MemberSignUpRequest {
+public class SignUpRequest {
 
     private String email;
     private String password;

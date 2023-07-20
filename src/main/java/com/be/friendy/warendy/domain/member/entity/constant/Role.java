@@ -1,4 +1,4 @@
-package com.be.friendy.warendy.domain.type;
+package com.be.friendy.warendy.domain.member.entity.constant;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

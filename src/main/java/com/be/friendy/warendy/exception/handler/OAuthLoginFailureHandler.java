@@ -1,6 +1,6 @@
 package com.be.friendy.warendy.exception.handler;
 
-import com.be.friendy.warendy.service.MemberService;
+import com.be.friendy.warendy.domain.member.service.MemberService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

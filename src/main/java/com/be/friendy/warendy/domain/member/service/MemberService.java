@@ -1,18 +1,15 @@
-package com.be.friendy.warendy.service;
+package com.be.friendy.warendy.domain.member.service;
 
-import com.be.friendy.warendy.domain.dto.request.MemberSignInRequest;
-import com.be.friendy.warendy.domain.dto.request.MemberSignUpRequest;
-import com.be.friendy.warendy.domain.entity.Member;
-import com.be.friendy.warendy.domain.repository.MemberRepository;
+import com.be.friendy.warendy.domain.member.dto.request.SignInRequest;
+import com.be.friendy.warendy.domain.member.dto.request.SignUpRequest;
+import com.be.friendy.warendy.domain.member.entity.Member;
+import com.be.friendy.warendy.domain.member.repository.MemberRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +40,7 @@ public class MemberService extends DefaultOAuth2UserService {
 
         // User 존재여부 확인 및 없으면 생성
         if(getUserByEmailAndOAuthType(email, oauthType) == null){
-            MemberSignUpRequest member = new MemberSignUpRequest();
+            SignUpRequest member = new SignUpRequest();
             member.setEmail(email);
             member.setOauthType(oauthType);
             this.memberRepository.save(member.toEntity());
@@ -56,7 +53,7 @@ public class MemberService extends DefaultOAuth2UserService {
     }
 
 
-    public Member signUp(MemberSignUpRequest member) {
+    public Member signUp(SignUpRequest member) {
         boolean exists = this.memberRepository.existsByEmail(member.getEmail());
         if(exists) {
             throw new RuntimeException("already exists");
@@ -67,7 +64,7 @@ public class MemberService extends DefaultOAuth2UserService {
 
         return result;
     }
-    public Member signIn(MemberSignInRequest member) {
+    public Member signIn(SignInRequest member) {
         Member user = this.memberRepository.findByEmail(member.getEmail())
                 .orElseThrow(() -> new RuntimeException("user does not exists"));
 

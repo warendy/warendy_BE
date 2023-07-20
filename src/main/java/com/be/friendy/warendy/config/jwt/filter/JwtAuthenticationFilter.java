@@ -1,6 +1,6 @@
-package com.be.friendy.warendy.config;
+package com.be.friendy.warendy.config.jwt.filter;
 
-import com.be.friendy.warendy.domain.repository.MemberRepository;
+import com.be.friendy.warendy.config.jwt.TokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

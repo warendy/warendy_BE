@@ -1,6 +1,6 @@
-package com.be.friendy.warendy.domain.entity;
+package com.be.friendy.warendy.domain.member.entity;
 
-import com.be.friendy.warendy.domain.type.Role;
+import com.be.friendy.warendy.domain.member.entity.constant.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;

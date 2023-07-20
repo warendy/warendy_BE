@@ -1,9 +1,9 @@
-package com.be.friendy.warendy.service;
+package com.be.friendy.warendy.domain.member.service;
 
-import com.be.friendy.warendy.config.TokenProvider;
-import com.be.friendy.warendy.domain.dto.request.MemberSignUpRequest;
-import com.be.friendy.warendy.domain.entity.Member;
-import com.be.friendy.warendy.domain.repository.MemberRepository;
+import com.be.friendy.warendy.config.jwt.TokenProvider;
+import com.be.friendy.warendy.domain.member.dto.request.SignUpRequest;
+import com.be.friendy.warendy.domain.member.entity.Member;
+import com.be.friendy.warendy.domain.member.repository.MemberRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,7 +19,6 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -40,13 +39,13 @@ public class KakaoUserService {
     @Value("${kakao.client-id}")
     private String clientId;
 
-    public MemberSignUpRequest kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
+    public SignUpRequest kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
 
         String accessToken = getAccessToken(code);
 
         // 2. 토큰으로 카카오 API 호출
-        MemberSignUpRequest kakaoUserInfoDto = getKakaoUserInfo(accessToken);
+        SignUpRequest kakaoUserInfoDto = getKakaoUserInfo(accessToken);
 
         // 3. 카카오ID로 회원가입 처리
         Member kakaoUser = signupKakaoUser(kakaoUserInfoDto);
@@ -59,7 +58,7 @@ public class KakaoUserService {
         return kakaoUserInfoDto;
     }
 
-    private MemberSignUpRequest getKakaoUserInfo(String accessToken) throws JsonProcessingException {
+    private SignUpRequest getKakaoUserInfo(String accessToken) throws JsonProcessingException {
         log.info("access token:" + accessToken);
         // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
@@ -82,7 +81,7 @@ public class KakaoUserService {
         String id = String.valueOf(jsonNode.get("id"));
         String nickname = jsonNode.get("properties")
                 .get("nickname").asText();
-        MemberSignUpRequest member = MemberSignUpRequest.builder()
+        SignUpRequest member = SignUpRequest.builder()
                                                         .socialId(id)
                                                         .nickname(nickname)
                                                         .build();
@@ -90,9 +89,10 @@ public class KakaoUserService {
 
     }
 
-    private Member signupKakaoUser(MemberSignUpRequest kakaoUserInfo) {
+    private Member signupKakaoUser(SignUpRequest kakaoUserInfo) {
         // DB 에 중복된 Kakao Id 가 있는지 확인
         String sId = kakaoUserInfo.getSocialId();
+
         Member user = memberRepository.findBySocialId(sId).orElse(null);
 
         if (user == null) {
@@ -103,7 +103,7 @@ public class KakaoUserService {
             String password = UUID.randomUUID().toString();
             String encodedPassword = passwordEncoder.encode(password);
 
-            MemberSignUpRequest socialUser = MemberSignUpRequest.builder()
+            SignUpRequest socialUser = SignUpRequest.builder()
                     .socialId(sId)
                     .nickname(nickName)
                     .oauthType("kakao")
