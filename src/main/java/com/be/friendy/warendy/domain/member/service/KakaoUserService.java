@@ -35,9 +35,9 @@ public class KakaoUserService {
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
 
-    @Value("${kakao.redirect-uri}")
+    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
     private String redirectUri;
-    @Value("${kakao.client-id}")
+    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String clientId;
 
     public SignUpRequest kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
