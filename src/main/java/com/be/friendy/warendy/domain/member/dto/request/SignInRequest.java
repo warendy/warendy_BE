@@ -1,4 +1,4 @@
-package com.be.friendy.warendy.domain.dto.request;
+package com.be.friendy.warendy.domain.member.dto.request;
 
 import lombok.*;
 
@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MemberSignInRequest {
+public class SignInRequest {
     private String email;
     private String password;
 }

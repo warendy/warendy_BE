@@ -1,11 +1,12 @@
-package com.be.friendy.warendy.config;
+package com.be.friendy.warendy.config.jwt;
 
-import com.be.friendy.warendy.service.MemberService;
+import com.be.friendy.warendy.domain.member.service.MemberService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -26,9 +26,9 @@ public class TokenProvider {
 
     @Value("${spring.jwt.secret-key}")
     private String secretKey;
-    public String generateToken(String username, String role) {
+
+    public String generateToken(String username) {
         Claims claims = Jwts.claims().setSubject(username);
-        claims.put(KEY_ROLES, role);
 
         var now = new Date();
         var expiredDate = new Date(now.getTime() + TOKEN_EXPIRE_TIME);
@@ -37,16 +37,16 @@ public class TokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(now) // 토큰 생성 시간
                 .setExpiration(expiredDate) // 토큰 만료 시간
-                .signWith(SignatureAlgorithm.HS512, this.secretKey)
+                .signWith(SignatureAlgorithm.HS512, secretKey)
                 .compact();
     }
 
     public Authentication getAuthentication(String jwt) {
-        UserDetails userDetails = this.memberService.loadUserByUsername(this.getUsername(jwt));
+        UserDetails userDetails = this.memberService.loadUserByEmail(this.getEmail(jwt));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    public String getUsername(String token) {
+    public String getEmail(String token) {
         return this.parsedClaims(token).getSubject();
     }
 

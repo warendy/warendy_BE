@@ -1,6 +1,7 @@
-package com.be.friendy.warendy.domain.dto.request;
+package com.be.friendy.warendy.domain.member.dto.request;
 
-import com.be.friendy.warendy.domain.entity.Member;
+import com.be.friendy.warendy.domain.member.entity.Member;
+import com.be.friendy.warendy.domain.member.entity.constant.Role;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -11,26 +12,20 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MemberSignUpRequest {
+public class SignUpRequest {
 
     private String email;
-
     private String password;
-
     private String nickname;
-
     private String avatar;
-
     private String mbti;
 
-    private String role;
+    private Role role;
+    private String oauthType;
 
     private int body;
-
     private int dry;
-
     private int tannin;
-
     private int acidity;
 
     public Member toEntity() {
@@ -38,15 +33,14 @@ public class MemberSignUpRequest {
                 .email(this.email)
                 .password(this.password)
                 .nickname(this.nickname)
+                .oauthType(this.oauthType)
                 .avatar(null)
-                .role("ROLE_MEMBER")
+                .role(Role.MEMBER)
                 .mbti(this.mbti)
                 .body(this.body)
                 .dry(this.dry)
                 .tannin(this.tannin)
                 .acidity(this.acidity)
-                .createdAt(LocalDateTime.now())
-                .modifiedAt(LocalDateTime.now())
                 .build();
     }
 }
