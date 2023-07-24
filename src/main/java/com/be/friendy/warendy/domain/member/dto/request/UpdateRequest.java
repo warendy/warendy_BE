@@ -19,5 +19,4 @@ public class UpdateRequest {
     private int dry;
     private int tannin;
     private int acidity;
-
 }

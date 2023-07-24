@@ -6,10 +6,10 @@ on:
       - main
 env:
   S3_BUCKET_NAME: warendy-s3
-#  RESOURCE_PATH: ./src/main/resources/application.yaml
+  RESOURCE_PATH: ./src/main/resources/application.yml
   CODE_DEPLOY_APPLICATION_NAME: CODE-DEPLOY-WARENDY
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: CODE-DEPLOY-GROUP
-
+  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,6 +22,27 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 17
+
+      - name: Set Up MySQL
+        uses: samin/mysql-action@v1
+        with:
+          character set server: 'utf8'
+          mysql database: warendy
+          mysql user: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
+          mysql password: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+
+      - name: Set yaml file
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ${{ env.RESOURCE_PATH }}
+        env:
+          spring.security.oauth2.client.registration.kakao.client-id: ${{ secrets.KAKAO_CLIENT_ID }}
+          spring.security.oauth2.client.registration.kakao.client-secret: ${{ secrets.KAKAO_CLIENT_SECRET }}
+          spring.security.oauth2.client.registration.kakao.redirect-uri: ${{ secrets.KAKAO_REDIRECT_URI }}
+          spring.jwt.secret-key: ${{ secrets.SPRING_JWT_SECRET_KEY }}
+          spring.datasource.url: ${{ secrets.SPRING_DATASOURCE_URL }}
+          spring.datasource.username: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
+          spring.datasource.password: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew

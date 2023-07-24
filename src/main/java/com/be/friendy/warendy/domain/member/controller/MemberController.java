@@ -59,3 +59,4 @@ public class MemberController {
         return kakaoUserService.kakaoLogin(code, response);
     }
 }
+
