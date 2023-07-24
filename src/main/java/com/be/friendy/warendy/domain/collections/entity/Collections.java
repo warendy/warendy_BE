@@ -1,21 +1,20 @@
-package com.be.friendy.warendy.domain.favorite.entity;
+package com.be.friendy.warendy.domain.collections.entity;
 
 import com.be.friendy.warendy.domain.member.entity.Member;
 import com.be.friendy.warendy.domain.wine.entity.Wine;
-import com.be.friendy.warendy.domain.winebar.entity.WineBar;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
+@Builder
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Entity(name = "FAVORITE")
-public class Favorite {
+@Entity(name = "COLLECTIONS")
+public class Collections {
     @Id // 엔티티 내부에서 아이디임을 선언
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 시퀀스 전략 선언
-    @Column(name = "FAVORITE_ID") // 아이디에 해당하는 컬럼명 선언
+    @Column(name = "COLLECTION_ID") // 아이디에 해당하는 컬럼명 선언
     private Long id;
 
     @ManyToOne

@@ -4,6 +4,7 @@ import com.be.friendy.warendy.config.jwt.TokenProvider;
 import com.be.friendy.warendy.domain.member.dto.request.SignInRequest;
 import com.be.friendy.warendy.domain.member.dto.request.SignUpRequest;
 import com.be.friendy.warendy.domain.member.dto.request.UpdateRequest;
+import com.be.friendy.warendy.domain.member.dto.response.InfoResponse;
 import com.be.friendy.warendy.domain.member.entity.Member;
 import com.be.friendy.warendy.domain.member.service.KakaoUserService;
 import com.be.friendy.warendy.domain.member.service.MemberService;
@@ -25,16 +26,24 @@ public class MemberController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@RequestBody SignUpRequest request){
-        Member result = this.memberService.signUp(request);
+        Member result = memberService.signUp(request);
         return ResponseEntity.ok(result);
     }
 
     @PostMapping("/signin")
     public ResponseEntity<?> signIn(@RequestBody SignInRequest request){
-        Member member = this.memberService.signIn(request);
-        String token = this.tokenProvider.generateToken(member.getEmail());
+        Member member = memberService.signIn(request);
+        String token = tokenProvider.generateToken(member.getEmail());
         log.info("user login -> " + request.getEmail());
         return ResponseEntity.ok(token);
+    }
+
+    @GetMapping("/members")
+    public ResponseEntity<?> getInfo(@RequestHeader("Authorization") String authorizationHeader){
+        String jwtToken = authorizationHeader.substring(7);
+        String email = tokenProvider.getEmail(jwtToken);
+        InfoResponse result = memberService.getMemberInfo(email);
+        return ResponseEntity.ok(result);
     }
 
     @PatchMapping("/members")
@@ -42,13 +51,13 @@ public class MemberController {
                                            @RequestBody UpdateRequest request){
         String jwtToken = authorizationHeader.substring(7);
         String email = tokenProvider.getEmail(jwtToken);
-        this.memberService.updateMember(request, email);
+        memberService.updateMember(request, email);
         return ResponseEntity.ok("updated");
     }
 
     @DeleteMapping("/members/{memberId}")
     public ResponseEntity<?> deleteAccount(@PathVariable Long memberId) {
-        this.memberService.deleteAccount(memberId);
+        memberService.deleteAccount(memberId);
         return ResponseEntity.ok("삭제 성공");
     }
 
