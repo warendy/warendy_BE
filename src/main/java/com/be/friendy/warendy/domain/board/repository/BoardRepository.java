@@ -18,7 +18,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     List<Board> findAllByDateAndDeletedAtIsNull(String date);
 
-    Optional<Board> findBoardByIdAndDeletedAtIsNull(Long id);
+    Optional<Board> findByIdAndDeletedAtIsNull(Long id);
 
     boolean existsByName(String name);
 }

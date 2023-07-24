@@ -17,8 +17,6 @@ public class BoardCreateResponse {
 
     private Long memberId;
     private Long wineBarId;
-//    private Member member;
-//    private WineBar wineBar;
     private String name;
     private String creator;
     private String date;
@@ -28,8 +26,6 @@ public class BoardCreateResponse {
 
     public static BoardCreateResponse fromEntity(Board board) {
         return BoardCreateResponse.builder()
-//                .memberId(board.getMemberId())
-//                .wineBarId(board.getWineBarId())
                 .memberId(board.getMember().getId())
                 .wineBarId(board.getWineBar().getId())
                 .name(board.getName())

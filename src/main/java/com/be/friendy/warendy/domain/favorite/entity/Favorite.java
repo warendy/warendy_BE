@@ -3,6 +3,7 @@ package com.be.friendy.warendy.domain.favorite.entity;
 import com.be.friendy.warendy.domain.member.entity.Member;
 import com.be.friendy.warendy.domain.wine.entity.Wine;
 import com.be.friendy.warendy.domain.winebar.entity.WineBar;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,10 +19,12 @@ public class Favorite {
     @Column(name = "FAVORITE_ID") // 아이디에 해당하는 컬럼명 선언
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID", nullable = false)
     private Member member;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "WINE_ID")
     private Wine wine;

@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 public class BoardCreateRequest {
 
     private Long memberId;
-//    private Long wineBarId;
 
     private String name;
 
@@ -31,9 +30,9 @@ public class BoardCreateRequest {
 
     private String contents;
 
-    public Board toEntity(Member member) {
+    public Board toEntity(WineBar wineBar, Member member) {
         return Board.builder()
-//                .wineBarId(wineBarId)
+                .wineBar(wineBar)
                 .member(member)
                 .name(name)
                 .creator(member.getNickname())
@@ -47,7 +46,6 @@ public class BoardCreateRequest {
     public static BoardCreateRequest fromEntity(Board board) {
         return BoardCreateRequest.builder()
                 .memberId(board.getMember().getId())
-//                .wineBarId(board.getWineBarId())
                 .name(board.getName())
                 .creator(board.getCreator())
                 .date(board.getDate())

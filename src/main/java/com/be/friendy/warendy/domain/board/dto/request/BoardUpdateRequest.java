@@ -16,9 +16,6 @@ import java.time.LocalDateTime;
 public class BoardUpdateRequest {
     private Long memberId;
     private Long wineBarId;
-
-//    private Member member;
-//    private WineBar wineBar;
     private String name;
     private String creator;
     private String date;
