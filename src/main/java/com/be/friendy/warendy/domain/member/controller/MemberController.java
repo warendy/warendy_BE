@@ -54,8 +54,9 @@ public class MemberController {
 
     @GetMapping("/test/oauth2/callback/kakao")
     public SignUpRequest kakaoLogin(@RequestParam String code, HttpServletResponse response)
-                                                                    throws JsonProcessingException {
+            throws JsonProcessingException {
         System.out.println(code);
         return kakaoUserService.kakaoLogin(code, response);
     }
 }
+

@@ -82,9 +82,9 @@ public class KakaoUserService {
         String nickname = jsonNode.get("properties")
                 .get("nickname").asText();
         SignUpRequest member = SignUpRequest.builder()
-                                                        .email(id)
-                                                        .nickname(nickname)
-                                                        .build();
+                .email(id)
+                .nickname(nickname)
+                .build();
         return member;
 
     }

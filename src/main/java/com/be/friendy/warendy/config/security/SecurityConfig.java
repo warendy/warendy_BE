@@ -43,16 +43,16 @@ public class SecurityConfig {
                         .permitAll() // 해당 경로는 인증 없이 접근 가능
                         .requestMatchers("/members/**") // 해당 경로는 인증이 필요
                         .hasRole("MEMBER") // ROLE 이 MEMBER 가 포함된 경우에만 인증 가능
-                    .and()
+                        .and()
                         .oauth2Login()
                         .userInfoEndpoint()
                         .userService(memberService)
-                    .and()
+                        .and()
                         .successHandler(oAuthLoginSuccessHandler)
                         .failureHandler(oAuthLoginFailureHandler)
-                    .and()
+                        .and()
                         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    .and()
+                        .and()
                         .addFilterBefore(this.authenticationFilter, UsernamePasswordAuthenticationFilter.class);
             } catch (Exception e) {
                 throw new RuntimeException(e);
