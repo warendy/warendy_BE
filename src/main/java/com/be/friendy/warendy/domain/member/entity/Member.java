@@ -1,5 +1,7 @@
 package com.be.friendy.warendy.domain.member.entity;
 
+import com.be.friendy.warendy.domain.chat.entity.ConnectedChat;
+import com.be.friendy.warendy.domain.chat.entity.Notification;
 import com.be.friendy.warendy.domain.collections.entity.Collections;
 import com.be.friendy.warendy.domain.common.BaseEntity;
 import com.be.friendy.warendy.domain.member.entity.constant.Role;
@@ -32,6 +34,22 @@ public class Member extends BaseEntity implements UserDetails  {
     @Column(name = "MEMBER_ID") // 아이디에 해당하는 컬럼명 선언
     private Long id;
 
+    @OneToMany
+    @JoinColumn(name = "MEMBER_ID")
+    private List<Review> reviews;
+
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "MEMBER_ID")
+    private List<Collections> collections;
+
+    @OneToMany
+    @JoinColumn(name = "CONNECTED_CHAT_ID")
+    private List<ConnectedChat> connectedChats;
+
+    @OneToMany
+    @JoinColumn(name = "NOTIFICATION_ID")
+    private List<Notification> notifications;
+
     private String email;
     private String password;
     private String nickname;
@@ -47,13 +65,7 @@ public class Member extends BaseEntity implements UserDetails  {
     private int tannin;
     private int acidity;
 
-    @OneToMany
-    @JoinColumn(name = "MEMBER_ID")
-    private List<Review> reviews;
 
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "MEMBER_ID")
-    private List<Collections> collections;
 
     // Member 엔티티에서 원하는 필드만 수정하는 메서드
     public void updateMemberInfo(String email, String password, String nickname, String avatar, String mbti, Integer body,
