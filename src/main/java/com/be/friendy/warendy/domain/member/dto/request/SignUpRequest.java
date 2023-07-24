@@ -28,6 +28,7 @@ public class SignUpRequest {
     private int tannin;
     private int acidity;
 
+
     public Member toEntity() {
         return Member.builder()
                 .email(this.email)

@@ -1,7 +1,9 @@
 package com.be.friendy.warendy.domain.member.entity;
 
+import com.be.friendy.warendy.domain.collections.entity.Collections;
 import com.be.friendy.warendy.domain.common.BaseEntity;
 import com.be.friendy.warendy.domain.member.entity.constant.Role;
+import com.be.friendy.warendy.domain.review.entity.Review;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
@@ -13,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Getter
 @Builder
@@ -43,6 +46,14 @@ public class Member extends BaseEntity implements UserDetails  {
     private int dry;
     private int tannin;
     private int acidity;
+
+    @OneToMany
+    @JoinColumn(name = "MEMBER_ID")
+    private List<Review> reviews;
+
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "MEMBER_ID")
+    private List<Collections> collections;
 
     // Member 엔티티에서 원하는 필드만 수정하는 메서드
     public void updateMemberInfo(String email, String password, String nickname, String avatar, String mbti, Integer body,
