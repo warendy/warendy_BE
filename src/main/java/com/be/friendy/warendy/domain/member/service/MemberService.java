@@ -87,5 +87,4 @@ public class MemberService extends DefaultOAuth2UserService {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("already exists"));
     }
-
 }
