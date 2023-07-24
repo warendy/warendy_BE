@@ -23,12 +23,6 @@ public class Favorite {
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "WINE_ID", nullable = false)
+    @JoinColumn(name = "WINE_ID")
     private Wine wine;
-
-    @ManyToOne
-    @JoinColumn(name = "WINEBAR_ID", nullable = false)
-    private WineBar wineBar;
-
-
 }

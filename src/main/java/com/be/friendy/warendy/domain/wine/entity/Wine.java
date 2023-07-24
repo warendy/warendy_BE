@@ -1,7 +1,7 @@
 package com.be.friendy.warendy.domain.wine.entity;
 
-import com.be.friendy.warendy.domain.collections.entity.Collections;
 import com.be.friendy.warendy.domain.common.BaseEntity;
+import com.be.friendy.warendy.domain.favorite.entity.Favorite;
 import com.be.friendy.warendy.domain.review.entity.Review;
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,7 +30,7 @@ public class Wine extends BaseEntity {
 
     @OneToMany
     @JoinColumn(name = "WINE_ID")
-    private List<Collections> collections;
+    private List<Favorite> favorites;
 
 
     private String name;

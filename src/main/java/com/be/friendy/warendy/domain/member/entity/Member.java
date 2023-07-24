@@ -2,8 +2,8 @@ package com.be.friendy.warendy.domain.member.entity;
 
 import com.be.friendy.warendy.domain.chat.entity.ConnectedChat;
 import com.be.friendy.warendy.domain.chat.entity.Notification;
-import com.be.friendy.warendy.domain.collections.entity.Collections;
 import com.be.friendy.warendy.domain.common.BaseEntity;
+import com.be.friendy.warendy.domain.favorite.entity.Favorite;
 import com.be.friendy.warendy.domain.member.entity.constant.Role;
 import com.be.friendy.warendy.domain.review.entity.Review;
 import jakarta.persistence.*;
@@ -36,19 +36,19 @@ public class Member extends BaseEntity implements UserDetails  {
 
     @OneToMany
     @JoinColumn(name = "MEMBER_ID")
-    private List<Review> reviews;
+    private List<Review> reviewList;
 
     @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "MEMBER_ID")
-    private List<Collections> collections;
+    private List<Favorite> favoriteList;
 
     @OneToMany
     @JoinColumn(name = "CONNECTED_CHAT_ID")
-    private List<ConnectedChat> connectedChats;
+    private List<ConnectedChat> connectedChatList;
 
     @OneToMany
     @JoinColumn(name = "NOTIFICATION_ID")
-    private List<Notification> notifications;
+    private List<Notification> notificationList;
 
     private String email;
     private String password;
