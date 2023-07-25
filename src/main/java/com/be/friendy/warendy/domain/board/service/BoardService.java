@@ -20,14 +20,12 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-@Transactional(readOnly = true)
 public class BoardService {
 
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
     private final WineBarRepository wineBarRepository;
 
-    @Transactional(readOnly = false, isolation = Isolation.SERIALIZABLE)
     public Board createBoard(Long winebarId, BoardCreateRequest createRequest) {
 
 
@@ -38,10 +36,10 @@ public class BoardService {
 
         Member member = memberRepository.findById(createRequest.getMemberId())
                 .orElseThrow(() -> new RuntimeException("user does not exists"));
-//        Optional<WineBar> wineBar = wineBarRepository.findById(winebarId);
-//        board.setCreator(member.getNickname());
+        WineBar wineBar = wineBarRepository.findById(winebarId).
+                orElseThrow(() -> new RuntimeException("the bar does not exists"));;
 
-        return boardRepository.save(createRequest.toEntity(member));
+        return boardRepository.save(createRequest.toEntity(wineBar,member));
     }
 
     public BoardCreateRequest creatBoard2(Long winebarId, BoardCreateRequest createRequest) {
@@ -55,8 +53,6 @@ public class BoardService {
 
         Board board = boardRepository.save(
                 Board.builder()
-//                        .wineBarId(createRequest.getWineBarId())
-//                        .memberId(createRequest.getMemberId())
                         .member(member)
                         .wineBar(wineBarRepository
                                 .findById(winebarId)
@@ -72,24 +68,20 @@ public class BoardService {
         return BoardCreateRequest.fromEntity(board);
     }
 
-    @Transactional
     public List<Board> searchBoard() {
         return boardRepository.findAll();
     }
 
-    @Transactional
     public List<Board> searchBoardByBoardName(String name) {
 
         return boardRepository.findAllByNameAndDeletedAtIsNull(name);
     }
 
-    @Transactional
     public List<Board> searchBoardByWineName(String wineName) {
 
         return boardRepository.findAllByWineNameAndDeletedAtIsNull(wineName);
     }
 
-    @Transactional
     public List<Board> searchBoardByWineBarName(String wineBarName) {
 
         var wineBar = this.wineBarRepository.findByName(wineBarName)
@@ -98,20 +90,17 @@ public class BoardService {
         return boardRepository.findAllByWineBarIdAndDeletedAtIsNull(wineBar.getId());
     }
 
-    @Transactional
     public List<Board> searchBoardByCreator(String creator) {
         return boardRepository.findAllByCreatorAndDeletedAtIsNull(creator);
     }
 
-    @Transactional
     public List<Board> searchBoardByDate(LocalDate date) {
         String dateToStr = String.valueOf(date);
         return boardRepository.findAllByDateAndDeletedAtIsNull(dateToStr);
     }
 
-    @Transactional(readOnly = false)
     public Board updateBoard(Long id, BoardUpdateRequest boardUpdateRequest) {
-        Board nowBoard = boardRepository.findBoardByIdAndDeletedAtIsNull(id)
+        Board nowBoard = boardRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new RuntimeException("the board does not exists"));
 
         updateFunction(boardUpdateRequest, nowBoard);
@@ -142,15 +131,14 @@ public class BoardService {
     }
 
     public Board updateBoard2(Long boardId, BoardUpdateRequest request) {
-        Board nowBoard = boardRepository.findBoardByIdAndDeletedAtIsNull(boardId)
+        Board nowBoard = boardRepository.findByIdAndDeletedAtIsNull(boardId)
                 .orElseThrow(() -> new RuntimeException("the board does not exists"));;
         nowBoard.updateBoardInfo(request);
         return boardRepository.save(nowBoard);
     }
 
-    @Transactional(readOnly = false)
     public void deleteBoard(Long boardId) {
-        Board board = boardRepository.findBoardByIdAndDeletedAtIsNull(boardId)
+        Board board = boardRepository.findByIdAndDeletedAtIsNull(boardId)
                 .orElseThrow(() -> new RuntimeException("The board does not exist"));
         boardRepository.delete(board);
     }

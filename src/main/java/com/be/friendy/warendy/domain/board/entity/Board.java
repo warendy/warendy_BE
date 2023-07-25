@@ -5,6 +5,7 @@ import com.be.friendy.warendy.domain.board.dto.request.BoardUpdateRequest;
 import com.be.friendy.warendy.domain.common.BaseEntity;
 import com.be.friendy.warendy.domain.member.entity.Member;
 import com.be.friendy.warendy.domain.winebar.entity.WineBar;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
@@ -16,7 +17,7 @@ import org.hibernate.annotations.Where;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@SQLDelete(sql = "UPDATE member SET deleted_at = NOW() WHERE member_id=?")
+@SQLDelete(sql = "UPDATE board SET deleted_at = current_timestamp WHERE board_id = ?")
 // delete 요청이 들어올때 db에 삭제되지 않고 deleted_at 컬럼에 삭제요청 시간으로 업데이트 된다.
 @Where(clause = "deleted_at is NULL")
 @Entity(name = "BOARD")
@@ -27,10 +28,12 @@ public class Board extends BaseEntity {
     @Column(name = "BOARD_ID") // 아이디에 해당하는 컬럼명 선언
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID", nullable = false)
     private Member member;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "WINEBAR_ID", nullable = false)
     private WineBar wineBar;
