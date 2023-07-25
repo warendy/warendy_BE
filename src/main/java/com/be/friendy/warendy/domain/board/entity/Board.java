@@ -27,9 +27,6 @@ public class Board extends BaseEntity {
     @Column(name = "BOARD_ID") // 아이디에 해당하는 컬럼명 선언
     private Long id;
 
-//    private Long memberId;
-//    private Long wineBarId;
-
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID", nullable = false)
     private Member member;
@@ -44,7 +41,6 @@ public class Board extends BaseEntity {
     private String wineName;
     private Integer headcount;
     private String contents;
-
 
     public void updateBoardInfo(BoardUpdateRequest request) {
         name = request.getName();

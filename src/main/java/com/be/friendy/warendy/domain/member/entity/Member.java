@@ -10,10 +10,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,7 +25,7 @@ import java.util.List;
 @SQLDelete(sql = "UPDATE member SET deleted_at = NOW() WHERE member_id=?") // delete 요청이 들어올때 db에 삭제되지 않고 deleted_at 컬럼에 삭제요청 시간으로 업데이트 된다.
 @Where(clause = "deleted_at is NULL")
 @Entity(name = "MEMBER")
-public class Member extends BaseEntity implements UserDetails  {
+public class Member extends BaseEntity  {
 
     @Id // 엔티티 내부에서 아이디임을 선언
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 시퀀스 전략 선언
@@ -99,7 +97,6 @@ public class Member extends BaseEntity implements UserDetails  {
         }
     }
 
-    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Role userRole = this.getRole();
         String authority = userRole.getKey();
@@ -108,30 +105,5 @@ public class Member extends BaseEntity implements UserDetails  {
         authorities.add(simpleAuthority);
 
         return authorities;
-    }
-
-    @Override
-    public String getUsername() {
-        return null;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return false;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return false;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return false;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return false;
     }
 }

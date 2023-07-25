@@ -6,6 +6,7 @@ import com.be.friendy.warendy.domain.member.dto.request.SignUpRequest;
 import com.be.friendy.warendy.domain.member.dto.request.UpdateRequest;
 import com.be.friendy.warendy.domain.member.dto.response.InfoResponse;
 import com.be.friendy.warendy.domain.member.entity.Member;
+import com.be.friendy.warendy.domain.member.entity.constant.Role;
 import com.be.friendy.warendy.domain.member.repository.MemberRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -31,14 +32,15 @@ public class MemberService extends DefaultOAuth2UserService {
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
 
-    public Member signUp(SignUpRequest member) {
-        boolean exists = memberRepository.existsByEmail(member.getEmail());
+    public InfoResponse signUp(SignUpRequest request) {
+        //이미 들록된 유저인지 확인
+        boolean exists = memberRepository.existsByEmail(request.getEmail());
         if(exists) {
             throw new RuntimeException("already exists");
         }
 
-        member.setPassword(passwordEncoder.encode(member.getPassword()));
-        return memberRepository.save(member.toEntity());
+        request.setPassword(passwordEncoder.encode(request.getPassword()));
+        return InfoResponse.fromEntity(memberRepository.save(setAccount(request)));
     }
 
     public Member signIn(SignInRequest member) {
@@ -68,7 +70,6 @@ public class MemberService extends DefaultOAuth2UserService {
         memberInfo.setEmail(member.getEmail());
         memberInfo.setNickname(member.getNickname());
         memberInfo.setAvatar(member.getAvatar());
-        memberInfo.setMbti(member.getMbti());
         memberInfo.setBody(member.getBody());
         memberInfo.setDry(member.getDry());
         memberInfo.setTannin(member.getTannin());
@@ -84,7 +85,21 @@ public class MemberService extends DefaultOAuth2UserService {
     }
 
     public UserDetails loadUserByEmail(String email) {
-        return memberRepository.findByEmail(email)
+        return (UserDetails) memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("already exists"));
+    }
+
+    private Member setAccount(SignUpRequest request){
+        return Member.builder()
+                .email(request.getEmail())
+                .password(request.getPassword())
+                .nickname(request.getNickname())
+                .avatar(request.getAvatar())
+                .role(Role.MEMBER)
+                .body(request.getBody())
+                .dry(request.getDry())
+                .tannin(request.getTannin())
+                .acidity(request.getAcidity())
+                .build();
     }
 }

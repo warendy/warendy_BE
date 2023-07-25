@@ -18,7 +18,6 @@ public class SignUpRequest {
     private String password;
     private String nickname;
     private String avatar;
-    private String mbti;
 
     private Role role;
     private String oauthType;
@@ -29,19 +28,4 @@ public class SignUpRequest {
     private int acidity;
 
 
-    public Member toEntity() {
-        return Member.builder()
-                .email(this.email)
-                .password(this.password)
-                .nickname(this.nickname)
-                .oauthType(this.oauthType)
-                .avatar(null)
-                .role(Role.MEMBER)
-                .mbti(this.mbti)
-                .body(this.body)
-                .dry(this.dry)
-                .tannin(this.tannin)
-                .acidity(this.acidity)
-                .build();
-    }
 }
