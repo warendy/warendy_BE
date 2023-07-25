@@ -45,7 +45,6 @@ public class Board extends BaseEntity {
     private Integer headcount;
     private String contents;
 
-
     public void updateBoardInfo(BoardUpdateRequest request) {
         name = request.getName();
         creator = request.getCreator();
