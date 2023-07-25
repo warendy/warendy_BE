@@ -37,7 +37,7 @@ public class Member extends BaseEntity  {
     @JoinColumn(name = "BOARD_ID")
     private List<Board> boardList;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "REVIEW_ID")
     private List<Review> reviewList;
 
@@ -49,7 +49,7 @@ public class Member extends BaseEntity  {
     @JoinColumn(name = "CONNECTED_CHAT_ID")
     private List<ConnectedChat> connectedChatList;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "NOTIFICATION_ID")
     private List<Notification> notificationList;
 

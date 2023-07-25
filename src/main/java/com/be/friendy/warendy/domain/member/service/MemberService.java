@@ -66,16 +66,7 @@ public class MemberService extends DefaultOAuth2UserService {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("user does not exists"));
 
-        InfoResponse memberInfo = new InfoResponse();
-        memberInfo.setEmail(member.getEmail());
-        memberInfo.setNickname(member.getNickname());
-        memberInfo.setAvatar(member.getAvatar());
-        memberInfo.setBody(member.getBody());
-        memberInfo.setDry(member.getDry());
-        memberInfo.setTannin(member.getTannin());
-        memberInfo.setAcidity(member.getAcidity());
-
-        return memberInfo;
+        return InfoResponse.fromEntity(member);
     }
 
     public void deleteAccount(Long memberId){
@@ -84,8 +75,8 @@ public class MemberService extends DefaultOAuth2UserService {
         memberRepository.delete(member);
     }
 
-    public UserDetails loadUserByEmail(String email) {
-        return (UserDetails) memberRepository.findByEmail(email)
+    public Member loadUserByEmail(String email) {
+        return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("already exists"));
     }
 
