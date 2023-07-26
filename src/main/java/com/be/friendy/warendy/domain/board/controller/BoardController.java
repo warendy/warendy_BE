@@ -18,25 +18,24 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/board")
+@RequestMapping("/boards")
 public class BoardController {
     private final BoardService boardService;
 
-    @PostMapping("/{winebar_id}")
-    public ResponseEntity<Board> boardCreate(
+    @PostMapping("/winebars/{winebar_id}")
+    public ResponseEntity<BoardCreateResponse> boardCreate(
             @PathVariable Long winebar_id,
             @RequestBody BoardCreateRequest request
     ) {
         return ResponseEntity.ok(boardService.createBoard(winebar_id, request));
     }
 
-    @PostMapping("/{winebar_id}/ver2")
-    public BoardCreateResponse boardCreate2(
+    @PostMapping("/winebars/{winebar_id}/ver2")
+    public ResponseEntity<BoardCreateResponse> boardCreate2(
             @PathVariable Long winebar_id,
             @RequestBody BoardCreateRequest request
     ) {
-        return BoardCreateResponse.fromRequest(winebar_id,
-                boardService.creatBoard2(winebar_id, request));
+        return ResponseEntity.ok(boardService.creatBoard2(winebar_id, request));
     }
 
 
@@ -62,9 +61,9 @@ public class BoardController {
 
     @GetMapping("/winebar_name")
     public ResponseEntity<List> boardSearchByWindBarName(
-            @RequestParam String wineBarName
+            @RequestParam String winebarName
     ) {
-        return ResponseEntity.ok(boardService.searchBoardByWineBarName(wineBarName));
+        return ResponseEntity.ok(boardService.searchBoardByWineBarName(winebarName));
     }
 
     @GetMapping("/date")
@@ -92,7 +91,8 @@ public class BoardController {
             @PathVariable Long board_id,
             @RequestBody BoardUpdateRequest boardUpdateRequest
     ) {
-        return ResponseEntity.ok(boardService.updateBoard(board_id, boardUpdateRequest));
+        return ResponseEntity.ok(
+                boardService.updateBoard(board_id, boardUpdateRequest));
     }
 
     @PutMapping("/{board_id}")
@@ -100,7 +100,8 @@ public class BoardController {
             @PathVariable Long board_id,
             @RequestBody BoardUpdateRequest boardUpdateRequest
     ) {
-        return ResponseEntity.ok(boardService.updateBoard2(board_id, boardUpdateRequest));
+        return ResponseEntity.ok(
+                boardService.updateBoard2(board_id, boardUpdateRequest));
     }
 
     @DeleteMapping("/{board_id}")

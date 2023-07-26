@@ -1,17 +1,19 @@
 package com.be.friendy.warendy.domain.winebar.repository;
 
-import com.be.friendy.warendy.domain.winebar.entity.WineBar;
+import com.be.friendy.warendy.domain.winebar.entity.Winebar;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface WineBarRepository extends JpaRepository<WineBar, Long> {
+@Repository
+public interface WineBarRepository extends JpaRepository<Winebar, Long> {
 
-    Optional<WineBar> findByName(String name);
+    Optional<Winebar> findByName(String name);
 
-    List<WineBar> findAllByLatAndLnt(Double lat, Double lnt);
+    List<Winebar> findAllByLatAndLnt(Double lat, Double lnt);
 
-    Optional<WineBar> findByLatAndLnt(Double lat, Double lnt);
+    Optional<Winebar> findByLatAndLnt(Double lat, Double lnt);
 
 }

@@ -1,6 +1,5 @@
 package com.be.friendy.warendy.domain.member.entity;
 
-import com.be.friendy.warendy.domain.board.entity.Board;
 import com.be.friendy.warendy.domain.chat.entity.ConnectedChat;
 import com.be.friendy.warendy.domain.chat.entity.Notification;
 import com.be.friendy.warendy.domain.common.BaseEntity;
@@ -11,7 +10,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,29 +23,26 @@ import java.util.List;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE member SET deleted_at = current_timestamp WHERE member_id=?") // delete 요청이 들어올때 db에 삭제되지 않고 deleted_at 컬럼에 삭제요청 시간으로 업데이트 된다.
+@SQLDelete(sql = "UPDATE member SET deleted_at = current_timestamp WHERE member_id=?")
+// delete 요청이 들어올때 db에 삭제되지 않고 deleted_at 컬럼에 삭제요청 시간으로 업데이트 된다.
 @Where(clause = "deleted_at is NULL")
 @Entity(name = "MEMBER")
-public class Member extends BaseEntity implements UserDetails  {
+public class Member extends BaseEntity implements UserDetails {
 
     @Id // 엔티티 내부에서 아이디임을 선언
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 시퀀스 전략 선언
     @Column(name = "MEMBER_ID") // 아이디에 해당하는 컬럼명 선언
     private Long id;
 
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "BOARD_ID")
-    private List<Board> boardList;
-
     @OneToMany
     @JoinColumn(name = "REVIEW_ID")
     private List<Review> reviewList;
 
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "FAVORITE_ID")
     private List<Favorite> favoriteList;
 
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "CONNECTED_CHAT_ID")
     private List<ConnectedChat> connectedChatList;
 
@@ -69,8 +64,6 @@ public class Member extends BaseEntity implements UserDetails  {
     private int dry;
     private int tannin;
     private int acidity;
-
-
 
     // Member 엔티티에서 원하는 필드만 수정하는 메서드
     public void updateMemberInfo(String email, String password, String nickname, String avatar, String mbti, Integer body,
@@ -139,4 +132,5 @@ public class Member extends BaseEntity implements UserDetails  {
     public boolean isEnabled() {
         return false;
     }
+
 }
