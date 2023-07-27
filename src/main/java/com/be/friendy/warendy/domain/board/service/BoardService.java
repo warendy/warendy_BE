@@ -9,7 +9,7 @@ import com.be.friendy.warendy.domain.board.repository.BoardRepository;
 import com.be.friendy.warendy.domain.member.entity.Member;
 import com.be.friendy.warendy.domain.member.repository.MemberRepository;
 import com.be.friendy.warendy.domain.winebar.entity.Winebar;
-import com.be.friendy.warendy.domain.winebar.repository.WineBarRepository;
+import com.be.friendy.warendy.domain.winebar.repository.WinebarRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
-    private final WineBarRepository wineBarRepository;
+    private final WinebarRepository wineBarRepository;
 
     public BoardCreateResponse createBoard(
             Long winebarId, BoardCreateRequest createRequest) {
@@ -97,7 +97,7 @@ public class BoardService {
                 .collect(Collectors.toList());
     }
 
-    public List<BoardSearchResponse> searchBoardByWineBarName(
+    public List<BoardSearchResponse> searchBoardByWinebarName(
             String winebarName, Pageable pageable
     ) {
         Winebar winebar = this.wineBarRepository.findByName(winebarName)

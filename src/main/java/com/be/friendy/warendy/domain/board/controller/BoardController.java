@@ -66,12 +66,12 @@ public class BoardController {
     }
 
     @GetMapping("/winebar_name")
-    public ResponseEntity<List> boardSearchByWindBarName(
+    public ResponseEntity<List> boardSearchByWinebarName(
             @RequestParam String winebarName,
             @PageableDefault(size = 3) Pageable pageable
     ) {
         return ResponseEntity.ok(boardService
-                .searchBoardByWineBarName(winebarName, pageable));
+                .searchBoardByWinebarName(winebarName, pageable));
     }
 
     @GetMapping("/creator")

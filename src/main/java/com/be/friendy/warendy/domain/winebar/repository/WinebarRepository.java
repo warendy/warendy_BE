@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface WineBarRepository extends JpaRepository<Winebar, Long> {
+public interface WinebarRepository extends JpaRepository<Winebar, Long> {
 
     Optional<Winebar> findByName(String name);
 

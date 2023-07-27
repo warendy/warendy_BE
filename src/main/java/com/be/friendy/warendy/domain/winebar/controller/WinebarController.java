@@ -14,7 +14,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class WineBarController {
+public class WinebarController {
 
     private final WineBarService wineBarService;
 
@@ -22,7 +22,7 @@ public class WineBarController {
     public ResponseEntity<List> wineBarSearch (
             @RequestParam Double lat, @RequestParam Double lnt
     ) {
-        return ResponseEntity.ok(wineBarService.searchWineBar(lat, lnt));
+        return ResponseEntity.ok(wineBarService.searchWinebar(lat, lnt));
     }
 
 }
