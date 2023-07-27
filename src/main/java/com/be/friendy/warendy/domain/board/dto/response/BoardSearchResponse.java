@@ -1,4 +1,5 @@
-package com.be.friendy.warendy.domain.board.dto.request;
+package com.be.friendy.warendy.domain.board.dto.response;
+
 
 import lombok.*;
 
@@ -8,10 +9,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BoardUpdateRequest {
+public class BoardSearchResponse {
 
-    private Long memberId;
-    private Long winebarId;
+    private String winebarName;
     private String name;
     private String creator;
     private String date;

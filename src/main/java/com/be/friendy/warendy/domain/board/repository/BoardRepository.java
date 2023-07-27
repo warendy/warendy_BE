@@ -1,24 +1,27 @@
 package com.be.friendy.warendy.domain.board.repository;
 
 import com.be.friendy.warendy.domain.board.entity.Board;
+import com.be.friendy.warendy.domain.winebar.entity.Winebar;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
-    List<Board> findAllByNameAndDeletedAtIsNull(String boardName);
+    List<Board> findAllByName(String boardName);
 
-    List<Board> findAllByWineNameAndDeletedAtIsNull(String wineName);
+    List<Board> findAllByWineName(String wineName);
 
-    List<Board> findAllByWineBarIdAndDeletedAtIsNull(Long wineBarId);
+    List<Board> findAllByWinebar(Winebar winebar);
 
-    List<Board> findAllByCreatorAndDeletedAtIsNull(String creator);
+    List<Board> findAllByCreator(String creator);
 
-    List<Board> findAllByDateAndDeletedAtIsNull(String date);
+    List<Board> findAllByDate(String date);
 
-    Optional<Board> findByIdAndDeletedAtIsNull(Long id);
+    Optional<Board> findById(Long id);
 
     boolean existsByName(String name);
 }

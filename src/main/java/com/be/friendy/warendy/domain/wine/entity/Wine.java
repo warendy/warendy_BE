@@ -5,8 +5,6 @@ import com.be.friendy.warendy.domain.favorite.entity.Favorite;
 import com.be.friendy.warendy.domain.review.entity.Review;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import java.util.List;
 
@@ -15,8 +13,6 @@ import java.util.List;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE member SET deleted_at = NOW() WHERE member_id=?") // delete 요청이 들어올때 db에 삭제되지 않고 deleted_at 컬럼에 삭제요청 시간으로 업데이트 된다.
-@Where(clause = "deleted_at is NULL")
 @Entity(name = "WINE")
 public class Wine extends BaseEntity {
     @Id // 엔티티 내부에서 아이디임을 선언
@@ -25,26 +21,26 @@ public class Wine extends BaseEntity {
     private Long id;
 
     @OneToMany
-    @JoinColumn(name = "WINE_ID")
+    @JoinColumn(name = "REVIEW_ID")
     private List<Review> reviews;
 
     @OneToMany
-    @JoinColumn(name = "WINE_ID")
+    @JoinColumn(name = "FAVORITE_ID")
     private List<Favorite> favorites;
 
-
     private String name;
-    private int vintage;
+    private Integer vintage;
     private String price;
     private String picture;
     private Integer body;
     private Integer dry;
     private Integer tannin;
     private Integer acidity;
-    private double alcohol;
+    private Double alcohol;
     private String grapes;
     private String region;
     private String type;
     private String winery;
     private Float rating;
+
 }

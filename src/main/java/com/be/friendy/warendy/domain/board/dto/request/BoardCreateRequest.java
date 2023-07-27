@@ -3,10 +3,8 @@ package com.be.friendy.warendy.domain.board.dto.request;
 
 import com.be.friendy.warendy.domain.board.entity.Board;
 import com.be.friendy.warendy.domain.member.entity.Member;
-import com.be.friendy.warendy.domain.winebar.entity.WineBar;
+import com.be.friendy.warendy.domain.winebar.entity.Winebar;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Setter
 @Getter
@@ -30,10 +28,10 @@ public class BoardCreateRequest {
 
     private String contents;
 
-    public Board toEntity(WineBar wineBar, Member member) {
+    public Board toEntity(Winebar wineBar, Member member) {
         return Board.builder()
-                .wineBar(wineBar)
                 .member(member)
+                .winebar(wineBar)
                 .name(name)
                 .creator(member.getNickname())
                 .date(date)
@@ -42,17 +40,4 @@ public class BoardCreateRequest {
                 .contents(contents)
                 .build();
     }
-
-    public static BoardCreateRequest fromEntity(Board board) {
-        return BoardCreateRequest.builder()
-                .memberId(board.getMember().getId())
-                .name(board.getName())
-                .creator(board.getCreator())
-                .date(board.getDate())
-                .wineName(board.getWineName())
-                .headcount(board.getHeadcount())
-                .contents(board.getContents())
-                .build();
-    }
-
 }
