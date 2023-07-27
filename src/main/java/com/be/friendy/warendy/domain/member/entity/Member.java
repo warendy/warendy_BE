@@ -12,7 +12,6 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,7 +45,7 @@ public class Member extends BaseEntity implements UserDetails {
     @JoinColumn(name = "CONNECTED_CHAT_ID")
     private List<ConnectedChat> connectedChatList;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "NOTIFICATION_ID")
     private List<Notification> notificationList;
 
@@ -97,7 +96,6 @@ public class Member extends BaseEntity implements UserDetails {
         }
     }
 
-    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Role userRole = this.getRole();
         String authority = userRole.getKey();

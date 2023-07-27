@@ -2,7 +2,9 @@ package com.be.friendy.warendy.domain.member.service;
 
 import com.be.friendy.warendy.config.jwt.TokenProvider;
 import com.be.friendy.warendy.domain.member.dto.request.SignUpRequest;
+import com.be.friendy.warendy.domain.member.dto.response.InfoResponse;
 import com.be.friendy.warendy.domain.member.entity.Member;
+import com.be.friendy.warendy.domain.member.entity.constant.Role;
 import com.be.friendy.warendy.domain.member.repository.MemberRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -40,7 +42,7 @@ public class KakaoUserService {
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String clientId;
 
-    public SignUpRequest kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
+    public InfoResponse kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
 
@@ -55,7 +57,7 @@ public class KakaoUserService {
 
         // 5. response Header에 JWT 토큰 추가
         kakaoUsersAuthorizationInput(authentication, response);
-        return kakaoUserInfoDto;
+        return InfoResponse.fromEntity(kakaoUser);
     }
 
     private SignUpRequest getKakaoUserInfo(String accessToken) throws JsonProcessingException {
@@ -99,6 +101,7 @@ public class KakaoUserService {
             // 회원가입
             String nickName = kakaoUserInfo.getNickname();
             String profileImgUrl = kakaoUserInfo.getAvatar();
+
             // password: random UUID
             String password = UUID.randomUUID().toString();
             String encodedPassword = passwordEncoder.encode(password);
@@ -110,13 +113,29 @@ public class KakaoUserService {
                     .avatar(profileImgUrl)
                     .password(encodedPassword)
                     .build();
-            user = memberRepository.save(socialUser.toEntity());
+            user = memberRepository.save(setAccount(socialUser));
 
             return user;
 
         }
         return user;
     }
+
+    private Member setAccount(SignUpRequest request){
+        return Member.builder()
+                .email(request.getEmail())
+                .password(request.getPassword())
+                .nickname(request.getNickname())
+                .avatar(request.getAvatar())
+                .oauthType(request.getOauthType())
+                .role(Role.MEMBER)
+                .body(request.getBody())
+                .dry(request.getDry())
+                .tannin(request.getTannin())
+                .acidity(request.getAcidity())
+                .build();
+    }
+
     private String getAccessToken(String code) throws JsonProcessingException {
         // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
