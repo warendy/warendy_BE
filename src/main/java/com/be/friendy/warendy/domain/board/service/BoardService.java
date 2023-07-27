@@ -11,6 +11,7 @@ import com.be.friendy.warendy.domain.member.repository.MemberRepository;
 import com.be.friendy.warendy.domain.winebar.entity.Winebar;
 import com.be.friendy.warendy.domain.winebar.repository.WineBarRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -70,100 +71,61 @@ public class BoardService {
         ));
     }
 
-    public List<BoardSearchResponse> searchBoard() {
-        return boardRepository.findAll()
+    // board 조희 페이징 처리 - 임시
+    public List<BoardSearchResponse> searchBoard(Pageable pageable) {
+        return boardRepository.findAll(pageable)
                 .stream()
-                .map(board -> BoardSearchResponse.builder()
-                        .winebarName(board.getWinebar().getName())
-                        .name(board.getName())
-                        .creator(board.getCreator())
-                        .date(board.getDate())
-                        .wineName(board.getWineName())
-                        .headcount(board.getHeadcount())
-                        .contents(board.getContents())
-                        .build())
+                .map(BoardSearchResponse::fromEntity)
                 .collect(Collectors.toList());
     }
 
-    public List<BoardSearchResponse> searchBoardByBoardName(String name) {
-
-        return boardRepository.findAllByName(name)
+    public List<BoardSearchResponse> searchBoardByBoardName(
+            String name, Pageable pageable
+    ) {
+        return boardRepository.findByName(name, pageable)
                 .stream()
-                .map(board -> BoardSearchResponse.builder()
-                        .winebarName(board.getWinebar().getName())
-                        .name(board.getName())
-                        .creator(board.getCreator())
-                        .date(board.getDate())
-                        .wineName(board.getWineName())
-                        .headcount(board.getHeadcount())
-                        .contents(board.getContents())
-                        .build())
+                .map(BoardSearchResponse::fromEntity)
                 .collect(Collectors.toList());
     }
 
-    public List<BoardSearchResponse> searchBoardByWineName(String wineName) {
-
-        return boardRepository.findAllByWineName(wineName)
+    public List<BoardSearchResponse> searchBoardByWineName(
+            String wineName, Pageable pageable
+    ) {
+        return boardRepository.findByWineName(wineName, pageable)
                 .stream()
-                .map(board -> BoardSearchResponse.builder()
-                        .winebarName(board.getWinebar().getName())
-                        .name(board.getName())
-                        .creator(board.getCreator())
-                        .date(board.getDate())
-                        .wineName(board.getWineName())
-                        .headcount(board.getHeadcount())
-                        .contents(board.getContents())
-                        .build())
+                .map(BoardSearchResponse::fromEntity)
                 .collect(Collectors.toList());
     }
 
-    public List<BoardSearchResponse> searchBoardByWineBarName(String winebarName) {
-
+    public List<BoardSearchResponse> searchBoardByWineBarName(
+            String winebarName, Pageable pageable
+    ) {
         Winebar winebar = this.wineBarRepository.findByName(winebarName)
                 .orElseThrow(() -> new RuntimeException("the wine does not exists"));
 
-        return boardRepository.findAllByWinebar(winebar)
+        return boardRepository.findByWinebar(winebar, pageable)
                 .stream()
-                .map(board -> BoardSearchResponse.builder()
-                        .winebarName(board.getWinebar().getName())
-                        .name(board.getName())
-                        .creator(board.getCreator())
-                        .date(board.getDate())
-                        .wineName(board.getWineName())
-                        .headcount(board.getHeadcount())
-                        .contents(board.getContents())
-                        .build())
+                .map(BoardSearchResponse::fromEntity)
                 .collect(Collectors.toList());
     }
 
-    public List<BoardSearchResponse> searchBoardByCreator(String creator) {
-        return boardRepository.findAllByCreator(creator)
+    public List<BoardSearchResponse> searchBoardByCreator(
+            String creator, Pageable pageable
+    ) {
+        return boardRepository.findByCreator(creator, pageable)
                 .stream()
-                .map(board -> BoardSearchResponse.builder()
-                        .winebarName(board.getWinebar().getName())
-                        .name(board.getName())
-                        .creator(board.getCreator())
-                        .date(board.getDate())
-                        .wineName(board.getWineName())
-                        .headcount(board.getHeadcount())
-                        .contents(board.getContents())
-                        .build())
+                .map(BoardSearchResponse::fromEntity)
                 .collect(Collectors.toList());
     }
 
-    public List<BoardSearchResponse> searchBoardByDate(LocalDate date) {
+
+    public List<BoardSearchResponse> searchBoardByDate(
+            LocalDate date, Pageable pageable
+    ) {
         String dateToStr = String.valueOf(date);
-        return boardRepository.findAllByDate(dateToStr)
+        return boardRepository.findByDate(dateToStr, pageable)
                 .stream()
-                .map(board -> BoardSearchResponse.builder()
-                        .winebarName(board.getWinebar().getName())
-                        .name(board.getName())
-                        .creator(board.getCreator())
-                        .date(board.getDate())
-                        .wineName(board.getWineName())
-                        .headcount(board.getHeadcount())
-                        .contents(board.getContents())
-                        .build())
+                .map(BoardSearchResponse::fromEntity)
                 .collect(Collectors.toList());
     }
 
