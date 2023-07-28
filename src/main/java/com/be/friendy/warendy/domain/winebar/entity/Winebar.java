@@ -26,10 +26,6 @@ public class Winebar extends BaseEntity {
     private Long id;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = false)
-    @JoinColumn(name = "REVIEW_ID")
-    private List<Review> reviewList;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = false)
     @JoinColumn(name = "FAVORITE_ID")
     private List<Favorite> favoriteList;
 

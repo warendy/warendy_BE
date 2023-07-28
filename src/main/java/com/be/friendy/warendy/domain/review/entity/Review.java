@@ -4,7 +4,6 @@ import com.be.friendy.warendy.domain.common.BaseEntity;
 import com.be.friendy.warendy.domain.member.entity.Member;
 import com.be.friendy.warendy.domain.wine.entity.Wine;
 
-import com.be.friendy.warendy.domain.winebar.entity.Winebar;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
@@ -31,10 +30,6 @@ public class Review extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "WINE_ID")
     private Wine wine;
-
-    @ManyToOne
-    @JoinColumn(name = "WINEBAR_ID")
-    private Winebar winebar;
 
     private String nickname;
     private String contents;

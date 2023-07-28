@@ -6,7 +6,6 @@ import com.be.friendy.warendy.domain.notification.entity.Notification;
 import com.be.friendy.warendy.domain.notification.repository.EmitterRepositoryImpl;
 import com.be.friendy.warendy.domain.notification.repository.NotificationRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
