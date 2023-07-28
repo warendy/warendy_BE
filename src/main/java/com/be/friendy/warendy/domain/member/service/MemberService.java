@@ -58,7 +58,7 @@ public class MemberService extends DefaultOAuth2UserService {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("user does not exists"));
         member.updateMemberInfo(request.getEmail(), request.getPassword(), request.getNickname(), request.getAvatar(),
-                request.getMbti(), request.getBody(), request.getDry(), request.getTannin(), request.getAcidity());
+                request.getBody(), request.getDry(), request.getTannin(), request.getAcidity());
         memberRepository.save(member);
     }
 

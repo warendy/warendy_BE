@@ -39,21 +39,21 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> {
             try {
                 authorize
-                        .requestMatchers("/login/**", "/signup/**", "/oauth2/**", "/**")
-                        .permitAll() // 해당 경로는 인증 없이 접근 가능
-                        .requestMatchers("/members/**") // 해당 경로는 인증이 필요
-                        .hasRole("MEMBER") // ROLE 이 MEMBER 가 포함된 경우에만 인증 가능
+                            .requestMatchers("/login/**", "/signup/**", "/oauth2/**", "/**")
+                            .permitAll() // 해당 경로는 인증 없이 접근 가능
+                            .requestMatchers("/members/**") // 해당 경로는 인증이 필요
+                            .hasRole("MEMBER") // ROLE 이 MEMBER 가 포함된 경우에만 인증 가능
                         .and()
-                        .oauth2Login()
-                        .userInfoEndpoint()
-                        .userService(memberService)
+                            .oauth2Login()
+                            .userInfoEndpoint()
+                            .userService(memberService)
                         .and()
-                        .successHandler(oAuthLoginSuccessHandler)
-                        .failureHandler(oAuthLoginFailureHandler)
+                            .successHandler(oAuthLoginSuccessHandler)
+                            .failureHandler(oAuthLoginFailureHandler)
                         .and()
-                        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                         .and()
-                        .addFilterBefore(this.authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                            .addFilterBefore(this.authenticationFilter, UsernamePasswordAuthenticationFilter.class);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

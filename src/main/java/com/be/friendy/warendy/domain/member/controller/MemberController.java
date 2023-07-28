@@ -23,13 +23,13 @@ public class MemberController {
     private final MemberService memberService;
     private final TokenProvider tokenProvider;
     private final KakaoUserService kakaoUserService;
-
+    //회원 가입
     @PostMapping("/signup")
     public ResponseEntity<InfoResponse> signUp(@RequestBody SignUpRequest request){
         InfoResponse result = memberService.signUp(request);
         return ResponseEntity.ok(result);
     }
-
+    //회원 로그인
     @PostMapping("/signin")
     public ResponseEntity<?> signIn(@RequestBody SignInRequest request){
         Member member = memberService.signIn(request);
@@ -37,7 +37,7 @@ public class MemberController {
         log.info("user login -> " + request.getEmail());
         return ResponseEntity.ok(token);
     }
-
+    //회원정보 조회
     @GetMapping("/members")
     public ResponseEntity<?> getInfo(@RequestHeader("Authorization") String authorizationHeader){
         String jwtToken = authorizationHeader.substring(7);
@@ -45,7 +45,7 @@ public class MemberController {
         InfoResponse result = memberService.getMemberInfo(email);
         return ResponseEntity.ok(result);
     }
-
+    //회원정보 수정
     @PatchMapping("/members")
     public ResponseEntity<?> updateAccount(@RequestHeader("Authorization") String authorizationHeader,
                                            @RequestBody UpdateRequest request){
@@ -54,13 +54,13 @@ public class MemberController {
         memberService.updateMember(request, email);
         return ResponseEntity.ok("updated");
     }
-
+    //회원 삭제
     @DeleteMapping("/members/{memberId}")
     public ResponseEntity<?> deleteAccount(@PathVariable Long memberId) {
         memberService.deleteAccount(memberId);
         return ResponseEntity.ok("삭제 성공");
     }
-
+    //카카오 로그인/회원가입
     @GetMapping("/test/oauth2/callback/kakao")
     public InfoResponse kakaoLogin(@RequestParam String code, HttpServletResponse response)
             throws JsonProcessingException {
