@@ -11,13 +11,13 @@ import com.be.friendy.warendy.domain.member.repository.MemberRepository;
 import com.be.friendy.warendy.domain.winebar.entity.Winebar;
 import com.be.friendy.warendy.domain.winebar.repository.WinebarRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -27,23 +27,7 @@ public class BoardService {
     private final MemberRepository memberRepository;
     private final WinebarRepository wineBarRepository;
 
-    public BoardCreateResponse createBoard(
-            Long winebarId, BoardCreateRequest createRequest) {
-        boolean exists = boardRepository.existsByName(createRequest.getName());
-        if (exists) {
-            throw new RuntimeException("already exists");
-        }
-
-        Member member = memberRepository.findById(createRequest.getMemberId())
-                .orElseThrow(() -> new RuntimeException("user does not exists"));
-        Winebar winebar = wineBarRepository.findById(winebarId).
-                orElseThrow(() -> new RuntimeException("the bar does not exists"));
-
-        return BoardCreateResponse.fromEntity(
-                boardRepository.save(createRequest.toEntity(winebar, member)));
-    }
-
-    public BoardCreateResponse creatBoard2(
+    public BoardCreateResponse creatBoard(
             Long winebarId, BoardCreateRequest createRequest) {
         boolean exists = boardRepository.existsByName(createRequest.getName());
         if (exists) {
@@ -71,62 +55,49 @@ public class BoardService {
         ));
     }
 
-    // board 조희 페이징 처리 - 임시
-    public List<BoardSearchResponse> searchBoard(Pageable pageable) {
+    public Page<BoardSearchResponse> searchBoard(Pageable pageable) {
         return boardRepository.findAll(pageable)
-                .stream()
-                .map(BoardSearchResponse::fromEntity)
-                .collect(Collectors.toList());
+                .map(BoardSearchResponse::fromEntity);
     }
 
-    public List<BoardSearchResponse> searchBoardByBoardName(
+    public Page<BoardSearchResponse> searchBoardByBoardName(
             String name, Pageable pageable
     ) {
         return boardRepository.findByName(name, pageable)
-                .stream()
-                .map(BoardSearchResponse::fromEntity)
-                .collect(Collectors.toList());
+                .map(BoardSearchResponse::fromEntity);
     }
 
-    public List<BoardSearchResponse> searchBoardByWineName(
+    public Page<BoardSearchResponse> searchBoardByWineName(
             String wineName, Pageable pageable
     ) {
         return boardRepository.findByWineName(wineName, pageable)
-                .stream()
-                .map(BoardSearchResponse::fromEntity)
-                .collect(Collectors.toList());
+                .map(BoardSearchResponse::fromEntity);
     }
 
-    public List<BoardSearchResponse> searchBoardByWinebarName(
+    public Page<BoardSearchResponse> searchBoardByWinebarName(
             String winebarName, Pageable pageable
     ) {
         Winebar winebar = this.wineBarRepository.findByName(winebarName)
                 .orElseThrow(() -> new RuntimeException("the wine does not exists"));
 
         return boardRepository.findByWinebar(winebar, pageable)
-                .stream()
-                .map(BoardSearchResponse::fromEntity)
-                .collect(Collectors.toList());
+                .map(BoardSearchResponse::fromEntity);
     }
 
-    public List<BoardSearchResponse> searchBoardByCreator(
+    public Page<BoardSearchResponse> searchBoardByCreator(
             String creator, Pageable pageable
     ) {
         return boardRepository.findByCreator(creator, pageable)
-                .stream()
-                .map(BoardSearchResponse::fromEntity)
-                .collect(Collectors.toList());
+                .map(BoardSearchResponse::fromEntity);
     }
 
 
-    public List<BoardSearchResponse> searchBoardByDate(
+    public Page<BoardSearchResponse> searchBoardByDate(
             LocalDate date, Pageable pageable
     ) {
         String dateToStr = String.valueOf(date);
         return boardRepository.findByDate(dateToStr, pageable)
-                .stream()
-                .map(BoardSearchResponse::fromEntity)
-                .collect(Collectors.toList());
+                .map(BoardSearchResponse::fromEntity);
     }
 
     public Board updateBoard(Long id, BoardUpdateRequest boardUpdateRequest) {

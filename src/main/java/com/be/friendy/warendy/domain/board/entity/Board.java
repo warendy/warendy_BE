@@ -27,11 +27,11 @@ public class Board extends BaseEntity {
     @Column(name = "BOARD_ID") // 아이디에 해당하는 컬럼명 선언
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MEMBER_ID", nullable = false)
     private Member member;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "WINEBAR_ID", nullable = false)
     private Winebar winebar;
 
