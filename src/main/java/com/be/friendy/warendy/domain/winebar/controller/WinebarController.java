@@ -1,5 +1,6 @@
 package com.be.friendy.warendy.domain.winebar.controller;
 
+import com.be.friendy.warendy.domain.winebar.dto.response.WinebarSearchResponse;
 import com.be.friendy.warendy.domain.winebar.entity.Winebar;
 import com.be.friendy.warendy.domain.winebar.service.WineBarService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class WinebarController {
     private final WineBarService wineBarService;
 
     @GetMapping("/winebars")
-    public ResponseEntity<Winebar> wineBarSearch (
+    public ResponseEntity<WinebarSearchResponse> wineBarSearch (
             @RequestParam Double lat, @RequestParam Double lnt
     ) {
         return ResponseEntity.ok(wineBarService.searchWinebar(lat, lnt));
