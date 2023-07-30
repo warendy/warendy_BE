@@ -2,7 +2,7 @@ package com.be.friendy.warendy.domain.winebar.service;
 
 
 import com.be.friendy.warendy.domain.winebar.entity.Winebar;
-import com.be.friendy.warendy.domain.winebar.repository.WineBarRepository;
+import com.be.friendy.warendy.domain.winebar.repository.WinebarRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +12,10 @@ import java.util.List;
 @AllArgsConstructor
 public class WineBarService {
 
-    WineBarRepository wineBarRepository;
+    WinebarRepository winebarRepository;
 
-    public List<Winebar> searchWineBar(Double lat, Double lnt) {
-        return wineBarRepository.findAllByLatAndLnt(lat, lnt);
+    public List<Winebar> searchWinebar(Double lat, Double lnt) {
+        return winebarRepository.findAllByLatAndLnt(lat, lnt);
     }
 
 }

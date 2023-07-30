@@ -9,14 +9,15 @@ import com.be.friendy.warendy.domain.board.repository.BoardRepository;
 import com.be.friendy.warendy.domain.member.entity.Member;
 import com.be.friendy.warendy.domain.member.repository.MemberRepository;
 import com.be.friendy.warendy.domain.winebar.entity.Winebar;
-import com.be.friendy.warendy.domain.winebar.repository.WineBarRepository;
+import com.be.friendy.warendy.domain.winebar.repository.WinebarRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -24,25 +25,9 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
-    private final WineBarRepository wineBarRepository;
+    private final WinebarRepository wineBarRepository;
 
-    public BoardCreateResponse createBoard(
-            Long winebarId, BoardCreateRequest createRequest) {
-        boolean exists = boardRepository.existsByName(createRequest.getName());
-        if (exists) {
-            throw new RuntimeException("already exists");
-        }
-
-        Member member = memberRepository.findById(createRequest.getMemberId())
-                .orElseThrow(() -> new RuntimeException("user does not exists"));
-        Winebar winebar = wineBarRepository.findById(winebarId).
-                orElseThrow(() -> new RuntimeException("the bar does not exists"));
-
-        return BoardCreateResponse.fromEntity(
-                boardRepository.save(createRequest.toEntity(winebar, member)));
-    }
-
-    public BoardCreateResponse creatBoard2(
+    public BoardCreateResponse creatBoard(
             Long winebarId, BoardCreateRequest createRequest) {
         boolean exists = boardRepository.existsByName(createRequest.getName());
         if (exists) {
@@ -70,101 +55,49 @@ public class BoardService {
         ));
     }
 
-    public List<BoardSearchResponse> searchBoard() {
-        return boardRepository.findAll()
-                .stream()
-                .map(board -> BoardSearchResponse.builder()
-                        .winebarName(board.getWinebar().getName())
-                        .name(board.getName())
-                        .creator(board.getCreator())
-                        .date(board.getDate())
-                        .wineName(board.getWineName())
-                        .headcount(board.getHeadcount())
-                        .contents(board.getContents())
-                        .build())
-                .collect(Collectors.toList());
+    public Page<BoardSearchResponse> searchBoard(Pageable pageable) {
+        return boardRepository.findAll(pageable)
+                .map(BoardSearchResponse::fromEntity);
     }
 
-    public List<BoardSearchResponse> searchBoardByBoardName(String name) {
-
-        return boardRepository.findAllByName(name)
-                .stream()
-                .map(board -> BoardSearchResponse.builder()
-                        .winebarName(board.getWinebar().getName())
-                        .name(board.getName())
-                        .creator(board.getCreator())
-                        .date(board.getDate())
-                        .wineName(board.getWineName())
-                        .headcount(board.getHeadcount())
-                        .contents(board.getContents())
-                        .build())
-                .collect(Collectors.toList());
+    public Page<BoardSearchResponse> searchBoardByBoardName(
+            String name, Pageable pageable
+    ) {
+        return boardRepository.findByName(name, pageable)
+                .map(BoardSearchResponse::fromEntity);
     }
 
-    public List<BoardSearchResponse> searchBoardByWineName(String wineName) {
-
-        return boardRepository.findAllByWineName(wineName)
-                .stream()
-                .map(board -> BoardSearchResponse.builder()
-                        .winebarName(board.getWinebar().getName())
-                        .name(board.getName())
-                        .creator(board.getCreator())
-                        .date(board.getDate())
-                        .wineName(board.getWineName())
-                        .headcount(board.getHeadcount())
-                        .contents(board.getContents())
-                        .build())
-                .collect(Collectors.toList());
+    public Page<BoardSearchResponse> searchBoardByWineName(
+            String wineName, Pageable pageable
+    ) {
+        return boardRepository.findByWineName(wineName, pageable)
+                .map(BoardSearchResponse::fromEntity);
     }
 
-    public List<BoardSearchResponse> searchBoardByWineBarName(String winebarName) {
-
+    public Page<BoardSearchResponse> searchBoardByWinebarName(
+            String winebarName, Pageable pageable
+    ) {
         Winebar winebar = this.wineBarRepository.findByName(winebarName)
-                .orElseThrow(() -> new RuntimeException("the wine does not exists"));
+                .orElseThrow(() -> new RuntimeException("the winebar does not exists"));
 
-        return boardRepository.findAllByWinebar(winebar)
-                .stream()
-                .map(board -> BoardSearchResponse.builder()
-                        .winebarName(board.getWinebar().getName())
-                        .name(board.getName())
-                        .creator(board.getCreator())
-                        .date(board.getDate())
-                        .wineName(board.getWineName())
-                        .headcount(board.getHeadcount())
-                        .contents(board.getContents())
-                        .build())
-                .collect(Collectors.toList());
+        return boardRepository.findByWinebar(winebar, pageable)
+                .map(BoardSearchResponse::fromEntity);
     }
 
-    public List<BoardSearchResponse> searchBoardByCreator(String creator) {
-        return boardRepository.findAllByCreator(creator)
-                .stream()
-                .map(board -> BoardSearchResponse.builder()
-                        .winebarName(board.getWinebar().getName())
-                        .name(board.getName())
-                        .creator(board.getCreator())
-                        .date(board.getDate())
-                        .wineName(board.getWineName())
-                        .headcount(board.getHeadcount())
-                        .contents(board.getContents())
-                        .build())
-                .collect(Collectors.toList());
+    public Page<BoardSearchResponse> searchBoardByCreator(
+            String creator, Pageable pageable
+    ) {
+        return boardRepository.findByCreator(creator, pageable)
+                .map(BoardSearchResponse::fromEntity);
     }
 
-    public List<BoardSearchResponse> searchBoardByDate(LocalDate date) {
+
+    public Page<BoardSearchResponse> searchBoardByDate(
+            LocalDate date, Pageable pageable
+    ) {
         String dateToStr = String.valueOf(date);
-        return boardRepository.findAllByDate(dateToStr)
-                .stream()
-                .map(board -> BoardSearchResponse.builder()
-                        .winebarName(board.getWinebar().getName())
-                        .name(board.getName())
-                        .creator(board.getCreator())
-                        .date(board.getDate())
-                        .wineName(board.getWineName())
-                        .headcount(board.getHeadcount())
-                        .contents(board.getContents())
-                        .build())
-                .collect(Collectors.toList());
+        return boardRepository.findByDate(dateToStr, pageable)
+                .map(BoardSearchResponse::fromEntity);
     }
 
     public Board updateBoard(Long id, BoardUpdateRequest boardUpdateRequest) {
