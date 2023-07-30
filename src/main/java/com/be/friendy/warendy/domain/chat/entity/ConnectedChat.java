@@ -5,8 +5,6 @@ import com.be.friendy.warendy.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-
 @Getter
 @Builder
 @ToString
@@ -26,9 +24,5 @@ public class ConnectedChat {
     @ManyToOne
     @JoinColumn(name = "CHATROOM_ID", nullable = false)
     private Chatroom chatroom;
-
-    @OneToMany
-    @JoinColumn(name = "MESSAGE_ID")
-    private List<Message> message;
 
 }

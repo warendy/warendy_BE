@@ -2,13 +2,9 @@ package com.be.friendy.warendy.domain.winebar.entity;
 
 
 import com.be.friendy.warendy.domain.common.BaseEntity;
-import com.be.friendy.warendy.domain.favorite.entity.Favorite;
-import com.be.friendy.warendy.domain.review.entity.Review;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Where;
-
-import java.util.List;
 
 @Getter
 @ToString
@@ -24,14 +20,6 @@ public class Winebar extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 시퀀스 전략 선언
     @Column(name = "WINEBAR_ID") // 아이디에 해당하는 컬럼명 선언
     private Long id;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = false)
-    @JoinColumn(name = "REVIEW_ID")
-    private List<Review> reviewList;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = false)
-    @JoinColumn(name = "FAVORITE_ID")
-    private List<Favorite> favoriteList;
 
     private String name;
 

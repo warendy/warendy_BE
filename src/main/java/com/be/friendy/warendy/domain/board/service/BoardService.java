@@ -16,8 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -78,7 +76,7 @@ public class BoardService {
             String winebarName, Pageable pageable
     ) {
         Winebar winebar = this.wineBarRepository.findByName(winebarName)
-                .orElseThrow(() -> new RuntimeException("the wine does not exists"));
+                .orElseThrow(() -> new RuntimeException("the winebar does not exists"));
 
         return boardRepository.findByWinebar(winebar, pageable)
                 .map(BoardSearchResponse::fromEntity);
@@ -100,39 +98,7 @@ public class BoardService {
                 .map(BoardSearchResponse::fromEntity);
     }
 
-    public Board updateBoard(Long id, BoardUpdateRequest boardUpdateRequest) {
-        Board nowBoard = boardRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("the board does not exists"));
-
-        updateFunction(boardUpdateRequest, nowBoard);
-        return boardRepository.save(nowBoard);
-    }
-
-    private static void updateFunction(
-            BoardUpdateRequest boardUpdateRequest, Board nowBoard) {
-        List<BoardUpdateRequest> list = new ArrayList<>();
-        list.add(boardUpdateRequest);
-
-        for (BoardUpdateRequest request : list) {
-            if (request.getName() != null) {
-                nowBoard.setName(request.getName());
-            }
-            if (request.getDate() != null) {
-                nowBoard.setDate(request.getDate());
-            }
-            if (request.getWineName() != null) {
-                nowBoard.setWineName(request.getWineName());
-            }
-            if (request.getHeadcount() != nowBoard.getHeadcount()) {
-                nowBoard.setHeadcount(request.getHeadcount());
-            }
-            if (request.getContents() != null) {
-                nowBoard.setContents(request.getContents());
-            }
-        }
-    }
-
-    public Board updateBoard2(Long boardId, BoardUpdateRequest request) {
+    public Board updateBoard(Long boardId, BoardUpdateRequest request) {
         Board nowBoard = boardRepository.findById(boardId)
                 .orElseThrow(() -> new RuntimeException("the board does not exists"));
         ;

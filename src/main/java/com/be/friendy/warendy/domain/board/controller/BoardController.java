@@ -91,22 +91,13 @@ public class BoardController {
         return null;
     }
 
-    @PatchMapping("/{boardId}")
-    public ResponseEntity<Board> boardUpdatePATCH(
+    @PutMapping("/{boardId}")
+    public ResponseEntity<Board> boardUpdate(
             @PathVariable Long boardId,
             @RequestBody BoardUpdateRequest boardUpdateRequest
     ) {
         return ResponseEntity.ok(
                 boardService.updateBoard(boardId, boardUpdateRequest));
-    }
-
-    @PutMapping("/{boardId}")
-    public ResponseEntity<Board> boardUpdatePUT(
-            @PathVariable Long boardId,
-            @RequestBody BoardUpdateRequest boardUpdateRequest
-    ) {
-        return ResponseEntity.ok(
-                boardService.updateBoard2(boardId, boardUpdateRequest));
     }
 
     @DeleteMapping("/{boardId}")
