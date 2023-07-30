@@ -78,7 +78,7 @@ public class BoardService {
             String winebarName, Pageable pageable
     ) {
         Winebar winebar = this.wineBarRepository.findByName(winebarName)
-                .orElseThrow(() -> new RuntimeException("the wine does not exists"));
+                .orElseThrow(() -> new RuntimeException("the winebar does not exists"));
 
         return boardRepository.findByWinebar(winebar, pageable)
                 .map(BoardSearchResponse::fromEntity);
