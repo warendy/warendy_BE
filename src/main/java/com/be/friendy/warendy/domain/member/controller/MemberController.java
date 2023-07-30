@@ -25,8 +25,8 @@ public class MemberController {
     private final KakaoUserService kakaoUserService;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signUp(@RequestBody SignUpRequest request){
-        Member result = memberService.signUp(request);
+    public ResponseEntity<InfoResponse> signUp(@RequestBody SignUpRequest request){
+        InfoResponse result = memberService.signUp(request);
         return ResponseEntity.ok(result);
     }
 
@@ -62,7 +62,7 @@ public class MemberController {
     }
 
     @GetMapping("/test/oauth2/callback/kakao")
-    public SignUpRequest kakaoLogin(@RequestParam String code, HttpServletResponse response)
+    public InfoResponse kakaoLogin(@RequestParam String code, HttpServletResponse response)
             throws JsonProcessingException {
         System.out.println(code);
         return kakaoUserService.kakaoLogin(code, response);

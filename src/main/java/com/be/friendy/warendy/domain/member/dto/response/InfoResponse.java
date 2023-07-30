@@ -1,22 +1,35 @@
 package com.be.friendy.warendy.domain.member.dto.response;
 
+import com.be.friendy.warendy.domain.member.entity.Member;
+import com.be.friendy.warendy.domain.member.entity.constant.Role;
 import lombok.*;
 
-@Setter
-@Getter
-@ToString
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class InfoResponse {
+public record InfoResponse (
+        String email,
+        String nickname,
+        String password,
+        String avatar,
+        Role role,
+        String oauthType,
+        int body,
+        int dry,
+        int tannin,
+        int acidity
+) {
 
-    private String email;
-    private String nickname;
-    private String avatar;
-    private String mbti;
-    private int body;
-    private int dry;
-    private int tannin;
-    private int acidity;
-
+    public static InfoResponse fromEntity(Member member) {
+        return InfoResponse.builder()
+                .email(member.getEmail())
+                .password(member.getPassword())
+                .nickname(member.getNickname())
+                .oauthType(member.getOauthType())
+                .avatar(member.getAvatar())
+                .role(member.getRole())
+                .body(member.getBody())
+                .dry(member.getDry())
+                .tannin(member.getTannin())
+                .acidity(member.getAcidity())
+                .build();
+    }
 }

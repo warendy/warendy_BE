@@ -1,5 +1,6 @@
 package com.be.friendy.warendy.config.jwt;
 
+import com.be.friendy.warendy.domain.member.entity.Member;
 import com.be.friendy.warendy.domain.member.service.MemberService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -42,12 +43,12 @@ public class TokenProvider {
     }
 
     public Authentication getAuthentication(String jwt) {
-        UserDetails userDetails = this.memberService.loadUserByEmail(this.getEmail(jwt));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        Member member = memberService.loadUserByEmail(this.getEmail(jwt));
+        return new UsernamePasswordAuthenticationToken(member, "", member.getAuthorities());
     }
 
     public String getEmail(String token) {
-        return this.parsedClaims(token).getSubject();
+        return parsedClaims(token).getSubject();
     }
 
     public boolean validateToken(String token) {
