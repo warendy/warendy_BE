@@ -61,7 +61,7 @@ public class MemberController {
         return ResponseEntity.ok("삭제 성공");
     }
 
-    @GetMapping("/test/oauth2/callback/kakao")
+    @GetMapping("/oauth2/callback/kakao")
     public InfoResponse kakaoLogin(@RequestParam String code, HttpServletResponse response)
             throws JsonProcessingException {
         System.out.println(code);
