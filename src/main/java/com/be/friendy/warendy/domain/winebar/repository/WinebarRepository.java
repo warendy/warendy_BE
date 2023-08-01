@@ -12,8 +12,6 @@ public interface WinebarRepository extends JpaRepository<Winebar, Long> {
 
     Optional<Winebar> findByName(String name);
 
-    List<Winebar> findAllByLatAndLnt(Double lat, Double lnt);
-
     Optional<Winebar> findByLatAndLnt(Double lat, Double lnt);
 
 }

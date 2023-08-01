@@ -1,11 +1,7 @@
 package com.be.friendy.warendy.domain.member.entity;
 
-import com.be.friendy.warendy.domain.chat.entity.ConnectedChat;
-import com.be.friendy.warendy.domain.chat.entity.Notification;
 import com.be.friendy.warendy.domain.common.BaseEntity;
-import com.be.friendy.warendy.domain.favorite.entity.Favorite;
 import com.be.friendy.warendy.domain.member.entity.constant.Role;
-import com.be.friendy.warendy.domain.review.entity.Review;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
@@ -15,7 +11,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @Getter
 @Builder
@@ -32,23 +27,7 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 시퀀스 전략 선언
     @Column(name = "MEMBER_ID") // 아이디에 해당하는 컬럼명 선언
     private Long id;
-
-    @OneToMany
-    @JoinColumn(name = "REVIEW_ID")
-    private List<Review> reviewList;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "FAVORITE_ID")
-    private List<Favorite> favoriteList;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "CONNECTED_CHAT_ID")
-    private List<ConnectedChat> connectedChatList;
-
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "NOTIFICATION_ID")
-    private List<Notification> notificationList;
-
+  
     private String email;
     private String password;
     private String nickname;

@@ -12,8 +12,8 @@ import lombok.*;
 @Builder
 public class BoardSearchResponse {
 
+    private String name;        // board 제목
     private String winebarName;
-    private String name;
     private String creator;
     private String date;
     private String wineName;
@@ -22,8 +22,8 @@ public class BoardSearchResponse {
 
     public static BoardSearchResponse fromEntity(Board board) {
         return BoardSearchResponse.builder()
-                .winebarName(board.getWinebar().getName())
                 .name(board.getName())
+                .winebarName(board.getWinebar().getName())
                 .creator(board.getCreator())
                 .date(board.getDate())
                 .wineName(board.getWineName())
