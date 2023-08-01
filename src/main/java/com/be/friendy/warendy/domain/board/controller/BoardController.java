@@ -25,9 +25,9 @@ import java.time.LocalDate;
 public class BoardController {
     private final BoardService boardService;
 
-    @PostMapping("/winebars/{winebarId}")
+    @PostMapping("/winebars/{winebar-id}")
     public ResponseEntity<BoardCreateResponse> boardCreate(
-            @PathVariable Long winebarId,
+            @PathVariable(value = "winebar-id") Long winebarId,
             @RequestBody BoardCreateRequest request
     ) {
         return ResponseEntity.ok(boardService.creatBoard(winebarId, request));
@@ -91,18 +91,18 @@ public class BoardController {
         return null;
     }
 
-    @PutMapping("/{boardId}")
+    @PutMapping("/{board-id}")
     public ResponseEntity<Board> boardUpdate(
-            @PathVariable Long boardId,
+            @PathVariable(value = "board-id") Long boardId,
             @RequestBody BoardUpdateRequest boardUpdateRequest
     ) {
         return ResponseEntity.ok(
                 boardService.updateBoard(boardId, boardUpdateRequest));
     }
 
-    @DeleteMapping("/{boardId}")
+    @DeleteMapping("/{board-id}")
     public ResponseEntity<String> boardDelete(
-            @PathVariable Long boardId
+            @PathVariable(value = "board-id") Long boardId
     ) {
         boardService.deleteBoard(boardId);
         return ResponseEntity.ok("board is deleted!");

@@ -27,7 +27,6 @@ public class Wine extends BaseEntity {
     private Integer acidity;
     private Double alcohol;
     private String grapes;
-    @ElementCollection(fetch = FetchType.LAZY)
     private List<String> paring;
     private String region;
     private String type;
