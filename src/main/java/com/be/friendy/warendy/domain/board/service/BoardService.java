@@ -3,6 +3,7 @@ package com.be.friendy.warendy.domain.board.service;
 import com.be.friendy.warendy.domain.board.dto.request.BoardCreateRequest;
 import com.be.friendy.warendy.domain.board.dto.request.BoardUpdateRequest;
 import com.be.friendy.warendy.domain.board.dto.response.BoardCreateResponse;
+import com.be.friendy.warendy.domain.board.dto.response.BoardSearchDetailResponse;
 import com.be.friendy.warendy.domain.board.dto.response.BoardSearchResponse;
 import com.be.friendy.warendy.domain.board.entity.Board;
 import com.be.friendy.warendy.domain.board.repository.BoardRepository;
@@ -61,6 +62,12 @@ public class BoardService {
                 .map(BoardSearchResponse::fromEntity);
     }
 
+    public BoardSearchDetailResponse searchBoardDetail(Long boardId) {
+        return boardRepository.findById(boardId)
+                .map(BoardSearchDetailResponse::fromEntity)
+                .orElseThrow(() -> new RuntimeException("the board does not exist"));
+    }
+
     public Page<BoardSearchResponse> searchBoardByBoardName(
             String name, Pageable pageable
     ) {
@@ -104,6 +111,13 @@ public class BoardService {
     ) {
         String dateToStr = String.valueOf(date);
         return boardRepository.findByDate(dateToStr, pageable)
+                .map(BoardSearchResponse::fromEntity);
+    }
+
+    public Page<BoardSearchResponse> searchBoardByTime(
+            String time, Pageable pageable
+    ) {
+        return boardRepository.findByTime(time, pageable)
                 .map(BoardSearchResponse::fromEntity);
     }
 

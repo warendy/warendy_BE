@@ -10,11 +10,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BoardCreateResponse {
-
-    private Long memberId;
-    private Long winebarId;
-    private String name;
+public class BoardSearchDetailResponse {
+    private String name;        // board 제목
+    private String winebarName;
+    private String winebarAddress;
     private String creator;
     private String date;
     private String time;
@@ -22,11 +21,11 @@ public class BoardCreateResponse {
     private Integer headcount;
     private String contents;
 
-    public static BoardCreateResponse fromEntity(Board board) {
-        return BoardCreateResponse.builder()
-                .memberId(board.getMember().getId())
-                .winebarId(board.getWinebar().getId())
+    public static BoardSearchDetailResponse fromEntity(Board board) {
+        return BoardSearchDetailResponse.builder()
                 .name(board.getName())
+                .winebarName(board.getWinebar().getName())
+                .winebarAddress(board.getWinebar().getAddress())
                 .creator(board.getCreator())
                 .date(board.getDate())
                 .time(board.getTime())
