@@ -26,7 +26,7 @@ import java.util.List;
 // delete 요청이 들어올때 db에 삭제되지 않고 deleted_at 컬럼에 삭제요청 시간으로 업데이트 된다.
 @Where(clause = "deleted_at is NULL")
 @Entity(name = "MEMBER")
-public class Member extends BaseEntity implements UserDetails {
+public class Member extends BaseEntity {
 
     @Id // 엔티티 내부에서 아이디임을 선언
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 시퀀스 전략 선언
@@ -65,7 +65,8 @@ public class Member extends BaseEntity implements UserDetails {
     private int acidity;
 
     // Member 엔티티에서 원하는 필드만 수정하는 메서드
-    public void updateMemberInfo(String email, String password, String nickname, String avatar, String mbti, Integer body,
+    public void updateMemberInfo(String email, String password, String nickname,
+                                 String avatar, String mbti, Integer body,
                                  Integer dry, Integer tannin, Integer acidity) {
         if (email != null) {
             this.email = email;
@@ -104,31 +105,6 @@ public class Member extends BaseEntity implements UserDetails {
         authorities.add(simpleAuthority);
 
         return authorities;
-    }
-
-    @Override
-    public String getUsername() {
-        return null;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return false;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return false;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return false;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return false;
     }
 
 }
