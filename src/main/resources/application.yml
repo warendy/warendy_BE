@@ -1,5 +1,6 @@
 spring:
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: create
     generate-ddl: true

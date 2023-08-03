@@ -7,13 +7,15 @@ import lombok.*;
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity(name = "NOTIFICATION")
+@Entity
 @EqualsAndHashCode(of = "id")
 public class Notification {
     @Id // 엔티티 내부에서 아이디임을 선언
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 시퀀스 전략 선언
     @Column(name = "NOTIFICATION_ID") // 아이디에 해당하는 컬럼명 선언
     private Long id;
+
+    private String boardId;
 
     @Column(nullable = false)
     private boolean isRead;
@@ -26,10 +28,10 @@ public class Notification {
     private Member receiver;
 
     @Builder
-    public Notification(Member receiver, String content, Boolean isRead) {
+    public Notification(String boardId, String content, Boolean isRead, Member receiver) {
         this.receiver = receiver;
+        this.boardId = boardId;
         this.content = content;
         this.isRead = isRead;
     }
-
 }

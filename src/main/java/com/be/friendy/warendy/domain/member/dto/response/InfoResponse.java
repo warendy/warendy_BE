@@ -8,7 +8,6 @@ import lombok.*;
 public record InfoResponse (
         String email,
         String nickname,
-        String password,
         String avatar,
         Role role,
         String oauthType,
@@ -21,7 +20,6 @@ public record InfoResponse (
     public static InfoResponse fromEntity(Member member) {
         return InfoResponse.builder()
                 .email(member.getEmail())
-                .password(member.getPassword())
                 .nickname(member.getNickname())
                 .oauthType(member.getOauthType())
                 .avatar(member.getAvatar())

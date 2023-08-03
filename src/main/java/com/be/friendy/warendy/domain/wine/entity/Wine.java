@@ -14,19 +14,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "WINE")
-public class Wine extends BaseEntity {
+public class Wine {
     @Id // 엔티티 내부에서 아이디임을 선언
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 시퀀스 전략 선언
     @Column(name = "WINE_ID") // 아이디에 해당하는 컬럼명 선언
     private Long id;
-
-    @OneToMany
-    @JoinColumn(name = "REVIEW_ID")
-    private List<Review> reviews;
-
-    @OneToMany
-    @JoinColumn(name = "FAVORITE_ID")
-    private List<Favorite> favorites;
 
     private String name;
     private Integer vintage;
@@ -37,6 +29,7 @@ public class Wine extends BaseEntity {
     private Integer tannin;
     private Integer acidity;
     private Double alcohol;
+    private String pairing;
     private String grapes;
     private String region;
     private String type;

@@ -19,15 +19,13 @@ public class NotificationController {
     private final MemberRepository memberRepository;
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/subscribe/{boardId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe(@RequestHeader(value = "Last-Event-ID",
                                     required = false, defaultValue = "") String lastEventId,
-                                @RequestHeader("Authorization") String authorizationHeader) {
-        String jwtToken = authorizationHeader.substring(7);
-        String email = tokenProvider.getEmail(jwtToken);
+                                @RequestHeader(value = "Authorization", required = false) String authorizationHeader,
+                                @PathVariable Long boardId) {
+        String email = tokenProvider.getEmailFromToken(authorizationHeader);
         Member memberInfo = memberRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("user does not exists"));
-        return notificationService.subscribe(memberInfo.getId(), lastEventId);
+        return notificationService.subscribe(memberInfo, boardId);
     }
-
-
 }

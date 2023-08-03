@@ -3,7 +3,6 @@ package com.be.friendy.warendy.config.security;
 
 import com.be.friendy.warendy.config.jwt.filter.JwtAuthenticationFilter;
 import com.be.friendy.warendy.exception.handler.OAuthLoginFailureHandler;
-import com.be.friendy.warendy.exception.handler.OAuthLoginSuccessHandler;
 import com.be.friendy.warendy.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +22,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
-    @Autowired
-    OAuthLoginSuccessHandler oAuthLoginSuccessHandler;
 
     @Autowired
     OAuthLoginFailureHandler oAuthLoginFailureHandler;
@@ -48,7 +44,6 @@ public class SecurityConfig {
                             .userInfoEndpoint()
                             .userService(memberService)
                         .and()
-                            .successHandler(oAuthLoginSuccessHandler)
                             .failureHandler(oAuthLoginFailureHandler)
                         .and()
                             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

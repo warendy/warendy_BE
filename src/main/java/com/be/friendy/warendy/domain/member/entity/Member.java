@@ -33,22 +33,6 @@ public class Member extends BaseEntity {
     @Column(name = "MEMBER_ID") // 아이디에 해당하는 컬럼명 선언
     private Long id;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "REVIEW_ID")
-    private List<Review> reviewList;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "FAVORITE_ID")
-    private List<Favorite> favoriteList;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "CONNECTED_CHAT_ID")
-    private List<ConnectedChat> connectedChatList;
-
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "NOTIFICATION_ID")
-    private List<Notification> notificationList;
-
     private String email;
     private String password;
     private String nickname;

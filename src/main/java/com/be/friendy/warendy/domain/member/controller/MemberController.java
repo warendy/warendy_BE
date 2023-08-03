@@ -40,8 +40,7 @@ public class MemberController {
     //회원정보 조회
     @GetMapping("/members")
     public ResponseEntity<?> getInfo(@RequestHeader("Authorization") String authorizationHeader){
-        String jwtToken = authorizationHeader.substring(7);
-        String email = tokenProvider.getEmail(jwtToken);
+        String email = tokenProvider.getEmailFromToken(authorizationHeader);
         InfoResponse result = memberService.getMemberInfo(email);
         return ResponseEntity.ok(result);
     }
@@ -49,8 +48,7 @@ public class MemberController {
     @PatchMapping("/members")
     public ResponseEntity<?> updateAccount(@RequestHeader("Authorization") String authorizationHeader,
                                            @RequestBody UpdateRequest request){
-        String jwtToken = authorizationHeader.substring(7);
-        String email = tokenProvider.getEmail(jwtToken);
+        String email = tokenProvider.getEmailFromToken(authorizationHeader);
         memberService.updateMember(request, email);
         return ResponseEntity.ok("updated");
     }
