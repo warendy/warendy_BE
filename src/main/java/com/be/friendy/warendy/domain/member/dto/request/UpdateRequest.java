@@ -14,7 +14,6 @@ public class UpdateRequest {
     private String password;
     private String nickname;
     private String avatar;
-    private String mbti;
     private int body;
     private int dry;
     private int tannin;
