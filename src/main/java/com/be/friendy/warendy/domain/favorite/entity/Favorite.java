@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
+@Entity(name = "FAVORITE")
 public class Favorite {
     @Id // 엔티티 내부에서 아이디임을 선언
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 시퀀스 전략 선언
