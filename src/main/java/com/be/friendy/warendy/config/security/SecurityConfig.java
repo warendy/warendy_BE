@@ -2,9 +2,9 @@ package com.be.friendy.warendy.config.security;
 
 
 import com.be.friendy.warendy.config.jwt.filter.JwtAuthenticationFilter;
+import com.be.friendy.warendy.domain.member.service.MemberService;
 import com.be.friendy.warendy.exception.handler.OAuthLoginFailureHandler;
 import com.be.friendy.warendy.exception.handler.OAuthLoginSuccessHandler;
-import com.be.friendy.warendy.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +16,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 
 
 @Configuration
@@ -33,27 +32,34 @@ public class SecurityConfig {
     @Autowired
     MemberService memberService;
     private final JwtAuthenticationFilter authenticationFilter;
+
+    private final CorsConfig corsConfig;
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception  {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.authorizeHttpRequests(authorize -> {
             try {
                 authorize
-                        .requestMatchers("/login/**", "/signup/**", "/oauth2/**", "/**")
-                        .permitAll() // 해당 경로는 인증 없이 접근 가능
-                        .requestMatchers("/members/**") // 해당 경로는 인증이 필요
-                        .hasRole("MEMBER") // ROLE 이 MEMBER 가 포함된 경우에만 인증 가능
-                        .and()
-                        .oauth2Login()
-                        .userInfoEndpoint()
-                        .userService(memberService)
-                        .and()
-                        .successHandler(oAuthLoginSuccessHandler)
-                        .failureHandler(oAuthLoginFailureHandler)
-                        .and()
-                        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                        .and()
-                        .addFilterBefore(this.authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                    .requestMatchers("/login/**", "/signup/**", "/oauth2/**",
+                        "/**")
+                    .permitAll() // 해당 경로는 인증 없이 접근 가능
+                    .requestMatchers("/members/**") // 해당 경로는 인증이 필요
+                    .hasRole("MEMBER") // ROLE 이 MEMBER 가 포함된 경우에만 인증 가능
+                    .and()
+                    .oauth2Login()
+                    .userInfoEndpoint()
+                    .userService(memberService)
+                    .and()
+                    .successHandler(oAuthLoginSuccessHandler)
+                    .failureHandler(oAuthLoginFailureHandler)
+                    .and()
+                    .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .and()
+                    .addFilter(corsConfig.corsFilter())
+                    .addFilterBefore(this.authenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -63,7 +69,8 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        AuthenticationConfiguration authenticationConfiguration)
+        throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 }
