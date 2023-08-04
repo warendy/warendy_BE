@@ -6,6 +6,8 @@ import com.be.friendy.warendy.domain.winebar.repository.WinebarRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class WineBarService {
@@ -18,4 +20,11 @@ public class WineBarService {
 
     }
 
+    public List<WinebarSearchResponse> searchWinebarAround(Double lat, Double lnt) {
+
+        List<WinebarSearchResponse> winebarList =
+                winebarRepository.findByDistance(lat, lnt).stream()
+                        .map(WinebarSearchResponse::fromEntity).toList();
+        return winebarList;
+    }
 }
