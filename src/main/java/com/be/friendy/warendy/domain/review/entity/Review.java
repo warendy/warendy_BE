@@ -2,6 +2,7 @@ package com.be.friendy.warendy.domain.review.entity;
 
 import com.be.friendy.warendy.domain.common.BaseEntity;
 import com.be.friendy.warendy.domain.member.entity.Member;
+import com.be.friendy.warendy.domain.review.dto.request.ReviewUpdateRequest;
 import com.be.friendy.warendy.domain.wine.entity.Wine;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,5 +33,10 @@ public class Review extends BaseEntity {
     private Wine wine;
 
     private String contents;
-    private Float rating;
+    private Float rating;           // 유저 평점.
+
+    public void updateReviewInfo(ReviewUpdateRequest reviewUpdateRequest) {
+        contents = reviewUpdateRequest.getContents();
+        rating = reviewUpdateRequest.getRating();
+    }
 }
