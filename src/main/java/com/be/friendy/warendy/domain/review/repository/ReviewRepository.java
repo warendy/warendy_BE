@@ -13,4 +13,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     Page<Review> findByWine(Wine wine, Pageable pageable);
     Page<Review> findByMember(Member member, Pageable pageable);
+
 }
