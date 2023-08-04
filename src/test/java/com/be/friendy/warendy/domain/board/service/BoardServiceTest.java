@@ -3,6 +3,7 @@ package com.be.friendy.warendy.domain.board.service;
 import com.be.friendy.warendy.domain.board.dto.request.BoardCreateRequest;
 import com.be.friendy.warendy.domain.board.dto.request.BoardUpdateRequest;
 import com.be.friendy.warendy.domain.board.dto.response.BoardCreateResponse;
+import com.be.friendy.warendy.domain.board.dto.response.BoardSearchDetailResponse;
 import com.be.friendy.warendy.domain.board.dto.response.BoardSearchResponse;
 import com.be.friendy.warendy.domain.board.entity.Board;
 import com.be.friendy.warendy.domain.board.repository.BoardRepository;
@@ -85,6 +86,7 @@ class BoardServiceTest {
                         .name("A")
                         .creator("A")
                         .date("2010-1-13")
+                        .time("7AM")
                         .wineName("123")
                         .headcount(4)
                         .contents("123")
@@ -95,6 +97,7 @@ class BoardServiceTest {
                 .name("board name")
                 .creator("nick name")
                 .date("2010-1-1")
+                .time("7AM")
                 .wineName("wine name")
                 .headcount(6)
                 .contents("hello world!")
@@ -106,6 +109,43 @@ class BoardServiceTest {
         assertEquals(1L, createResponse.getWinebarId());
         assertEquals("A", createResponse.getCreator());
         assertEquals(4, createResponse.getHeadcount());
+    }
+
+    @Test
+    void successSearchBoardDetail() {
+        //given
+        Member member1 = Member.builder()
+                .id(13L)
+                .email("asdf@gmail.com")
+                .password("asdfasdfasdf")
+                .nickname("nick name").avatar("asdfasdfasdf")
+                .mbti("istp")
+                .role(Role.MEMBER).oauthType("fasdf")
+                .body(1).dry(1).tannin(1).acidity(1)
+                .build();
+        Winebar winebar1 = Winebar.builder()
+                .id(1L)
+                .name("AA")
+                .picture("asdfasdf")
+                .address("tttttttt")
+                .lat(0.0)
+                .lnt(0.0)
+                .rating(1.1)
+                .reviews(1)
+                .build();
+        Board board =  Board.builder()
+                .id(1L).member(member1).winebar(winebar1).name("A")
+                .creator("A").date("2010-1-13").time("7AM")
+                .wineName("123").headcount(4).contents("123")
+                .build();
+        given(boardRepository.findById(board.getId()))
+                .willReturn(Optional.of(board));
+        //when
+        BoardSearchDetailResponse boardDetailResponse
+                = boardService.searchBoardDetail(1L);
+        //then
+        assertEquals("AA", boardDetailResponse.getWinebarName());
+
     }
 
     @Test
@@ -133,16 +173,19 @@ class BoardServiceTest {
                 .build();
         List<Board> boardList = Arrays.asList(
                 Board.builder()
-                        .id(1L).member(member1).winebar(winebar1).name("A").creator("A")
-                        .date("2010-1-13").wineName("123").headcount(4).contents("123")
+                        .id(1L).member(member1).winebar(winebar1).name("A")
+                        .creator("A").date("2010-1-13").time("7AM")
+                        .wineName("123").headcount(4).contents("123")
                         .build(),
                 Board.builder()
-                        .id(1L).member(member1).winebar(winebar1).name("Ab").creator("Ab")
-                        .date("2010-1-13b").wineName("123b").headcount(45).contents("123b")
+                        .id(1L).member(member1).winebar(winebar1).name("Ab")
+                        .creator("Ab").date("2010-1-13b").time("7AM")
+                        .wineName("123b").headcount(45).contents("123b")
                         .build(),
                 Board.builder()
-                        .id(1L).member(member1).winebar(winebar1).name("Ac").creator("Ac")
-                        .date("2010-1-13c").wineName("123c").headcount(46).contents("123c")
+                        .id(1L).member(member1).winebar(winebar1).name("Ac")
+                        .creator("Ac").date("2010-1-13c").time("7AM")
+                        .wineName("123c").headcount(46).contents("123c")
                         .build()
         );
         given(memberRepository.findByNickname(anyString()))
@@ -187,6 +230,7 @@ class BoardServiceTest {
         Board targetBoard = Board.builder()
                 .id(1L).member(member1).winebar(winebar1).name("A").creator("A")
                 .date("2010-1-13").wineName("123").headcount(4).contents("123")
+                .time("7AM")
                 .build();
         given(boardRepository.save(any())).willReturn(targetBoard);
         given(boardRepository.findById(anyLong()))
@@ -198,6 +242,7 @@ class BoardServiceTest {
                 .name("name1")
                 .creator("creator!")
                 .date("2020-1-1")
+                .time("7AM")
                 .wineName("AAA")
                 .headcount(5)
                 .contents("empty at all")
@@ -236,6 +281,7 @@ class BoardServiceTest {
         Board targetBoard = Board.builder()
                 .id(1L).member(member1).winebar(winebar1).name("A").creator("A")
                 .date("2010-1-13").wineName("123").headcount(4).contents("123")
+                .time("7AM")
                 .build();
         given(boardRepository.findById(anyLong()))
                 .willReturn(Optional.of(targetBoard));
@@ -260,6 +306,7 @@ class BoardServiceTest {
                                 .name("name")
                                 .creator("creator")
                                 .date("2020-1-1")
+                                .time("7AM")
                                 .wineName("winename")
                                 .headcount(1)
                                 .contents("cont")
@@ -281,12 +328,24 @@ class BoardServiceTest {
                                 .name("name")
                                 .creator("creator")
                                 .date("2020-1-1")
+                                .time("7AM")
                                 .wineName("winename")
                                 .headcount(1)
                                 .contents("cont")
                                 .build()));
         //then
         assertEquals("winebar does not exist",exception.getMessage());
+    }
+
+    @Test
+    void failedSearchBoardDetailNotFoundBoard() {
+        //given
+        given(boardRepository.findById(anyLong())).willReturn(Optional.empty());
+        //when
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> boardService.searchBoardDetail(1L));
+        //then
+        assertEquals("the board does not exist",exception.getMessage());
     }
 
     @Test
@@ -328,6 +387,7 @@ class BoardServiceTest {
                                 .name("name")
                                 .creator("creator")
                                 .date("2020-1-1")
+                                .time("7AM")
                                 .wineName("winename")
                                 .headcount(1)
                                 .contents("cont")

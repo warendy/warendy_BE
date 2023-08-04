@@ -84,4 +84,5 @@ public class Member extends BaseEntity {
 
         return authorities;
     }
+
 }
