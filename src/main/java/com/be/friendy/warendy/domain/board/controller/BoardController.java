@@ -4,6 +4,7 @@ package com.be.friendy.warendy.domain.board.controller;
 import com.be.friendy.warendy.domain.board.dto.request.BoardCreateRequest;
 import com.be.friendy.warendy.domain.board.dto.request.BoardUpdateRequest;
 import com.be.friendy.warendy.domain.board.dto.response.BoardCreateResponse;
+import com.be.friendy.warendy.domain.board.dto.response.BoardSearchDetailResponse;
 import com.be.friendy.warendy.domain.board.dto.response.BoardSearchResponse;
 import com.be.friendy.warendy.domain.board.entity.Board;
 import com.be.friendy.warendy.domain.board.service.BoardService;
@@ -38,6 +39,13 @@ public class BoardController {
             @PageableDefault(size = 3) Pageable pageable
     ) {
         return ResponseEntity.ok(boardService.searchBoard(pageable));
+    }
+
+    @GetMapping("/{board-id}/detail")
+    public ResponseEntity<BoardSearchDetailResponse> boardSearchDetail(
+            @PathVariable("board-id") Long boardId
+    ) {
+        return ResponseEntity.ok(boardService.searchBoardDetail(boardId));
     }
 
     @GetMapping("/board-name")
@@ -83,6 +91,14 @@ public class BoardController {
             @PageableDefault(size = 3) Pageable pageable
     ) {
         return ResponseEntity.ok(boardService.searchBoardByDate(date, pageable));
+    }
+
+    @GetMapping("/time")
+    public ResponseEntity<Page<BoardSearchResponse>> boardSearchByTime(
+            @RequestParam String time,
+            @PageableDefault(size = 3) Pageable pageable
+    ) {
+        return ResponseEntity.ok(boardService.searchBoardByTime(time, pageable));
     }
 
     @GetMapping("/region")
