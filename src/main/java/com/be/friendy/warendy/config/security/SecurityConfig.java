@@ -25,9 +25,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     @Autowired
-    OAuthLoginSuccessHandler oAuthLoginSuccessHandler;
-
-    @Autowired
     OAuthLoginFailureHandler oAuthLoginFailureHandler;
 
     @Autowired
@@ -48,7 +45,6 @@ public class SecurityConfig {
                         .userInfoEndpoint()
                         .userService(memberService)
                         .and()
-                        .successHandler(oAuthLoginSuccessHandler)
                         .failureHandler(oAuthLoginFailureHandler)
                         .and()
                         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
