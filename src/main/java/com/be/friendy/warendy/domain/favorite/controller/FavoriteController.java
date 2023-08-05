@@ -2,7 +2,9 @@ package com.be.friendy.warendy.domain.favorite.controller;
 
 
 import com.be.friendy.warendy.config.jwt.TokenProvider;
+import com.be.friendy.warendy.domain.favorite.dto.request.AddWine;
 import com.be.friendy.warendy.domain.favorite.dto.request.CreateCategory;
+import com.be.friendy.warendy.domain.favorite.dto.response.Collection;
 import com.be.friendy.warendy.domain.favorite.service.FavoriteService;
 import com.be.friendy.warendy.domain.wine.entity.Wine;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +24,7 @@ public class FavoriteController {
     @PostMapping("/add/wines")
     @ResponseStatus(HttpStatus.OK)
     public void addToFavorite(@RequestHeader("Authorization") String authorizationHeader,
-                                @RequestBody Long request){
+                                @RequestBody AddWine request){
         String email = tokenProvider.getEmailFromToken(authorizationHeader);
         favoriteService.addWineToFavorite(email, request);
     }
@@ -35,10 +37,10 @@ public class FavoriteController {
         favoriteService.addWineToCategory(email, request);
     }
 
-//    @GetMapping("/wines")
-//    @ResponseStatus(HttpStatus.OK)
-//    public List<Wine> findAllWinesFromFavorite(@RequestHeader("Authorization") String authorizationHeader){
-//        String email = tokenProvider.getEmailFromToken(authorizationHeader);
-//        return favoriteService.findAllWines(email);
-//    }
+    @GetMapping("/wines")
+    @ResponseStatus(HttpStatus.OK)
+    public Collection findAllWinesFromFavorite(@RequestHeader("Authorization") String authorizationHeader){
+        String email = tokenProvider.getEmailFromToken(authorizationHeader);
+        return favoriteService.findAllWines(email);
+    }
 }

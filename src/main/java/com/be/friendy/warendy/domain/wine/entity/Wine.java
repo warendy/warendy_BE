@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "WINE")
-public class Wine extends BaseEntity {
+public class Wine {
     @Id // 엔티티 내부에서 아이디임을 선언
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 시퀀스 전략 선언
     @Column(name = "WINE_ID") // 아이디에 해당하는 컬럼명 선언
@@ -27,7 +27,7 @@ public class Wine extends BaseEntity {
     private Integer acidity;
     private Double alcohol;
     private String grapes;
-    private List<String> paring;
+    private String pairing;
     private String region;
     private String type;
     private String winery;

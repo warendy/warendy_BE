@@ -30,5 +30,7 @@ public class Favorite {
     @JoinColumn(name = "WINE_ID", nullable = false)
     private Wine wine;
 
+    private String imgUrl;
+
     private String category;
 }
