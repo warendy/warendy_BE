@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface WineRepository extends JpaRepository<Wine, Long> {
     Optional<Wine> findByName(String wineName);
+
+    Optional<Wine> findById(Long wineId);
 }
