@@ -27,4 +27,11 @@ public class WinebarController {
         return ResponseEntity.ok(wineBarService.searchWinebar(lat, lnt));
     }
 
+    @GetMapping("/winebars/around")
+    public ResponseEntity<List<WinebarSearchResponse>> aroundWineBarSearch (
+            @RequestParam Double lat, @RequestParam Double lnt
+    ) {
+        return ResponseEntity.ok(wineBarService.searchWinebarAround(lat, lnt));
+    }
+
 }
