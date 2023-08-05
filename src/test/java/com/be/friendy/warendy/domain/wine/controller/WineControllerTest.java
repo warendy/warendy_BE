@@ -4,6 +4,7 @@ import com.be.friendy.warendy.config.jwt.TokenProvider;
 import com.be.friendy.warendy.config.jwt.filter.JwtAuthenticationFilter;
 import com.be.friendy.warendy.domain.review.dto.response.WineReviewSearchByWineIdResponse;
 import com.be.friendy.warendy.domain.review.entity.Review;
+import com.be.friendy.warendy.domain.wine.dto.response.RecommendWineResponse;
 import com.be.friendy.warendy.domain.wine.dto.response.WineDetailSearchResponse;
 import com.be.friendy.warendy.domain.wine.service.WineService;
 import org.junit.jupiter.api.DisplayName;
@@ -17,6 +18,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -76,6 +78,42 @@ class WineControllerTest {
                 .andExpect(jsonPath("$.pairing")
                         .value("food"))
         ;
+    }
+
+    @Test
+    @WithMockUser(roles = "MEMBER")
+    void successWineRecommendation() throws Exception {
+        //given
+        List<Review> reviewList = new ArrayList<>();
+        List<WineReviewSearchByWineIdResponse> list = reviewList.stream()
+                .map(WineReviewSearchByWineIdResponse::fromEntity).toList();
+        List<RecommendWineResponse> list1 = Arrays.asList(
+                RecommendWineResponse.builder()
+                        .wineName("wineName")
+                        .vintage(2014)
+                        .price("W 25,000")
+                        .picture("url")
+                        .body(1)
+                        .dry(1)
+                        .tannin(1)
+                        .acidity(1)
+                        .alcohol(1.1)
+                        .grapes("grapes")
+                        .pairing("food")
+                        .region("region")
+                        .type("wineStyle")
+                        .winery("winery")
+                        .rating(1.1f)
+                        .reviewList(list)
+                        .build()
+        );
+        given(wineService.recommendWine(anyLong()))
+                .willReturn(list1);
+        //when
+
+        //then
+        mockMvc.perform(get("/wines/recommendation?member-id=1")).andDo(print())
+                .andExpect(jsonPath("$.[0].pairing").value("food"));
     }
 
 }
