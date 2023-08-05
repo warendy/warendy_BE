@@ -1,4 +1,4 @@
-### 에러 내용
+### 에러 내용(해결 완료)
 kafka producer에서 send할 때는 serialize가 문제없이 작동하는 것 같은데
 consumer에서 deserialize할 때, 에러가 생기는 것으로 추정됩니다.
 
@@ -51,3 +51,8 @@ at org.springframework.kafka.listener.KafkaMessageListenerContainer$ListenerCons
 at org.springframework.kafka.listener.KafkaMessageListenerContainer$ListenerConsumer.run(KafkaMessageListenerContainer.java:1338) ~[spring-kafka-3.0.1.jar:3.0.1]
 at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1804) ~[na:na]
 at java.base/java.lang.Thread.run(Thread.java:833) ~[na:na]
+
+### 결과
+로컬 테스트시 Message타입은 Entity지만 다른 테이블간의 연관관계를 설정하지 않았지만 프로젝트를 옮기는 과정에서
+chat에서 만들었던 Entity 클래스들에 Member Entity와 연관관계를 설정하여 Deserialize 부분에서 에러가 생겼다.
+새로운 dto 클래스 MessageDto 클래스를 만들어서 그걸로 kafka로 통신하고 DB에 저장할때만 Message로 바꿔서 저장하도록 진행했다.

@@ -1,6 +1,6 @@
 package com.be.friendy.warendy.domain.chat.configuration;
 
-import com.be.friendy.warendy.domain.chat.entity.Message;
+import com.be.friendy.warendy.domain.chat.dto.MessageDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -39,12 +39,12 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ProducerFactory<String, Message> producerFactory() {
+    public ProducerFactory<String, MessageDto> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
     @Bean
-    public KafkaTemplate<String, Message> kafkaTemplate() {
+    public KafkaTemplate<String, MessageDto> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
@@ -62,18 +62,18 @@ public class KafkaConfig {
         props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class);
 
         // Define trusted package for JsonDeserializer
-        props.put(JsonDeserializer.TRUSTED_PACKAGES, "com.be.friendy.warendy.domain.chat.entity");
+        props.put(JsonDeserializer.TRUSTED_PACKAGES, "com.be.friendy.warendy.domain.chat.dto");
         return props;
     }
 
     @Bean
-    public ConsumerFactory<String, Message> consumerFactory() {
+    public ConsumerFactory<String, MessageDto> consumerFactory() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs());
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, Message> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, Message> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, MessageDto> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, MessageDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }

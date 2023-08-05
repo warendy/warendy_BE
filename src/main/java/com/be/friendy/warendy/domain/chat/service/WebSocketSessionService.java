@@ -1,5 +1,6 @@
 package com.be.friendy.warendy.domain.chat.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -11,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 @Service
+@Slf4j
 public class WebSocketSessionService {
     private final Map<String, Set<WebSocketSession>> chatRoomSessions = new ConcurrentHashMap<>();
 
@@ -32,7 +34,12 @@ public class WebSocketSessionService {
         Set<WebSocketSession> sessions = chatRoomSessions.get(chatRoomId);
         if (sessions != null) {
             for (WebSocketSession session : sessions) {
-                session.close();  // 각 세션을 닫습니다.
+                try {
+                    session.close(); // 각 세션을 닫습니다.
+                } catch (IOException e) {
+                    // 로그를 남기고 계속 진행합니다.
+                    log.error("Error closing WebSocket session", e);
+                }
             }
         }
         chatRoomSessions.remove(chatRoomId);  // 채팅방을 맵에서 제거합니다.
