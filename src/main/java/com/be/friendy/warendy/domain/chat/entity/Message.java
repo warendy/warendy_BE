@@ -1,31 +1,30 @@
 package com.be.friendy.warendy.domain.chat.entity;
 
-import com.be.friendy.warendy.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
 
-@Getter
-@Builder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "MESSAGE")
-public class Message {
+@Getter
+@Setter
+@ToString
+@Builder
+@Entity
+public class Message implements Serializable {
+
     @Id // 엔티티 내부에서 아이디임을 선언
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 시퀀스 전략 선언
     @Column(name = "MESSAGE_ID") // 아이디에 해당하는 컬럼명 선언
     private Long id;
+    private String sender;
+    private String content;
+    private String timestamp;
+    private String roomId;
 
     @ManyToOne
-    @JoinColumn(name = "CONNECTED_CHAT_ID")
-    private ConnectedChat connectedChat;
+    @JoinColumn(name = "chat_room_id")
+    private ChatRoom chatRoom;
 
-    @ManyToOne
-    @JoinColumn(name = "MEMBER_ID")
-    private Member member;
-
-    private String contents;
-    private LocalDateTime sentAt;
 }

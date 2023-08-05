@@ -1,14 +1,14 @@
 spring:
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     generate-ddl: true
     show-sql: true
   datasource:
-    url: jdbc:mysql://localhost:3306/warendy
+    url: jdbc:mysql://localhost:3307/warendy
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: ${password}
+    password: 3307
   jwt:
     secret-key: ${secret-key}
   security:
@@ -29,3 +29,13 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
+
+  kafka:
+    bootstrap-servers: ${kafka-broker}
+#    consumer:
+#      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+#      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+#      properties:
+#        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+#        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+#        spring.json.trusted.packages: '*'
