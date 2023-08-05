@@ -238,5 +238,4 @@ class BoardControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk());
     }
-
 }

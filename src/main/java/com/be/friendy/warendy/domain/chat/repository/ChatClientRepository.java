@@ -6,10 +6,11 @@ import com.be.friendy.warendy.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ChatClientRepository extends JpaRepository<ChatClient, Long> {
-    List<ChatClient> findByChatRoom(ChatRoom chatRoom);
+    Optional<List<ChatClient>> findByChatRoom(ChatRoom chatRoom);
 
-    ChatClient findByChatRoomAndMember(ChatRoom chatRoom, Member member);
+    Optional<ChatClient> findByChatRoomAndMember(ChatRoom chatRoom, Member member);
 
 }
