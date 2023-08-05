@@ -31,11 +31,11 @@ public class MemberController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<?> signIn(@RequestBody SignInRequest request){
-        Member member = memberService.signIn(request);
-        String token = tokenProvider.generateToken(member.getEmail());
+    public void signIn(@RequestBody SignInRequest request, HttpServletResponse response){
+        Member user = memberService.signIn(request);
+        String token = tokenProvider.generateToken(user.getEmail());
+        response.addHeader("Authorization", "BEARER" + " " + token);
         log.info("user login -> " + request.getEmail());
-        return ResponseEntity.ok(token);
     }
 
     @GetMapping("/members")
