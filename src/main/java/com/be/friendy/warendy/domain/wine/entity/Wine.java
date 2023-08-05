@@ -4,6 +4,7 @@ import com.be.friendy.warendy.domain.common.BaseEntity;
 import com.be.friendy.warendy.domain.review.entity.Review;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Type;
 
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class Wine extends BaseEntity {
     private Integer acidity;
     private Double alcohol;
     private String grapes;
-    private List<String> paring;
+    private String pairing;
     private String region;
     private String type;
     private String winery;
@@ -51,7 +52,7 @@ public class Wine extends BaseEntity {
                 .acidity(acidity)
                 .alcohol(alcohol)
                 .grapes(grapes)
-                .paring(paring)
+                .pairing(pairing)
                 .region(region)
                 .type(type)
                 .winery(winery)
