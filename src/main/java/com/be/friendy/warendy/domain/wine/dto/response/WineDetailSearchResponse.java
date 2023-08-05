@@ -23,7 +23,7 @@ public class WineDetailSearchResponse {
     private Integer acidity;
     private Double alcohol;
     private String grapes;
-    private List<String> paring;
+    private String pairing;
     private String region;
     private String type;
     private String winery;
@@ -44,7 +44,7 @@ public class WineDetailSearchResponse {
                 .acidity(wine.getAcidity())
                 .alcohol(wine.getAlcohol())
                 .grapes(wine.getGrapes())
-                .paring(wine.getParing())
+                .pairing(wine.getPairing())
                 .region(wine.getRegion())
                 .type(wine.getType())
                 .winery(wine.getWinery())
