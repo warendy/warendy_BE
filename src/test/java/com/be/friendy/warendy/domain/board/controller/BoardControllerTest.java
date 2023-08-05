@@ -1,9 +1,7 @@
 package com.be.friendy.warendy.domain.board.controller;
 
-import com.be.friendy.warendy.config.AppConfig;
 import com.be.friendy.warendy.config.jwt.TokenProvider;
 import com.be.friendy.warendy.config.jwt.filter.JwtAuthenticationFilter;
-import com.be.friendy.warendy.config.security.SecurityConfig;
 import com.be.friendy.warendy.domain.board.dto.request.BoardCreateRequest;
 import com.be.friendy.warendy.domain.board.dto.request.BoardUpdateRequest;
 import com.be.friendy.warendy.domain.board.dto.response.BoardCreateResponse;
@@ -40,10 +38,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(value = BoardController.class,
         excludeFilters = {
-                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-                        classes = SecurityConfig.class),
-                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-                        classes = AppConfig.class),
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
                         classes = JwtAuthenticationFilter.class),
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
@@ -266,10 +260,8 @@ class BoardControllerTest {
                 .willThrow(new RuntimeException("the wine does not exist"));
         //when
         //then
-        mockMvc.perform(get("/boards/wine-name?wineName={}", "AAA")
-                        .contentType(MediaType.APPLICATION_JSON).with(csrf()))
+        mockMvc.perform(get("/boards/wine-name?wineName=AAA"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
-
 }

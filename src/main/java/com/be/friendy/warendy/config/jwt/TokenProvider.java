@@ -7,11 +7,9 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -60,13 +58,17 @@ public class TokenProvider {
         return !claims.getExpiration().before(new Date());
     }
 
+    public String getEmailFromToken(String token) {
+        String jwtToken = token.substring(7);
+        return parsedClaims(jwtToken).getSubject();
+    }
+
     private Claims parsedClaims(String token) {
         try {
             return Jwts.parser().setSigningKey(this.secretKey).parseClaimsJws(token).getBody();
-        } catch(ExpiredJwtException e) {
+        } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
-
     }
 
 }
