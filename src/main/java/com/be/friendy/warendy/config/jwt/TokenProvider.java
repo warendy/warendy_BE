@@ -49,11 +49,6 @@ public class TokenProvider {
         return parsedClaims(token).getSubject();
     }
 
-    public String getEmailFromToken(String token){
-        String jwtToken = token.substring(7);
-        return parsedClaims(jwtToken).getSubject();
-    }
-
     public boolean validateToken(String token) {
         if (!StringUtils.hasText(token)) {
             return false;
