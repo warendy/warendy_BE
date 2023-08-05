@@ -1,10 +1,8 @@
 package com.be.friendy.warendy.domain.wine.entity;
 
-import com.be.friendy.warendy.domain.common.BaseEntity;
 import com.be.friendy.warendy.domain.review.entity.Review;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Type;
 
 import java.util.List;
 
