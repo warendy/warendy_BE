@@ -2,6 +2,7 @@ package com.be.friendy.warendy.domain.wine.controller;
 
 import com.be.friendy.warendy.config.jwt.TokenProvider;
 import com.be.friendy.warendy.config.jwt.filter.JwtAuthenticationFilter;
+import com.be.friendy.warendy.domain.review.dto.response.WineReviewSearchByWineIdResponse;
 import com.be.friendy.warendy.domain.review.entity.Review;
 import com.be.friendy.warendy.domain.wine.dto.response.WineDetailSearchResponse;
 import com.be.friendy.warendy.domain.wine.service.WineService;
@@ -47,6 +48,8 @@ class WineControllerTest {
     void successSearchWineDetail() throws Exception {
         //given
         List<Review> reviewList = new ArrayList<>();
+        List<WineReviewSearchByWineIdResponse> list = reviewList.stream()
+                .map(WineReviewSearchByWineIdResponse::fromEntity).toList();
         given(wineService.searchWineDetail(anyLong()))
                 .willReturn(WineDetailSearchResponse.builder()
                         .wineName("wineName")
@@ -64,7 +67,7 @@ class WineControllerTest {
                         .type("wineStyle")
                         .winery("winery")
                         .rating(1.1f)
-                        .reviewList(reviewList)
+                        .reviewList(list)
                         .build());
         //when
         //then
