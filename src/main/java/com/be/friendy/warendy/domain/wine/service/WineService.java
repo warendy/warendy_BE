@@ -4,16 +4,16 @@ import com.be.friendy.warendy.domain.review.repository.ReviewRepository;
 import com.be.friendy.warendy.domain.wine.dto.response.WineDetailSearchResponse;
 import com.be.friendy.warendy.domain.wine.entity.Wine;
 import com.be.friendy.warendy.domain.wine.repository.WineRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class WineService {
 
-    private WineRepository wineRepository;
-    private ReviewRepository reviewRepository;
+    private final WineRepository wineRepository;
+    private final ReviewRepository reviewRepository;
 
     public WineDetailSearchResponse searchWineDetail(Long wineId) {
 

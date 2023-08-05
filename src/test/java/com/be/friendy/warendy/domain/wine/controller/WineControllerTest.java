@@ -1,9 +1,7 @@
 package com.be.friendy.warendy.domain.wine.controller;
 
-import com.be.friendy.warendy.config.AppConfig;
 import com.be.friendy.warendy.config.jwt.TokenProvider;
 import com.be.friendy.warendy.config.jwt.filter.JwtAuthenticationFilter;
-import com.be.friendy.warendy.config.security.SecurityConfig;
 import com.be.friendy.warendy.domain.review.entity.Review;
 import com.be.friendy.warendy.domain.wine.dto.response.WineDetailSearchResponse;
 import com.be.friendy.warendy.domain.wine.service.WineService;
@@ -29,10 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(value = WineController.class,
         excludeFilters = {
-                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-                        classes = SecurityConfig.class),
-                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-                        classes = AppConfig.class),
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
                         classes = JwtAuthenticationFilter.class),
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
