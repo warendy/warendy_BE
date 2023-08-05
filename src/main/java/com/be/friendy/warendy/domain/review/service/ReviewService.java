@@ -11,13 +11,13 @@ import com.be.friendy.warendy.domain.review.entity.Review;
 import com.be.friendy.warendy.domain.review.repository.ReviewRepository;
 import com.be.friendy.warendy.domain.wine.entity.Wine;
 import com.be.friendy.warendy.domain.wine.repository.WineRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;

@@ -1,9 +1,7 @@
 package com.be.friendy.warendy.domain.review.controller;
 
-import com.be.friendy.warendy.config.AppConfig;
 import com.be.friendy.warendy.config.jwt.TokenProvider;
 import com.be.friendy.warendy.config.jwt.filter.JwtAuthenticationFilter;
-import com.be.friendy.warendy.config.security.SecurityConfig;
 import com.be.friendy.warendy.domain.member.entity.Member;
 import com.be.friendy.warendy.domain.member.entity.constant.Role;
 import com.be.friendy.warendy.domain.review.dto.request.ReviewUpdateRequest;
@@ -28,7 +26,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,10 +39,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(value = ReviewController.class,
         excludeFilters = {
-                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-                        classes = SecurityConfig.class),
-                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-                        classes = AppConfig.class),
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
                         classes = JwtAuthenticationFilter.class),
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,

@@ -13,7 +13,7 @@ import com.be.friendy.warendy.domain.wine.entity.Wine;
 import com.be.friendy.warendy.domain.wine.repository.WineRepository;
 import com.be.friendy.warendy.domain.winebar.entity.Winebar;
 import com.be.friendy.warendy.domain.winebar.repository.WinebarRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class BoardService {
 
     private final BoardRepository boardRepository;
