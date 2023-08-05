@@ -43,6 +43,7 @@ jobs:
           spring.datasource.url: ${{ secrets.SPRING_DATASOURCE_URL }}
           spring.datasource.username: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
           spring.datasource.password: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+          spring.kafka.bootstrap-servers: ${{ secrets.KAKFA_BROKER }}
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
