@@ -17,6 +17,7 @@ public class BoardCreateResponse {
     private String name;
     private String creator;
     private String date;
+    private String time;
     private String wineName;
     private Integer headcount;
     private String contents;
@@ -28,6 +29,7 @@ public class BoardCreateResponse {
                 .name(board.getName())
                 .creator(board.getCreator())
                 .date(board.getDate())
+                .time(board.getTime())
                 .wineName(board.getWineName())
                 .headcount(board.getHeadcount())
                 .contents(board.getContents())

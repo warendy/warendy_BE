@@ -3,6 +3,7 @@ package com.be.friendy.warendy.domain.board.service;
 import com.be.friendy.warendy.domain.board.dto.request.BoardCreateRequest;
 import com.be.friendy.warendy.domain.board.dto.request.BoardUpdateRequest;
 import com.be.friendy.warendy.domain.board.dto.response.BoardCreateResponse;
+import com.be.friendy.warendy.domain.board.dto.response.BoardSearchDetailResponse;
 import com.be.friendy.warendy.domain.board.dto.response.BoardSearchResponse;
 import com.be.friendy.warendy.domain.board.entity.Board;
 import com.be.friendy.warendy.domain.board.repository.BoardRepository;
@@ -12,7 +13,7 @@ import com.be.friendy.warendy.domain.wine.entity.Wine;
 import com.be.friendy.warendy.domain.wine.repository.WineRepository;
 import com.be.friendy.warendy.domain.winebar.entity.Winebar;
 import com.be.friendy.warendy.domain.winebar.repository.WinebarRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class BoardService {
 
     private final BoardRepository boardRepository;
@@ -59,6 +60,12 @@ public class BoardService {
     public Page<BoardSearchResponse> searchBoard(Pageable pageable) {
         return boardRepository.findAll(pageable)
                 .map(BoardSearchResponse::fromEntity);
+    }
+
+    public BoardSearchDetailResponse searchBoardDetail(Long boardId) {
+        return boardRepository.findById(boardId)
+                .map(BoardSearchDetailResponse::fromEntity)
+                .orElseThrow(() -> new RuntimeException("the board does not exist"));
     }
 
     public Page<BoardSearchResponse> searchBoardByBoardName(
@@ -104,6 +111,13 @@ public class BoardService {
     ) {
         String dateToStr = String.valueOf(date);
         return boardRepository.findByDate(dateToStr, pageable)
+                .map(BoardSearchResponse::fromEntity);
+    }
+
+    public Page<BoardSearchResponse> searchBoardByTime(
+            String time, Pageable pageable
+    ) {
+        return boardRepository.findByTime(time, pageable)
                 .map(BoardSearchResponse::fromEntity);
     }
 

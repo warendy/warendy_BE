@@ -24,4 +24,8 @@ public class Favorite {
     @ManyToOne
     @JoinColumn(name = "WINE_ID", nullable = false)
     private Wine wine;
+
+    private String picture;
+
+    private String category;
 }

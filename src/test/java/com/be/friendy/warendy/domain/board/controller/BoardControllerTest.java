@@ -1,12 +1,11 @@
 package com.be.friendy.warendy.domain.board.controller;
 
-import com.be.friendy.warendy.config.AppConfig;
 import com.be.friendy.warendy.config.jwt.TokenProvider;
 import com.be.friendy.warendy.config.jwt.filter.JwtAuthenticationFilter;
-import com.be.friendy.warendy.config.security.SecurityConfig;
 import com.be.friendy.warendy.domain.board.dto.request.BoardCreateRequest;
 import com.be.friendy.warendy.domain.board.dto.request.BoardUpdateRequest;
 import com.be.friendy.warendy.domain.board.dto.response.BoardCreateResponse;
+import com.be.friendy.warendy.domain.board.dto.response.BoardSearchDetailResponse;
 import com.be.friendy.warendy.domain.board.dto.response.BoardSearchResponse;
 import com.be.friendy.warendy.domain.board.entity.Board;
 import com.be.friendy.warendy.domain.board.service.BoardService;
@@ -40,10 +39,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(value = BoardController.class,
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-                        classes = SecurityConfig.class),
-                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-                        classes = AppConfig.class),
-                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
                         classes = JwtAuthenticationFilter.class),
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
                         classes = TokenProvider.class)
@@ -73,6 +68,7 @@ class BoardControllerTest {
                         .name("board name")
                         .creator("nick name")
                         .date("2010-1-1")
+                        .time("7AM")
                         .wineName("wine name")
                         .headcount(4)
                         .contents("hello world!")
@@ -88,6 +84,7 @@ class BoardControllerTest {
                                         .name("board name1")
                                         .creator("nick name1")
                                         .date("2010-1-11")
+                                        .time("7AM")
                                         .wineName("wine name1")
                                         .headcount(4)
                                         .contents("hello world!1")
@@ -126,6 +123,7 @@ class BoardControllerTest {
                         .name("board name")
                         .creator("nick name")
                         .date("2010-1-1")
+                        .time("7AM")
                         .wineName("wine name")
                         .headcount(4)
                         .contents("hello world!")
@@ -143,6 +141,7 @@ class BoardControllerTest {
                                         .name("board name1")
                                         .creator("nick name1")
                                         .date("2010-1-11")
+                                        .time("7AM")
                                         .wineName("wine name1")
                                         .headcount(4)
                                         .contents("hello world!1")
@@ -161,6 +160,31 @@ class BoardControllerTest {
 
     @Test
     @WithMockUser(roles = "MEMBER")
+    @DisplayName("success Search Detail! - board")
+    void successSearchBoardDetail() throws Exception {
+        //given
+        given(boardService.searchBoardDetail(anyLong()))
+                .willReturn(BoardSearchDetailResponse.builder()
+                        .name("A")
+                        .winebarName("B")
+                        .winebarAddress("C")
+                        .creator("D")
+                        .date("2020-1-1")
+                        .time("7PM")
+                        .wineName("E")
+                        .headcount(3)
+                        .contents("F")
+                        .build());
+        //when
+        //then
+        mockMvc.perform(get("/boards/{board-id}/detail", 1L))
+                .andDo(print())
+                .andExpect(jsonPath("$.name").value("A"))
+        ;
+    }
+
+    @Test
+    @WithMockUser(roles = "MEMBER")
     @DisplayName("success Search with a Creator! - board")
     void successSearchBoardByCreator() throws Exception {
         //given
@@ -171,6 +195,7 @@ class BoardControllerTest {
                                 .name("board")
                                 .creator("Hong")
                                 .date("2000-1-1")
+                                .time("7AM")
                                 .wineName("wine")
                                 .headcount(4)
                                 .contents("content yo")
@@ -180,6 +205,7 @@ class BoardControllerTest {
                                 .name("board2")
                                 .creator("Hong")
                                 .date("2000-1-12")
+                                .time("10AM")
                                 .wineName("wine2")
                                 .headcount(5)
                                 .contents("content yo2")
@@ -189,6 +215,7 @@ class BoardControllerTest {
                                 .name("board3")
                                 .creator("Hong")
                                 .date("2000-1-13")
+                                .time("8AM")
                                 .wineName("wine3")
                                 .headcount(6)
                                 .contents("content yo3")
@@ -233,8 +260,7 @@ class BoardControllerTest {
                 .willThrow(new RuntimeException("the wine does not exist"));
         //when
         //then
-        mockMvc.perform(get("/boards/wine-name?wineName={}", "AAA")
-                .contentType(MediaType.APPLICATION_JSON).with(csrf()))
+        mockMvc.perform(get("/boards/wine-name?wineName=AAA"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

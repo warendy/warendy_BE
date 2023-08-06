@@ -16,6 +16,7 @@ public class BoardSearchResponse {
     private String winebarName;
     private String creator;
     private String date;
+    private String time;
     private String wineName;
     private Integer headcount;
     private String contents;
@@ -26,6 +27,7 @@ public class BoardSearchResponse {
                 .winebarName(board.getWinebar().getName())
                 .creator(board.getCreator())
                 .date(board.getDate())
+                .time(board.getTime())
                 .wineName(board.getWineName())
                 .headcount(board.getHeadcount())
                 .contents(board.getContents())

@@ -1,5 +1,6 @@
 package com.be.friendy.warendy.domain.member.service;
 
+import com.be.friendy.warendy.config.jwt.TokenProvider;
 import com.be.friendy.warendy.domain.member.dto.request.SignInRequest;
 import com.be.friendy.warendy.domain.member.dto.request.SignUpRequest;
 import com.be.friendy.warendy.domain.member.dto.request.UpdateRequest;
@@ -7,6 +8,7 @@ import com.be.friendy.warendy.domain.member.dto.response.InfoResponse;
 import com.be.friendy.warendy.domain.member.entity.Member;
 import com.be.friendy.warendy.domain.member.entity.constant.Role;
 import com.be.friendy.warendy.domain.member.repository.MemberRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -37,7 +39,6 @@ public class MemberService extends DefaultOAuth2UserService {
         if (!this.passwordEncoder.matches(member.getPassword(), user.getPassword())) {
             throw new RuntimeException("wrong password");
         }
-
         return user;
     }
 
@@ -79,5 +80,9 @@ public class MemberService extends DefaultOAuth2UserService {
                 .tannin(request.getTannin())
                 .acidity(request.getAcidity())
                 .build();
+    }
+
+    private void sendTokenToHeader(String token, HttpServletResponse response){
+        response.addHeader("Authorization", "BEARER" + " " + token);
     }
 }

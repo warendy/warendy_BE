@@ -22,6 +22,8 @@ public class BoardCreateRequest {
 
     private String date;
 
+    private String time;
+
     private String wineName;
 
     private Integer headcount;
@@ -35,6 +37,7 @@ public class BoardCreateRequest {
                 .name(name)
                 .creator(member.getNickname())
                 .date(date)
+                .time(time)
                 .wineName(wineName)
                 .headcount(headcount)
                 .contents(contents)
