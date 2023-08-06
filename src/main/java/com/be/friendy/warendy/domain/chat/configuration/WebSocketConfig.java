@@ -10,11 +10,16 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @Configuration
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
+
+    @Autowired
+    private SessionHandshakeInterceptor sessionHandshakeInterceptor;
     @Autowired
     private ChatWebSocketHandler chatWebSocketHandler;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(chatWebSocketHandler, "/api/chat/rooms/{roomId}").setAllowedOrigins("*");
+        registry.addHandler(chatWebSocketHandler, "/api/chat/rooms/{roomId}")
+                .setAllowedOrigins("*")
+                .addInterceptors(sessionHandshakeInterceptor);
     }
 }

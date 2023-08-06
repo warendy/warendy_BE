@@ -38,9 +38,10 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             // URL의 path parameter로부터 채팅방 ID를 추출
             String roomId = session.getUri().getPath().split("/")[4];
             webSocketSessionService.enterChatRoom(roomId, session);
+            String email = (String) session.getAttributes().get("email");
 
             // 이전 채팅 내역을 불러옵니다.
-            String email = getEmail(session.getPrincipal().getName()); // 사용자 인증을 구현한 방법에 따라 사용자 ID를 얻는 방법은 달라질 수 있습니다.(이건 JWT 사용시 사용)
+//            String email = getEmail(session.getPrincipal().getName()); // 사용자 인증을 구현한 방법에 따라 사용자 ID를 얻는 방법은 달라질 수 있습니다.(이건 JWT 사용시 사용)
 //        String userId = session.getUri().getPath().split("/")[5];
 
             Member member = memberRepository.findByEmail(email)
@@ -69,7 +70,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             for (MessageDto previousMessage : previousMessages) {
                 session.sendMessage(new TextMessage(previousMessage.getContent()));
             }
-        } catch(RuntimeException e) {
+        } catch (RuntimeException e) {
             log.error("RuntimeException in establishing connection : ", e);
         } catch (IOException e) {
             log.error("IOException in establishing connection : ", e);
@@ -77,18 +78,18 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             log.error("ExecutionException in establishing connection : ", e);
         } catch (InterruptedException e) {
             log.error("InterruptedException in establishing connection : ", e);
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Error in establishing connection : ", e);
         }
 
     }
 
     @Override
-    public void handleTextMessage(WebSocketSession session, TextMessage message){
-        try{
+    public void handleTextMessage(WebSocketSession session, TextMessage message) {
+        try {
             // 채팅 메시지를 Kafka로 전송하는 로직을 추가
             String roomId = session.getUri().getPath().split("/")[4];
-            String userId = getEmail(session.getPrincipal().getName()); // 사용자 인증을 구현한 방법에 따라 사용자 ID를 얻는 방법은 달라질 수 있습니다.
+            String userId = (String) session.getAttributes().get("email"); // 사용자 인증을 구현한 방법에 따라 사용자 ID를 얻는 방법은 달라질 수 있습니다.
 //        String userId = "dlduddnjs198";
 //        String userId = session.getUri().getPath().split("/")[5];
             String content = message.getPayload();
@@ -105,7 +106,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
-        try{
+        try {
             // URL의 path parameter로부터 채팅방 ID를 추출
             String roomId = session.getUri().getPath().split("/")[4];
 
@@ -114,23 +115,5 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             log.error("Error in closing connection : ", e);
         }
 
-    }
-
-    private String getEmail(String userId) {
-        // 쉼표 기준으로 문자열 분리
-        String[] infoParts = userId.split(", ");
-
-        // email 정보가 있는 부분을 찾는다.
-        String emailInfo = "";
-        for (String part : infoParts) {
-            if (part.startsWith("email=")) {
-                emailInfo = part;
-                break;
-            }
-        }
-
-        // email 정보 분리
-        String email = emailInfo.split("=")[1];
-        return email;
     }
 }
