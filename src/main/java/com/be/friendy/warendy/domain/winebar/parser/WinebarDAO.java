@@ -11,8 +11,8 @@ public class WinebarDAO {
 
     private Connection conn;
     String url = "jdbc:mysql://localhost:3306/warendy";
-    String dbUserId = "chanee";
-    String dbPassword = "wbbk77822!";
+    String dbUserId = "";
+    String dbPassword = "";
 
     public WinebarDAO() {
         try{
