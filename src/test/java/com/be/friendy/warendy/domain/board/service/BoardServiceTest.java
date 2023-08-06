@@ -1,5 +1,6 @@
 package com.be.friendy.warendy.domain.board.service;
 
+import com.be.friendy.warendy.config.jwt.TokenProvider;
 import com.be.friendy.warendy.domain.board.dto.request.BoardCreateRequest;
 import com.be.friendy.warendy.domain.board.dto.request.BoardUpdateRequest;
 import com.be.friendy.warendy.domain.board.dto.response.BoardCreateResponse;
@@ -48,6 +49,9 @@ class BoardServiceTest {
     @Mock
     private WineRepository wineRepository;
 
+    @Mock
+    private TokenProvider tokenProvider;
+
     @InjectMocks
     private BoardService boardService;
 
@@ -76,6 +80,8 @@ class BoardServiceTest {
                 .build();
         given(memberRepository.findById(anyLong()))
                 .willReturn(Optional.of(member1));
+        given(memberRepository.findByEmail(anyString()))
+                .willReturn(Optional.of(member1));
         given(wineBarRepository.findById(anyLong()))
                 .willReturn(Optional.of(winebar1));
         given(boardRepository.save(any()))
@@ -103,7 +109,7 @@ class BoardServiceTest {
                 .contents("hello world!")
                 .build();
         BoardCreateResponse createResponse =
-                boardService.creatBoard(13L, createRequest);
+                boardService.creatBoard("AAA",13L, createRequest);
         //then - given에서 값과 일치
         assertEquals(13L, createResponse.getMemberId());
         assertEquals(1L, createResponse.getWinebarId());
@@ -232,9 +238,14 @@ class BoardServiceTest {
                 .date("2010-1-13").wineName("123").headcount(4).contents("123")
                 .time("7AM")
                 .build();
-        given(boardRepository.save(any())).willReturn(targetBoard);
+        given(memberRepository.findById(anyLong()))
+                .willReturn(Optional.of(member1));
+        given(memberRepository.findByEmail(anyString()))
+                .willReturn(Optional.of(member1));
         given(boardRepository.findById(anyLong()))
                 .willReturn(Optional.of(targetBoard));
+        given(boardRepository.save(any())).willReturn(targetBoard);
+
         //when
         BoardUpdateRequest request = BoardUpdateRequest.builder()
                 .memberId(1L)
@@ -247,7 +258,7 @@ class BoardServiceTest {
                 .headcount(5)
                 .contents("empty at all")
                 .build();
-        Board board = boardService.updateBoard(13L, request);
+        Board board = boardService.updateBoard("AAA",13L, request);
         //then
         assertEquals(5, board.getHeadcount());
         assertEquals(13, board.getMember().getId());
@@ -283,11 +294,15 @@ class BoardServiceTest {
                 .date("2010-1-13").wineName("123").headcount(4).contents("123")
                 .time("7AM")
                 .build();
+        given(memberRepository.findById(anyLong()))
+                .willReturn(Optional.of(member1));
+        given(memberRepository.findByEmail(anyString()))
+                .willReturn(Optional.of(member1));
         given(boardRepository.findById(anyLong()))
                 .willReturn(Optional.of(targetBoard));
         ArgumentCaptor<Board> captor = ArgumentCaptor.forClass(Board.class);
         //when
-        boardService.deleteBoard(123L);
+        boardService.deleteBoard("AAA",123L);
         //then
         verify(boardRepository, times(1)).save(captor.capture());
         assertEquals(1, captor.getValue().getId());
@@ -300,7 +315,7 @@ class BoardServiceTest {
         given(boardRepository.existsByName(any())).willReturn(true);
         //when
         RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> boardService.creatBoard(1l,
+                () -> boardService.creatBoard("AAA", 1l,
                         BoardCreateRequest.builder()
                                 .memberId(1L)
                                 .name("name")
@@ -322,7 +337,7 @@ class BoardServiceTest {
         given(wineBarRepository.findById(anyLong())).willReturn(Optional.empty());
         //when
         RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> boardService.creatBoard(1l,
+                () -> boardService.creatBoard("aaa", 1l,
                         BoardCreateRequest.builder()
                                 .memberId(1L)
                                 .name("name")
@@ -376,12 +391,12 @@ class BoardServiceTest {
 
     @Test
     @DisplayName("fail update- board")
-    void failedUpdateBoard() {
+    void failedUpdateBoardNotFoundBoard() {
         //given
         given(boardRepository.findById(anyLong())).willReturn(Optional.empty());
         //when
         RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> boardService.updateBoard(1L,
+                () -> boardService.updateBoard("AAA", 1L,
                         BoardUpdateRequest.builder()
                                 .memberId(1L)
                                 .name("name")
@@ -398,12 +413,12 @@ class BoardServiceTest {
 
     @Test
     @DisplayName("fail delete! - board")
-    void failedDeleteBoard() {
+    void failedDeleteBoardNotFoundBoard() {
         //given
         given(boardRepository.findById(anyLong())).willReturn(Optional.empty());
         //when
         RuntimeException exception =  assertThrows(RuntimeException.class,
-                () -> boardService.deleteBoard(1L));
+                () -> boardService.deleteBoard("AAA", 1L));
         //then
         assertEquals("the board does not exist",exception.getMessage());
     }

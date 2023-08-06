@@ -1,6 +1,7 @@
 package com.be.friendy.warendy.domain.board.controller;
 
 
+import com.be.friendy.warendy.config.jwt.TokenProvider;
 import com.be.friendy.warendy.domain.board.dto.request.BoardCreateRequest;
 import com.be.friendy.warendy.domain.board.dto.request.BoardUpdateRequest;
 import com.be.friendy.warendy.domain.board.dto.response.BoardCreateResponse;
@@ -25,13 +26,16 @@ import java.time.LocalDate;
 @RequestMapping("/boards")
 public class BoardController {
     private final BoardService boardService;
+    private final TokenProvider tokenProvider;
 
     @PostMapping("/winebars/{winebar-id}")
     public ResponseEntity<BoardCreateResponse> boardCreate(
+            @RequestHeader("Authorization") String authorizationHeader,
             @PathVariable(value = "winebar-id") Long winebarId,
             @RequestBody BoardCreateRequest request
     ) {
-        return ResponseEntity.ok(boardService.creatBoard(winebarId, request));
+        String email = tokenProvider.getEmailFromToken(authorizationHeader);
+        return ResponseEntity.ok(boardService.creatBoard(email, winebarId, request));
     }
 
     @GetMapping("")
@@ -109,18 +113,22 @@ public class BoardController {
 
     @PutMapping("/{board-id}")
     public ResponseEntity<Board> boardUpdate(
+            @RequestHeader("Authorization") String authorizationHeader,
             @PathVariable(value = "board-id") Long boardId,
             @RequestBody BoardUpdateRequest boardUpdateRequest
     ) {
+        String email = tokenProvider.getEmailFromToken(authorizationHeader);
         return ResponseEntity.ok(
-                boardService.updateBoard(boardId, boardUpdateRequest));
+                boardService.updateBoard(email, boardId, boardUpdateRequest));
     }
 
     @DeleteMapping("/{board-id}")
     public ResponseEntity<String> boardDelete(
+            @RequestHeader("Authorization") String authorizationHeader,
             @PathVariable(value = "board-id") Long boardId
     ) {
-        boardService.deleteBoard(boardId);
+        String email = tokenProvider.getEmailFromToken(authorizationHeader);
+        boardService.deleteBoard(email, boardId);
         return ResponseEntity.ok("board is deleted!");
     }
 

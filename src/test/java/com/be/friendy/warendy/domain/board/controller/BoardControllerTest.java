@@ -21,6 +21,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -39,20 +40,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(value = BoardController.class,
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-                        classes = JwtAuthenticationFilter.class),
-                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-                        classes = TokenProvider.class)
+                        classes = JwtAuthenticationFilter.class)
         }
 )
 class BoardControllerTest {
 
     @MockBean
     private BoardService boardService;
+    @MockBean
+    private TokenProvider tokenProvider;
 
     @Autowired
     private MockMvc mockMvc;
 
-    //json에서 오브젝트로 오브젝트에서 json으로 바꿔주는
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -61,7 +61,10 @@ class BoardControllerTest {
     @DisplayName("success Create! - board")
     void successCreateBoard() throws Exception {
         //given
-        given(boardService.creatBoard(anyLong(), any()))
+        String email = "AAA";
+        given(tokenProvider.getEmailFromToken(any()))
+                .willReturn(email);
+        given(boardService.creatBoard(anyString(), anyLong(), any()))
                 .willReturn(BoardCreateResponse.builder()
                         .memberId(1L)
                         .winebarId(1L)
@@ -88,7 +91,9 @@ class BoardControllerTest {
                                         .wineName("wine name1")
                                         .headcount(4)
                                         .contents("hello world!1")
-                                        .build())))
+                                        .build()))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer ACCESS_TOKEN")
+                )
                 .andExpect(status().isOk())
                 .andExpect(
                         jsonPath("$.memberId").value(1))
@@ -105,7 +110,10 @@ class BoardControllerTest {
     @DisplayName("success Update! - board")
     void successUpdateBoard() throws Exception {
         //given
-        given(boardService.updateBoard(anyLong(), any()))
+        String email = "AAA";
+        given(tokenProvider.getEmailFromToken(any()))
+                .willReturn(email);
+        given(boardService.updateBoard(anyString(), anyLong(), any()))
                 .willReturn(Board.builder().id(1L)
                         .member(Member.builder().id(1L)
                                 .email("asdf@gmail.com")
@@ -145,7 +153,9 @@ class BoardControllerTest {
                                         .wineName("wine name1")
                                         .headcount(4)
                                         .contents("hello world!1")
-                                        .build())))
+                                        .build()))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer ACCESS_TOKEN")
+                )
                 .andExpect(status().isOk())
                 .andExpect(
                         jsonPath("$.member.id").value(1))
@@ -241,14 +251,146 @@ class BoardControllerTest {
     @DisplayName("success Delete - board")
     void successDeleteBoard() throws Exception {
         //given
+        String email = "AAA";
+        given(tokenProvider.getEmailFromToken(any()))
+                .willReturn(email);
+        given(boardService.creatBoard(anyString(), anyLong(), any()))
+                .willReturn(BoardCreateResponse.builder()
+                        .memberId(1L)
+                        .winebarId(1L)
+                        .name("board name")
+                        .creator("nick name")
+                        .date("2010-1-1")
+                        .time("7AM")
+                        .wineName("wine name")
+                        .headcount(4)
+                        .contents("hello world!")
+                        .build());
         Long deletedBoardID = 1L;
         //when
         //then
+
         mockMvc.perform(delete("/boards/{boardId}", deletedBoardID)
-                        .contentType(MediaType.APPLICATION_JSON).with(csrf()))
+                        .contentType(MediaType.APPLICATION_JSON).with(csrf())
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer ACCESS_TOKEN")
+                )
                 .andExpect(status().isOk())
                 .andDo(print());
 
+    }
+
+    @Test
+    @WithMockUser(roles = "MEMBER")
+    void failedCreateBoardByWrongUserInfo() throws Exception {
+        //given
+        given(boardService.creatBoard(anyString(), anyLong(), any()))
+                .willThrow(new RuntimeException("check the user information"));
+        //when
+        //then
+        mockMvc.perform(post("/boards/winebars/1")
+                        .contentType(MediaType.APPLICATION_JSON).with(csrf())
+                        .content(objectMapper
+                                .writeValueAsString(BoardCreateRequest
+                                        .builder()
+                                        .memberId(14L)
+                                        .name("board name1")
+                                        .creator("nick name1")
+                                        .date("2010-1-11")
+                                        .time("7AM")
+                                        .wineName("wine name1")
+                                        .headcount(4)
+                                        .contents("hello world!1")
+                                        .build()))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer ACCESS_TOKEN")
+                )
+                .andExpect(status().isOk())
+        ;
+    }
+
+    @Test
+    @WithMockUser(roles = "MEMBER")
+    void failedUpdateBoardByWrongUserInfo() throws Exception {
+        //given
+        given(boardService.updateBoard(anyString(), anyLong(), any()))
+                .willThrow(new RuntimeException("check the user information"));
+        //when
+        //then
+        mockMvc.perform(put("/boards/{board-id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON).with(csrf())
+                        .content(objectMapper
+                                .writeValueAsString(BoardUpdateRequest
+                                        .builder()
+                                        .memberId(14L)
+                                        .winebarId(15L)
+                                        .name("board name1")
+                                        .creator("nick name1")
+                                        .date("2010-1-11")
+                                        .time("7AM")
+                                        .wineName("wine name1")
+                                        .headcount(4)
+                                        .contents("hello world!1")
+                                        .build()))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer ACCESS_TOKEN")
+                )
+                .andExpect(status().isOk())
+        ;
+    }
+
+    @Test
+    @WithMockUser(roles = "MEMBER")
+    void failedCreateBoardNotFoundUser() throws Exception {
+        //given
+        given(boardService.creatBoard(anyString(), anyLong(), any()))
+                .willThrow(new RuntimeException("user does not exist"));
+        //when
+        //then
+        mockMvc.perform(post("/boards/winebars/1")
+                        .contentType(MediaType.APPLICATION_JSON).with(csrf())
+                        .content(objectMapper
+                                .writeValueAsString(BoardCreateRequest
+                                        .builder()
+                                        .memberId(14L)
+                                        .name("board name1")
+                                        .creator("nick name1")
+                                        .date("2010-1-11")
+                                        .time("7AM")
+                                        .wineName("wine name1")
+                                        .headcount(4)
+                                        .contents("hello world!1")
+                                        .build()))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer ACCESS_TOKEN")
+                )
+                .andExpect(status().isOk())
+        ;
+    }
+
+    @Test
+    @WithMockUser(roles = "MEMBER")
+    void failedUpdateBoardNotFoundUser() throws Exception {
+        //given
+        given(boardService.updateBoard(anyString(), anyLong(), any()))
+                .willThrow(new RuntimeException("user does not exist"));
+        //when
+        //then
+        mockMvc.perform(put("/boards/{board-id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON).with(csrf())
+                        .content(objectMapper
+                                .writeValueAsString(BoardUpdateRequest
+                                        .builder()
+                                        .memberId(14L)
+                                        .winebarId(15L)
+                                        .name("board name1")
+                                        .creator("nick name1")
+                                        .date("2010-1-11")
+                                        .time("7AM")
+                                        .wineName("wine name1")
+                                        .headcount(4)
+                                        .contents("hello world!1")
+                                        .build()))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer ACCESS_TOKEN")
+                )
+                .andExpect(status().isOk())
+        ;
     }
 
     @Test
@@ -262,6 +404,8 @@ class BoardControllerTest {
         //then
         mockMvc.perform(get("/boards/wine-name?wineName=AAA"))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+        ;
     }
+
 }
