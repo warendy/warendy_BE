@@ -1,6 +1,6 @@
 package com.be.friendy.warendy.domain.favorite.service;
 
-import com.be.friendy.warendy.domain.favorite.dto.request.AddWine;
+import com.be.friendy.warendy.domain.favorite.dto.request.GivenWineInfo;
 import com.be.friendy.warendy.domain.favorite.dto.request.CreateCategory;
 import com.be.friendy.warendy.domain.favorite.dto.response.Category;
 import com.be.friendy.warendy.domain.favorite.dto.response.Collection;
@@ -24,11 +24,11 @@ public class FavoriteService {
     private final MemberRepository memberRepository;
     private final WineRepository wineRepository;
 
-    public void addWineToFavorite(String email, AddWine request){
+    public void addWineToFavorite(String email, GivenWineInfo givenWineInfo){
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("user does not exist"));
 
-        Wine wineData = wineRepository.findById(request.getWineId()).orElseThrow(() -> new RuntimeException("wine does not exist"));
+        Wine wineData = wineRepository.findById(givenWineInfo.getWineId()).orElseThrow(() -> new RuntimeException("wine does not exist"));
 
         favoriteRepository.save(Favorite.builder()
                 .member(member)
@@ -38,22 +38,24 @@ public class FavoriteService {
     }
 
     public void addWineToCategory(String email, CreateCategory request){
-        Member member = memberRepository.findByEmail(email)
+        memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("user does not exist"));
-        System.out.println(request.getList().size());
-
         request.getList().forEach((e) -> {
                 String[] wineList = e.getWineIds().split(",");
                 for(int i = 0; i < wineList.length; i++){
-                    Wine wineData = wineRepository.findById(Long.parseLong(wineList[i]))
-                            .orElseThrow(() -> new RuntimeException("wine does not exist"));
-                    favoriteRepository.save(Favorite.builder()
-                            .member(member)
-                            .wine(wineData)
-                            .picture(wineData.getPicture())
-                            .category(e.getName())
-                            .build());
+                    Favorite data = favoriteRepository.findByWineId(Long.parseLong(wineList[i]))
+                            .orElseThrow(() -> new RuntimeException("wine does not exist in your collection"));
+                    Favorite updatedFavorite = addCategory(data, e.getName());
+                    favoriteRepository.save(updatedFavorite);
                 }});
+    }
+
+    public void deleteFavoriteWine(String email, GivenWineInfo givenWineInfo){
+        memberRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("user does not exist"));
+        Favorite favorite = favoriteRepository.findByWineId(givenWineInfo.getWineId())
+                .orElseThrow(() -> new RuntimeException("wine does not exist in your collection"));
+        favoriteRepository.delete(favorite);
     }
 
     public Collection findAllWines(String email){
@@ -62,26 +64,31 @@ public class FavoriteService {
         List<Favorite> favorites = favoriteRepository.findByMember(member);
 
         Map<String, List<WineInfo>> categoryMap = new HashMap<>();
-        List<WineInfo> wineInfoList = new ArrayList<>(); // List category data
+        List<WineInfo> wineInfoList = new ArrayList<>();
 
-        // Separate favorites with and without category
         for (Favorite favorite : favorites) {
             String categoryName = favorite.getCategory();
             WineInfo wineInfo = new WineInfo(favorite.getWine().getId(), favorite.getPicture());
-
             if (categoryName == null) {
-                wineInfoList.add(wineInfo); // Add to list category
+                wineInfoList.add(wineInfo);
             } else {
                 categoryMap.computeIfAbsent(categoryName, k -> new ArrayList<>()).add(wineInfo);
             }
         }
-
         List<Category> categoryList = categoryMap.entrySet().stream()
                 .map(entry -> new Category(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
-
-
         return new Collection(wineInfoList, categoryList);
+    }
+
+    private Favorite addCategory(Favorite data, String element){
+        return  Favorite.builder()
+                            .id(data.getId())
+                            .category(element)
+                            .member(data.getMember())
+                            .picture(data.getPicture())
+                            .wine(data.getWine())
+                        .build();
     }
 
 }
