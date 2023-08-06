@@ -34,7 +34,7 @@ public class MemberController {
     public void signIn(@RequestBody SignInRequest request, HttpServletResponse response){
         Member user = memberService.signIn(request);
         String token = tokenProvider.generateToken(user.getEmail());
-        response.addHeader("Authorization", "BEARER" + " " + token);
+        response.addHeader("Authorization", "Bearer" + " " + token);
         log.info("user login -> " + request.getEmail());
     }
 

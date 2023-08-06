@@ -8,6 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AddWine {
+public class GivenWineInfo {
     private Long wineId;
 }
