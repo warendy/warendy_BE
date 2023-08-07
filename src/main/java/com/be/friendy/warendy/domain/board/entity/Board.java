@@ -36,7 +36,7 @@ public class Board extends BaseEntity {
     private Winebar winebar;
 
     private String name;
-    private String creator;
+    private String nickname;
     private String date;
     private String time;
     private String wineName;
@@ -45,7 +45,7 @@ public class Board extends BaseEntity {
 
     public void updateBoardInfo(BoardUpdateRequest request) {
         name = request.getName();
-        creator = request.getCreator();
+        nickname = request.getNickname();
         date = request.getDate();
         wineName = request.getWineName();
         headcount = request.getHeadcount();

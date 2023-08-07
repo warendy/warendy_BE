@@ -15,7 +15,7 @@ public class BoardCreateResponse {
     private Long memberId;
     private Long winebarId;
     private String name;
-    private String creator;
+    private String nickname;
     private String date;
     private String time;
     private String wineName;
@@ -27,7 +27,7 @@ public class BoardCreateResponse {
                 .memberId(board.getMember().getId())
                 .winebarId(board.getWinebar().getId())
                 .name(board.getName())
-                .creator(board.getCreator())
+                .nickname(board.getNickname())
                 .date(board.getDate())
                 .time(board.getTime())
                 .wineName(board.getWineName())

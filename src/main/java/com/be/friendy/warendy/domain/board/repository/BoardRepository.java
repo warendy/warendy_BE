@@ -22,7 +22,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     Page<Board> findByWinebar(Winebar winebar, Pageable pageable);
 
-    Page<Board> findByCreator(String creator, Pageable pageable);
+    Page<Board> findByNickname(String creator, Pageable pageable);
 
     Page<Board> findByDate(String date, Pageable pageable);
 

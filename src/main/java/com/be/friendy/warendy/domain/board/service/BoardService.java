@@ -55,7 +55,7 @@ public class BoardService {
                         .member(memberById)
                         .winebar(winebar)
                         .name(createRequest.getName())
-                        .creator(createRequest.getCreator())
+                        .nickname(createRequest.getNickname())
                         .date(createRequest.getDate())
                         .wineName(createRequest.getWineName())
                         .headcount(createRequest.getHeadcount())
@@ -81,7 +81,7 @@ public class BoardService {
         Member memberByEmail = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("user does not exist"));
 
-        return boardRepository.findByCreator(memberByEmail.getNickname(),pageable)
+        return boardRepository.findByNickname(memberByEmail.getNickname(),pageable)
                 .map(BoardSearchResponse::fromEntity);
     }
 
@@ -118,7 +118,7 @@ public class BoardService {
         Member member = memberRepository.findByNickname(creator)
                 .orElseThrow(() -> new RuntimeException("user does not exist"));
 
-        return boardRepository.findByCreator(member.getNickname(), pageable)
+        return boardRepository.findByNickname(member.getNickname(), pageable)
                 .map(BoardSearchResponse::fromEntity);
     }
 
