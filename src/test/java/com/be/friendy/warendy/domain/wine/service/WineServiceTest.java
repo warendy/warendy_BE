@@ -118,14 +118,14 @@ class WineServiceTest {
                 .build();
         List<Wine> wineList = new ArrayList<>();
         wineList.add(wine1);
-        given(memberRepository.findById(anyLong()))
+        given(memberRepository.findByEmail(anyString()))
                 .willReturn(Optional.of(member1));
         given(wineRepository.findSimilarWines(
                 anyInt(), anyInt(), anyInt(), anyInt()))
                 .willReturn(wineList);
         //when
         List<RecommendWineResponse> recommendWines
-                = wineService.recommendWine(member1.getId());
+                = wineService.recommendWine(member1.getEmail());
         //then
         assertEquals(1, recommendWines.get(0).getBody());
         assertEquals(wine1.getName(), recommendWines.get(0).getWineName());
@@ -135,11 +135,11 @@ class WineServiceTest {
     @Test
     void failedRecommendationWineNotFoundMember() {
         //given
-        given(memberRepository.findById(anyLong()))
+        given(memberRepository.findByEmail(anyString()))
                 .willReturn(Optional.empty());
         //when
         RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> wineService.recommendWine(1L));
+                () -> wineService.recommendWine("AAA"));
         //then
         assertEquals("the user does not exist", exception.getMessage());
     }
