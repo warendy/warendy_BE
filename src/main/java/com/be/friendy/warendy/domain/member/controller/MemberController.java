@@ -31,11 +31,12 @@ public class MemberController {
     }
 
     @PostMapping("/signin")
-    public void signIn(@RequestBody SignInRequest request, HttpServletResponse response){
+    public InfoResponse signIn(@RequestBody SignInRequest request, HttpServletResponse response){
         Member user = memberService.signIn(request);
         String token = tokenProvider.generateToken(user.getEmail());
         response.addHeader("Authorization", "Bearer" + " " + token);
         log.info("user login -> " + request.getEmail());
+        return InfoResponse.fromEntity(user);
     }
 
     @GetMapping("/members")
