@@ -32,8 +32,8 @@ public class WineService {
                         wine, PageRequest.of(0, 5)).stream().toList()));
     }
 
-    public List<RecommendWineResponse> recommendWine(Long memberId) {
-        Member member = memberRepository.findById(memberId).orElseThrow(
+    public List<RecommendWineResponse> recommendWine(String Email) {
+        Member member = memberRepository.findByEmail(Email).orElseThrow(
                 () -> new RuntimeException("the user does not exist"));
         ;
         return wineRepository.findSimilarWines(

@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -31,15 +32,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(value = WineController.class,
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-                        classes = JwtAuthenticationFilter.class),
-                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-                        classes = TokenProvider.class)
+                        classes = JwtAuthenticationFilter.class)
         }
 )
 class WineControllerTest {
 
     @MockBean
     private WineService wineService;
+    @MockBean
+    private TokenProvider tokenProvider;
 
     @Autowired
     private MockMvc mockMvc;
@@ -84,6 +85,9 @@ class WineControllerTest {
     @WithMockUser(roles = "MEMBER")
     void successWineRecommendation() throws Exception {
         //given
+        String email = "AAA";
+        given(tokenProvider.getEmailFromToken(any()))
+                .willReturn(email);
         List<Review> reviewList = new ArrayList<>();
         List<WineReviewSearchByWineIdResponse> list = reviewList.stream()
                 .map(WineReviewSearchByWineIdResponse::fromEntity).toList();
@@ -107,13 +111,17 @@ class WineControllerTest {
                         .reviewList(list)
                         .build()
         );
-        given(wineService.recommendWine(anyLong()))
+        given(wineService.recommendWine(anyString()))
                 .willReturn(list1);
         //when
 
         //then
-        mockMvc.perform(get("/wines/recommendation?member-id=1")).andDo(print())
-                .andExpect(jsonPath("$.[0].pairing").value("food"));
+        mockMvc.perform(get("/wines/recommendation?member-id=1")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer ACCESS_TOKEN")
+                )
+                .andDo(print())
+                .andExpect(jsonPath("$.[0].pairing")
+                        .value("food"));
     }
 
 }
