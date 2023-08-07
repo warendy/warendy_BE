@@ -47,6 +47,7 @@ public class Board extends BaseEntity {
         name = request.getName();
         creator = request.getCreator();
         date = request.getDate();
+        time = request.getTime();
         wineName = request.getWineName();
         headcount = request.getHeadcount();
         contents = request.getContents();

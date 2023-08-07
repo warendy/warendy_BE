@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ReviewUpdateRequest {
+    private String nickname;
     private String contents;
     private Float rating;       // 유저 평점.
 }

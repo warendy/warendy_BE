@@ -7,6 +7,7 @@ import com.be.friendy.warendy.domain.member.entity.constant.Role;
 import com.be.friendy.warendy.domain.review.dto.request.ReviewUpdateRequest;
 import com.be.friendy.warendy.domain.review.dto.request.WineReviewCreateRequest;
 import com.be.friendy.warendy.domain.review.dto.response.MyReviewSearchResponse;
+import com.be.friendy.warendy.domain.review.dto.response.ReviewUpdateResponse;
 import com.be.friendy.warendy.domain.review.dto.response.WineReviewCreateResponse;
 import com.be.friendy.warendy.domain.review.dto.response.WineReviewSearchByWineIdResponse;
 import com.be.friendy.warendy.domain.review.entity.Review;
@@ -22,6 +23,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -40,14 +42,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(value = ReviewController.class,
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-                        classes = JwtAuthenticationFilter.class),
-                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-                        classes = TokenProvider.class)
+                        classes = JwtAuthenticationFilter.class)
         }
 )
 class ReviewControllerTest {
     @MockBean
     private ReviewService reviewService;
+    @MockBean
+    private TokenProvider tokenProvider;
 
     @Autowired
     private MockMvc mockMvc;
@@ -60,7 +62,10 @@ class ReviewControllerTest {
     @DisplayName("success create! - wine review")
     void successCreateWineReview() throws Exception {
         //given
-        given(reviewService.createWineReview(anyLong(), any()))
+        String email = "AAA";
+        given(tokenProvider.getEmailFromToken(any()))
+                .willReturn(email);
+        given(reviewService.createWineReview(anyString(), anyLong(), any()))
                 .willReturn(WineReviewCreateResponse.builder()
                         .nickname("Hong")
                         .wineName("AA")
@@ -79,7 +84,9 @@ class ReviewControllerTest {
                                         .contents("dong")
                                         .rating(1.0f)
                                         .build()
-                        )))
+                        ))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer ACCESS_TOKEN")
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.nickname").value("Hong"))
                 .andExpect(jsonPath("$.rating").value(1.1))
@@ -160,11 +167,16 @@ class ReviewControllerTest {
                         .build());
         PageImpl<MyReviewSearchResponse> myReviewPage =
                 new PageImpl<>(responseList);
-        given(reviewService.searchMyReview(anyString(), any()))
+        String email = "AAA";
+        given(tokenProvider.getEmailFromToken(any()))
+                .willReturn(email);
+        given(reviewService.searchMyReview(anyString(), anyString(), any()))
                 .willReturn(myReviewPage);
         //when
         //then
-        mockMvc.perform(get("/reviews/my-review/{nickname}", "A"))
+        mockMvc.perform(get("/reviews/my-review/{nickname}", "A")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer ACCESS_TOKEN")
+                )
                 .andDo(print())
                 .andExpect(jsonPath("$.content[0].wineName")
                         .value("AAA"));
@@ -175,50 +187,55 @@ class ReviewControllerTest {
     @DisplayName("success update! - review")
     void successUpdateReview() throws Exception {
         //given
-        given(reviewService.updateReview(anyLong(), any()))
-                .willReturn(Review.builder()
-                        .id(15L)
-                        .member(Member.builder()
-                                .id(13L)
-                                .email("asdf@gmail.com")
-                                .password("asdfasdfasdf")
-                                .nickname("Hong")
-                                .avatar("asdfasdfasdf")
-                                .mbti("istp")
-                                .role(Role.MEMBER).oauthType("fasdf")
-                                .body(1).dry(1).tannin(1).acidity(1)
-                                .build())
-                        .wine(Wine.builder()
-                                .id(1L)
-                                .name("AA")
-                                .vintage(1234)
-                                .price("12345")
-                                .picture("url-?")
-                                .body(1).dry(1).tannin(1).acidity(1).alcohol(1.1)
-                                .grapes("grapes")
-                                .pairing("food")
-                                .region("region1")
-                                .type("types")
-                                .winery("winery")
-                                .rating(1.1f)
-                                .build())
-                        .contents("AAAAAAA")
-                        .rating(4.2f)
-                        .build());
+        Review review = Review.builder()
+                .id(15L)
+                .member(Member.builder()
+                        .id(13L)
+                        .email("asdf@gmail.com")
+                        .password("asdfasdfasdf")
+                        .nickname("Hong")
+                        .avatar("asdfasdfasdf")
+                        .mbti("istp")
+                        .role(Role.MEMBER).oauthType("fasdf")
+                        .body(1).dry(1).tannin(1).acidity(1)
+                        .build())
+                .wine(Wine.builder()
+                        .id(1L)
+                        .name("AA")
+                        .vintage(1234)
+                        .price("12345")
+                        .picture("url-?")
+                        .body(1).dry(1).tannin(1).acidity(1).alcohol(1.1)
+                        .grapes("grapes")
+                        .pairing("food")
+                        .region("region1")
+                        .type("types")
+                        .winery("winery")
+                        .rating(1.1f)
+                        .build())
+                .contents("AAAAAAA")
+                .rating(4.2f)
+                .build();
+        String email = "AAA";
+        given(tokenProvider.getEmailFromToken(any()))
+                .willReturn(email);
+        given(reviewService.updateReview(anyString(), anyLong(), any()))
+                .willReturn(ReviewUpdateResponse.fromEntity(review));
         //when
         //then
         mockMvc.perform(put("/reviews/{review-id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper.writeValueAsString(
                                 ReviewUpdateRequest.builder()
+                                        .nickname("AAA")
                                         .contents("CC")
                                         .rating(1.9f)
-                                        .build())))
+                                        .build()))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer ACCESS_TOKEN")
+                )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.member.nickname")
+                .andExpect(jsonPath("$.nickname")
                         .value("Hong"))
-                .andExpect(jsonPath("$.wine.name")
-                        .value("AA"))
                 .andExpect(jsonPath("$.contents")
                         .value("AAAAAAA"))
                 .andDo(print());
@@ -230,10 +247,15 @@ class ReviewControllerTest {
     void successDeleteReview() throws Exception {
         //given
         Long deletedReview = 1L;
+        String email = "AAA";
+        given(tokenProvider.getEmailFromToken(any()))
+                .willReturn(email);
         //when
         //then
         mockMvc.perform(delete("/reviews/{review-id}", deletedReview)
-                        .contentType(MediaType.APPLICATION_JSON).with(csrf()))
+                        .contentType(MediaType.APPLICATION_JSON).with(csrf())
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer ACCESS_TOKEN")
+                )
                 .andExpect(status().isOk())
                 .andDo(print());
     }

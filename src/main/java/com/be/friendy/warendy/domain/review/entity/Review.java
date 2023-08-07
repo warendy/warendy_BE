@@ -24,12 +24,12 @@ public class Review extends BaseEntity {
     @Column(name = "REVIEW_ID") // 아이디에 해당하는 컬럼명 선언
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "MEMBER_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "MEMBER_ID", nullable = false)
     private Member member;
 
-    @ManyToOne
-    @JoinColumn(name = "WINE_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "WINE_ID", nullable = false)
     private Wine wine;
 
     private String contents;
