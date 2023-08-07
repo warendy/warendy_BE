@@ -90,7 +90,7 @@ class BoardServiceTest {
                         .member(member1)
                         .winebar(winebar1)
                         .name("A")
-                        .creator("A")
+                        .nickname("A")
                         .date("2010-1-13")
                         .time("7AM")
                         .wineName("123")
@@ -101,7 +101,7 @@ class BoardServiceTest {
         BoardCreateRequest createRequest = BoardCreateRequest.builder()
                 .memberId(1L)
                 .name("board name")
-                .creator("nick name")
+                .nickname("nick name")
                 .date("2010-1-1")
                 .time("7AM")
                 .wineName("wine name")
@@ -113,7 +113,7 @@ class BoardServiceTest {
         //then - given에서 값과 일치
         assertEquals(13L, createResponse.getMemberId());
         assertEquals(1L, createResponse.getWinebarId());
-        assertEquals("A", createResponse.getCreator());
+        assertEquals("A", createResponse.getNickname());
         assertEquals(4, createResponse.getHeadcount());
     }
 
@@ -141,7 +141,7 @@ class BoardServiceTest {
                 .build();
         Board board =  Board.builder()
                 .id(1L).member(member1).winebar(winebar1).name("A")
-                .creator("A").date("2010-1-13").time("7AM")
+                .nickname("A").date("2010-1-13").time("7AM")
                 .wineName("123").headcount(4).contents("123")
                 .build();
         given(boardRepository.findById(board.getId()))
@@ -152,6 +152,58 @@ class BoardServiceTest {
         //then
         assertEquals("AA", boardDetailResponse.getWinebarName());
 
+    }
+
+    @Test
+    void successSearchMyBoard() {
+        //given
+        Member member1 = Member.builder()
+                .id(13L)
+                .email("asdf@gmail.com")
+                .password("asdfasdfasdf")
+                .nickname("nick name").avatar("asdfasdfasdf")
+                .mbti("istp")
+                .role(Role.MEMBER).oauthType("fasdf")
+                .body(1).dry(1).tannin(1).acidity(1)
+                .build();
+        Winebar winebar1 = Winebar.builder()
+                .id(1L)
+                .name("AA")
+                .picture("asdfasdf")
+                .address("tttttttt")
+                .lat(0.0)
+                .lnt(0.0)
+                .rating(1.1)
+                .reviews(1)
+                .build();
+        List<Board> boardList = Arrays.asList(
+                Board.builder()
+                        .id(1L).member(member1).winebar(winebar1).name("A")
+                        .nickname("A").date("2010-1-13").time("7AM")
+                        .wineName("123").headcount(4).contents("123")
+                        .build(),
+                Board.builder()
+                        .id(1L).member(member1).winebar(winebar1).name("Ab")
+                        .nickname("Ab").date("2010-1-13b").time("7AM")
+                        .wineName("123b").headcount(45).contents("123b")
+                        .build(),
+                Board.builder()
+                        .id(1L).member(member1).winebar(winebar1).name("Ac")
+                        .nickname("Ac").date("2010-1-13c").time("7AM")
+                        .wineName("123c").headcount(46).contents("123c")
+                        .build()
+        );
+        given(memberRepository.findByEmail(anyString()))
+                .willReturn(Optional.of(member1));
+        given(boardRepository.findByNickname(anyString(), any()))
+                .willReturn(new PageImpl<>(boardList));
+        //when
+        Pageable pageable = PageRequest.of(0, 3);
+        Page<BoardSearchResponse> MyBoardPage
+                = boardService.searchMyBoardByEmail("AAA", pageable);
+        //then
+        assertEquals(3, MyBoardPage.getTotalElements());
+        assertEquals(1, MyBoardPage.getTotalPages());
     }
 
     @Test
@@ -180,23 +232,23 @@ class BoardServiceTest {
         List<Board> boardList = Arrays.asList(
                 Board.builder()
                         .id(1L).member(member1).winebar(winebar1).name("A")
-                        .creator("A").date("2010-1-13").time("7AM")
+                        .nickname("A").date("2010-1-13").time("7AM")
                         .wineName("123").headcount(4).contents("123")
                         .build(),
                 Board.builder()
                         .id(1L).member(member1).winebar(winebar1).name("Ab")
-                        .creator("Ab").date("2010-1-13b").time("7AM")
+                        .nickname("Ab").date("2010-1-13b").time("7AM")
                         .wineName("123b").headcount(45).contents("123b")
                         .build(),
                 Board.builder()
                         .id(1L).member(member1).winebar(winebar1).name("Ac")
-                        .creator("Ac").date("2010-1-13c").time("7AM")
+                        .nickname("Ac").date("2010-1-13c").time("7AM")
                         .wineName("123c").headcount(46).contents("123c")
                         .build()
         );
         given(memberRepository.findByNickname(anyString()))
                 .willReturn(Optional.ofNullable(member1));
-        given(boardRepository.findByCreator(anyString(), any()))
+        given(boardRepository.findByNickname(anyString(), any()))
                 .willReturn(new PageImpl<>(boardList));
         //when
         Pageable pageable = PageRequest.of(0, 3);
@@ -205,7 +257,7 @@ class BoardServiceTest {
         //then
         assertEquals(3, boardPage.getTotalElements());
         assertEquals(1, boardPage.getTotalPages());
-        assertEquals("A", boardPage.getContent().get(0).getCreator());
+        assertEquals("A", boardPage.getContent().get(0).getNickname());
         assertEquals("123b", boardPage.getContent().get(1).getWineName());
         assertEquals("AA", boardPage.getContent().get(2).getWinebarName());
     }
@@ -234,7 +286,7 @@ class BoardServiceTest {
                 .reviews(1)
                 .build();
         Board targetBoard = Board.builder()
-                .id(1L).member(member1).winebar(winebar1).name("A").creator("A")
+                .id(1L).member(member1).winebar(winebar1).name("A").nickname("A")
                 .date("2010-1-13").wineName("123").headcount(4).contents("123")
                 .time("7AM")
                 .build();
@@ -251,7 +303,7 @@ class BoardServiceTest {
                 .memberId(1L)
                 .winebarId(1L)
                 .name("name1")
-                .creator("creator!")
+                .nickname("creator!")
                 .date("2020-1-1")
                 .time("7AM")
                 .wineName("AAA")
@@ -290,7 +342,7 @@ class BoardServiceTest {
                 .reviews(1)
                 .build();
         Board targetBoard = Board.builder()
-                .id(1L).member(member1).winebar(winebar1).name("A").creator("A")
+                .id(1L).member(member1).winebar(winebar1).name("A").nickname("A")
                 .date("2010-1-13").wineName("123").headcount(4).contents("123")
                 .time("7AM")
                 .build();
@@ -315,11 +367,11 @@ class BoardServiceTest {
         given(boardRepository.existsByName(any())).willReturn(true);
         //when
         RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> boardService.creatBoard("AAA", 1l,
+                () -> boardService.creatBoard("AAA", 1L,
                         BoardCreateRequest.builder()
                                 .memberId(1L)
                                 .name("name")
-                                .creator("creator")
+                                .nickname("creator")
                                 .date("2020-1-1")
                                 .time("7AM")
                                 .wineName("winename")
@@ -337,11 +389,11 @@ class BoardServiceTest {
         given(wineBarRepository.findById(anyLong())).willReturn(Optional.empty());
         //when
         RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> boardService.creatBoard("aaa", 1l,
+                () -> boardService.creatBoard("aaa", 1L,
                         BoardCreateRequest.builder()
                                 .memberId(1L)
                                 .name("name")
-                                .creator("creator")
+                                .nickname("creator")
                                 .date("2020-1-1")
                                 .time("7AM")
                                 .wineName("winename")
@@ -361,6 +413,19 @@ class BoardServiceTest {
                 () -> boardService.searchBoardDetail(1L));
         //then
         assertEquals("the board does not exist",exception.getMessage());
+    }
+
+    @Test
+    void failedSearchMyBoardNotFoundUser() {
+        //given
+        given(memberRepository.findByEmail(anyString()))
+                .willReturn(Optional.empty());
+        //when
+        Pageable pageable = PageRequest.of(0,3);
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> boardService.searchMyBoardByEmail("AAA", pageable));
+        //then
+        assertEquals("user does not exist",exception.getMessage());
     }
 
     @Test
@@ -400,7 +465,7 @@ class BoardServiceTest {
                         BoardUpdateRequest.builder()
                                 .memberId(1L)
                                 .name("name")
-                                .creator("creator")
+                                .nickname("creator")
                                 .date("2020-1-1")
                                 .time("7AM")
                                 .wineName("winename")

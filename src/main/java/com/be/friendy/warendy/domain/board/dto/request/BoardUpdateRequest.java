@@ -13,7 +13,7 @@ public class BoardUpdateRequest {
     private Long memberId;
     private Long winebarId;
     private String name;
-    private String creator;
+    private String nickname;
     private String date;
     private String time;
     private String wineName;

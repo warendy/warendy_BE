@@ -14,7 +14,7 @@ public class BoardSearchResponse {
 
     private String name;        // board 제목
     private String winebarName;
-    private String creator;
+    private String nickname;
     private String date;
     private String time;
     private String wineName;
@@ -25,7 +25,7 @@ public class BoardSearchResponse {
         return BoardSearchResponse.builder()
                 .name(board.getName())
                 .winebarName(board.getWinebar().getName())
-                .creator(board.getCreator())
+                .nickname(board.getNickname())
                 .date(board.getDate())
                 .time(board.getTime())
                 .wineName(board.getWineName())

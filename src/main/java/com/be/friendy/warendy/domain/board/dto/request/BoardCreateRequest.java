@@ -18,7 +18,7 @@ public class BoardCreateRequest {
 
     private String name;
 
-    private String creator;
+    private String nickname;
 
     private String date;
 
@@ -35,7 +35,7 @@ public class BoardCreateRequest {
                 .member(member)
                 .winebar(wineBar)
                 .name(name)
-                .creator(member.getNickname())
+                .nickname(member.getNickname())
                 .date(date)
                 .time(time)
                 .wineName(wineName)
