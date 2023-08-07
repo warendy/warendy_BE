@@ -21,11 +21,8 @@ public record InfoResponse (
     public static InfoResponse fromEntity(Member member) {
         return InfoResponse.builder()
                 .email(member.getEmail())
-                .password(member.getPassword())
                 .nickname(member.getNickname())
-                .oauthType(member.getOauthType())
                 .avatar(member.getAvatar())
-                .role(member.getRole())
                 .body(member.getBody())
                 .dry(member.getDry())
                 .tannin(member.getTannin())
