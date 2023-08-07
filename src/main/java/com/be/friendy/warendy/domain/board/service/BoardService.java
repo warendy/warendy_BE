@@ -75,6 +75,16 @@ public class BoardService {
                 .orElseThrow(() -> new RuntimeException("the board does not exist"));
     }
 
+    public Page<BoardSearchResponse> searchMyBoardByEmail(
+            String email, Pageable pageable
+    ) {
+        Member memberByEmail = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("user does not exist"));
+
+        return boardRepository.findByCreator(memberByEmail.getNickname(),pageable)
+                .map(BoardSearchResponse::fromEntity);
+    }
+
     public Page<BoardSearchResponse> searchBoardByBoardName(
             String name, Pageable pageable
     ) {

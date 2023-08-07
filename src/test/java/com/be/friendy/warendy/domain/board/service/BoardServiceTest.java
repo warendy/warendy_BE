@@ -155,6 +155,58 @@ class BoardServiceTest {
     }
 
     @Test
+    void successSearchMyBoard() {
+        //given
+        Member member1 = Member.builder()
+                .id(13L)
+                .email("asdf@gmail.com")
+                .password("asdfasdfasdf")
+                .nickname("nick name").avatar("asdfasdfasdf")
+                .mbti("istp")
+                .role(Role.MEMBER).oauthType("fasdf")
+                .body(1).dry(1).tannin(1).acidity(1)
+                .build();
+        Winebar winebar1 = Winebar.builder()
+                .id(1L)
+                .name("AA")
+                .picture("asdfasdf")
+                .address("tttttttt")
+                .lat(0.0)
+                .lnt(0.0)
+                .rating(1.1)
+                .reviews(1)
+                .build();
+        List<Board> boardList = Arrays.asList(
+                Board.builder()
+                        .id(1L).member(member1).winebar(winebar1).name("A")
+                        .creator("A").date("2010-1-13").time("7AM")
+                        .wineName("123").headcount(4).contents("123")
+                        .build(),
+                Board.builder()
+                        .id(1L).member(member1).winebar(winebar1).name("Ab")
+                        .creator("Ab").date("2010-1-13b").time("7AM")
+                        .wineName("123b").headcount(45).contents("123b")
+                        .build(),
+                Board.builder()
+                        .id(1L).member(member1).winebar(winebar1).name("Ac")
+                        .creator("Ac").date("2010-1-13c").time("7AM")
+                        .wineName("123c").headcount(46).contents("123c")
+                        .build()
+        );
+        given(memberRepository.findByEmail(anyString()))
+                .willReturn(Optional.of(member1));
+        given(boardRepository.findByCreator(anyString(), any()))
+                .willReturn(new PageImpl<>(boardList));
+        //when
+        Pageable pageable = PageRequest.of(0, 3);
+        Page<BoardSearchResponse> MyBoardPage
+                = boardService.searchMyBoardByEmail("AAA", pageable);
+        //then
+        assertEquals(3, MyBoardPage.getTotalElements());
+        assertEquals(1, MyBoardPage.getTotalPages());
+    }
+
+    @Test
     @DisplayName("success search with a creator! - board")
     void successSearchBoardByCreator() {
         //given
@@ -361,6 +413,19 @@ class BoardServiceTest {
                 () -> boardService.searchBoardDetail(1L));
         //then
         assertEquals("the board does not exist",exception.getMessage());
+    }
+
+    @Test
+    void failedSearchMyBoardNotFoundUser() {
+        //given
+        given(memberRepository.findByEmail(anyString()))
+                .willReturn(Optional.empty());
+        //when
+        Pageable pageable = PageRequest.of(0,3);
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> boardService.searchMyBoardByEmail("AAA", pageable));
+        //then
+        assertEquals("user does not exist",exception.getMessage());
     }
 
     @Test

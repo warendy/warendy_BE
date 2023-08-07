@@ -38,7 +38,7 @@ public class BoardController {
         return ResponseEntity.ok(boardService.creatBoard(email, winebarId, request));
     }
 
-    @GetMapping("")
+    @GetMapping("/all")
     public ResponseEntity<Page<BoardSearchResponse>> boardSearch(
             @PageableDefault(size = 3) Pageable pageable
     ) {
@@ -50,6 +50,15 @@ public class BoardController {
             @PathVariable("board-id") Long boardId
     ) {
         return ResponseEntity.ok(boardService.searchBoardDetail(boardId));
+    }
+
+    @GetMapping("")
+    public ResponseEntity<Page<BoardSearchResponse>> boardSearchMyBoard(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @PageableDefault(size = 3) Pageable pageable
+    ) {
+        String email = tokenProvider.getEmailFromToken(authorizationHeader);
+        return ResponseEntity.ok(boardService.searchMyBoardByEmail(email, pageable));
     }
 
     @GetMapping("/board-name")
