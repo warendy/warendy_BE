@@ -1,8 +1,11 @@
 package com.be.friendy.warendy.domain.winebar.dto.response;
 
 
+import com.be.friendy.warendy.domain.board.dto.response.BoardSearchResponse;
 import com.be.friendy.warendy.domain.winebar.entity.Winebar;
 import lombok.*;
+
+import java.util.List;
 
 @Setter
 @Getter
@@ -26,6 +29,8 @@ public class WinebarSearchResponse {
 
     private Integer reviews;
 
+    private List<BoardSearchResponse> boardList;
+
     public static WinebarSearchResponse fromEntity(Winebar winebar) {
         return WinebarSearchResponse.builder()
                 .name(winebar.getName())
@@ -35,6 +40,9 @@ public class WinebarSearchResponse {
                 .lat(winebar.getLat())
                 .rating(winebar.getRating())
                 .reviews(winebar.getReviews())
+                .boardList(winebar.getBoardList()
+                        .stream().map(BoardSearchResponse::fromEntity)
+                        .toList())
                 .build();
     }
 
