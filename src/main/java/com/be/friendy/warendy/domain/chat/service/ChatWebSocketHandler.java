@@ -9,6 +9,7 @@ import com.be.friendy.warendy.domain.chat.repository.ChatRoomRepository;
 import com.be.friendy.warendy.domain.chat.repository.MessageRepository;
 import com.be.friendy.warendy.domain.member.entity.Member;
 import com.be.friendy.warendy.domain.member.repository.MemberRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     private final MessageRepository messageRepository;
     private final MemberRepository memberRepository;
     private final WebSocketSessionService webSocketSessionService;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
@@ -68,7 +70,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
             List<MessageDto> previousMessages = chatService.getChatMessages(roomId, email);
             for (MessageDto previousMessage : previousMessages) {
-                session.sendMessage(new TextMessage(previousMessage.getContent()));
+                String jsonMessage = objectMapper.writeValueAsString(previousMessage); // ObjectMapper를 사용하여 DTO를 JSON으로 변환
+                session.sendMessage(new TextMessage(jsonMessage));
             }
         } catch (RuntimeException e) {
             log.error("RuntimeException in establishing connection : ", e);
