@@ -25,10 +25,10 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final TokenProvider tokenProvider;
 
-    @PostMapping("/wines/{wine-id}")
+    @PostMapping("/wines")
     public ResponseEntity<WineReviewCreateResponse> wineReviewCreate(
             @RequestHeader("Authorization") String authorizationHeader,
-            @PathVariable(value = "wine-id") Long wineId,
+            @RequestParam(value = "wine-id") Long wineId,
             @RequestBody WineReviewCreateRequest wineReviewCreateRequest
     ) {
         String email = tokenProvider.getEmailFromToken(authorizationHeader);
@@ -36,25 +36,24 @@ public class ReviewController {
                 reviewService.createWineReview(email, wineId, wineReviewCreateRequest));
     }
 
-    @GetMapping("/wines/{wine-id}")
+    @GetMapping("/wines")
     public ResponseEntity<Page<WineReviewSearchByWineIdResponse>>
     wineReviewSearchByWineId(
-            @PathVariable(value = "wine-id") Long wineId,
+            @RequestParam(value = "wine-id") Long wineId,
             @PageableDefault(size = 3) Pageable pageable) {
 
         return ResponseEntity.ok(
                 reviewService.searchWineReviewByWineId(wineId, pageable));
     }
 
-    @GetMapping("/my-review/{nickname}")
+    @GetMapping("/my")
     public ResponseEntity<Page<MyReviewSearchResponse>> MyReviewSearch(
             @RequestHeader("Authorization") String authorizationHeader,
-            @PathVariable String nickname,
             @PageableDefault(size = 3) Pageable pageable
     ) {
         String email = tokenProvider.getEmailFromToken(authorizationHeader);
         return ResponseEntity.ok(
-                reviewService.searchMyReview(email, nickname, pageable));
+                reviewService.searchMyReview(email, pageable));
     }
 
     @PutMapping("/{review-id}")

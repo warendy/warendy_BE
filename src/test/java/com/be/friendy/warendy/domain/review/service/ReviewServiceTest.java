@@ -82,8 +82,6 @@ class ReviewServiceTest {
                 .rating(1.1f)
                 .build();
         // 순서대로
-        given(memberRepository.findByNickname(anyString()))
-                .willReturn(Optional.of(member1));
         given(memberRepository.findByEmail(anyString()))
                 .willReturn(Optional.of(member1));
         given(wineRepository.findById(anyLong()))
@@ -255,8 +253,6 @@ class ReviewServiceTest {
                                 .rating(3.1f)
                                 .build()
                 );
-        given(memberRepository.findByNickname(anyString()))
-                .willReturn(Optional.of(member1));
         given(memberRepository.findByEmail(anyString()))
                 .willReturn(Optional.of(member1));
         given(reviewRepository.findByMember(any(), any()))
@@ -264,7 +260,7 @@ class ReviewServiceTest {
         //when
         Pageable pageable = PageRequest.of(0, 3);
         Page<MyReviewSearchResponse> reviewPage =
-                reviewService.searchMyReview("AAA", "BBB", pageable);
+                reviewService.searchMyReview("AAA", pageable);
         //then
         assertEquals(3, reviewPage.getTotalElements());
         assertEquals(1, reviewPage.getTotalPages());
@@ -305,8 +301,6 @@ class ReviewServiceTest {
                 .contents("AAAAAAA")
                 .rating(4.2f)
                 .build();
-        given(memberRepository.findByNickname(anyString()))
-                .willReturn(Optional.of(member1));
         given(memberRepository.findByEmail(anyString()))
                 .willReturn(Optional.of(member1));
         given(reviewRepository.findById(anyLong()))
@@ -362,8 +356,6 @@ class ReviewServiceTest {
                 .build();
         given(reviewRepository.findById(anyLong()))
                 .willReturn(Optional.of(targetReview));
-        given(memberRepository.findByNickname(anyString()))
-                .willReturn(Optional.of(member1));
         given(memberRepository.findByEmail(anyString()))
                 .willReturn(Optional.of(member1));
         ArgumentCaptor<Review> captor = ArgumentCaptor.forClass(Review.class);

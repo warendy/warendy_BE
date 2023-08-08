@@ -76,7 +76,7 @@ class ReviewControllerTest {
                         .build());
         //when
         //then
-        mockMvc.perform(post("/reviews/wines/{wine-id}", 1L)
+        mockMvc.perform(post("/reviews/wines?wine-id=1")
                         .contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper.writeValueAsString(
                                 WineReviewCreateRequest.builder()
@@ -128,7 +128,7 @@ class ReviewControllerTest {
                 .willReturn(wineReviewPage);
         //when
         //then
-        mockMvc.perform(get("/reviews//wines/{wine-id}", 1L))
+        mockMvc.perform(get("/reviews/wines?wine-id=1"))
                 .andDo(print())
                 .andExpect(jsonPath("$.content[0].nickname")
                         .value("Hong"))
@@ -170,11 +170,11 @@ class ReviewControllerTest {
         String email = "AAA";
         given(tokenProvider.getEmailFromToken(any()))
                 .willReturn(email);
-        given(reviewService.searchMyReview(anyString(), anyString(), any()))
+        given(reviewService.searchMyReview(anyString(), any()))
                 .willReturn(myReviewPage);
         //when
         //then
-        mockMvc.perform(get("/reviews/my-review/{nickname}", "A")
+        mockMvc.perform(get("/reviews/my")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer ACCESS_TOKEN")
                 )
                 .andDo(print())
