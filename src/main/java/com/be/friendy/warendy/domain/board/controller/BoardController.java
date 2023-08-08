@@ -7,7 +7,7 @@ import com.be.friendy.warendy.domain.board.dto.request.BoardUpdateRequest;
 import com.be.friendy.warendy.domain.board.dto.response.BoardCreateResponse;
 import com.be.friendy.warendy.domain.board.dto.response.BoardSearchDetailResponse;
 import com.be.friendy.warendy.domain.board.dto.response.BoardSearchResponse;
-import com.be.friendy.warendy.domain.board.entity.Board;
+import com.be.friendy.warendy.domain.board.dto.response.BoardUpdateResponse;
 import com.be.friendy.warendy.domain.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,10 +28,10 @@ public class BoardController {
     private final BoardService boardService;
     private final TokenProvider tokenProvider;
 
-    @PostMapping("/winebars/{winebar-id}")
+    @PostMapping("/winebars")
     public ResponseEntity<BoardCreateResponse> boardCreate(
             @RequestHeader("Authorization") String authorizationHeader,
-            @PathVariable(value = "winebar-id") Long winebarId,
+            @RequestParam(value = "winebar-id") Long winebarId,
             @RequestBody BoardCreateRequest request
     ) {
         String email = tokenProvider.getEmailFromToken(authorizationHeader);
@@ -40,7 +40,7 @@ public class BoardController {
 
     @GetMapping("/all")
     public ResponseEntity<Page<BoardSearchResponse>> boardSearch(
-            @PageableDefault(size = 3) Pageable pageable
+            @PageableDefault(size = 10) Pageable pageable
     ) {
         return ResponseEntity.ok(boardService.searchBoard(pageable));
     }
@@ -55,7 +55,7 @@ public class BoardController {
     @GetMapping("")
     public ResponseEntity<Page<BoardSearchResponse>> boardSearchMyBoard(
             @RequestHeader("Authorization") String authorizationHeader,
-            @PageableDefault(size = 3) Pageable pageable
+            @PageableDefault(size = 10) Pageable pageable
     ) {
         String email = tokenProvider.getEmailFromToken(authorizationHeader);
         return ResponseEntity.ok(boardService.searchMyBoardByEmail(email, pageable));
@@ -77,6 +77,15 @@ public class BoardController {
     ) {
         return ResponseEntity.ok(boardService
                 .searchBoardByWineName(wineName, pageable));
+    }
+
+    @GetMapping("/winebar-id")
+    public ResponseEntity<Page<BoardSearchResponse>> boardSearchByWinebarId(
+            @RequestParam(value = "winebar-id") Long winebarId,
+            @PageableDefault(size = 3) Pageable pageable
+    ) {
+        return ResponseEntity.ok(boardService
+                .searchBoardByWinebarId(winebarId, pageable));
     }
 
     @GetMapping("/winebar-name")
@@ -121,7 +130,7 @@ public class BoardController {
     }
 
     @PutMapping("/{board-id}")
-    public ResponseEntity<Board> boardUpdate(
+    public ResponseEntity<BoardUpdateResponse> boardUpdate(
             @RequestHeader("Authorization") String authorizationHeader,
             @PathVariable(value = "board-id") Long boardId,
             @RequestBody BoardUpdateRequest boardUpdateRequest
