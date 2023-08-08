@@ -1,6 +1,5 @@
 package com.be.friendy.warendy.domain.winebar.service;
 
-import com.be.friendy.warendy.domain.board.entity.Board;
 import com.be.friendy.warendy.domain.winebar.dto.response.WinebarSearchResponse;
 import com.be.friendy.warendy.domain.winebar.entity.Winebar;
 import com.be.friendy.warendy.domain.winebar.repository.WinebarRepository;
@@ -10,7 +9,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,7 +27,6 @@ class WineBarServiceTest {
     @Test
     void successSearchWinebarAround() {
         //given
-        List<Board> boardList = new ArrayList<>();
         List<Winebar> winebarList =
                 Arrays.asList(
                         Winebar.builder()
@@ -41,7 +38,6 @@ class WineBarServiceTest {
                                 .lnt(1.1)
                                 .rating(1.1)
                                 .reviews(1)
-                                .boardList(boardList)
                                 .build(),
                         Winebar.builder()
                                 .id(1L)
@@ -52,7 +48,6 @@ class WineBarServiceTest {
                                 .lnt(1.13)
                                 .rating(1.1)
                                 .reviews(1)
-                                .boardList(boardList)
                                 .build(),
                         Winebar.builder()
                                 .id(3L)
@@ -63,7 +58,6 @@ class WineBarServiceTest {
                                 .lnt(1.1)
                                 .rating(1.1)
                                 .reviews(1)
-                                .boardList(boardList)
                                 .build()
                 );
 
