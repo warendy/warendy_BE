@@ -1,13 +1,10 @@
 package com.be.friendy.warendy.domain.winebar.entity;
 
 
-import com.be.friendy.warendy.domain.board.entity.Board;
 import com.be.friendy.warendy.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Where;
-
-import java.util.List;
 
 @Getter
 @ToString
@@ -38,6 +35,4 @@ public class Winebar extends BaseEntity {
 
     private Integer reviews;
 
-    @OneToMany(mappedBy = "winebar", fetch = FetchType.LAZY)
-    private List<Board> boardList;
 }
