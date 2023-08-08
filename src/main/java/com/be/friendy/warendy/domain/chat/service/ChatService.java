@@ -1,5 +1,6 @@
 package com.be.friendy.warendy.domain.chat.service;
 
+import com.be.friendy.warendy.domain.chat.dto.ChatRoomDto;
 import com.be.friendy.warendy.domain.chat.dto.MessageDto;
 import com.be.friendy.warendy.domain.chat.entity.ChatClient;
 import com.be.friendy.warendy.domain.chat.entity.ChatRoom;
@@ -9,6 +10,8 @@ import com.be.friendy.warendy.domain.chat.repository.ChatRoomRepository;
 import com.be.friendy.warendy.domain.chat.repository.MessageRepository;
 import com.be.friendy.warendy.domain.member.entity.Member;
 import com.be.friendy.warendy.domain.member.repository.MemberRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.http.HttpStatus;
@@ -45,6 +48,7 @@ public class ChatService {
     private final ConcurrentKafkaListenerContainerFactory<String, MessageDto> factory;
     private final WebSocketSessionService webSocketSessionService;
     private final Map<String, ConcurrentMessageListenerContainer<String, MessageDto>> containers = new ConcurrentHashMap<>();
+    private final ObjectMapper objectMapper;
 
     // 채팅방 생성
     public ChatRoom createChatRoom(String creatorId, String roomId, String name) {
@@ -59,7 +63,7 @@ public class ChatService {
         ChatRoom chatRoom = ChatRoom.builder()
                 .creator(member)
                 .roomId(roomId)
-                .memberNum(0)
+                .memberNum(1)
                 .name(name)
                 .build();
 
@@ -105,6 +109,17 @@ public class ChatService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not remove Kafka listener", e);
         }
 
+    }
+
+    public ChatRoomDto getChatRoomInfo(String roomId){
+        ChatRoom chatRoom;
+        try {
+            chatRoom = chatRoomRepository.findByRoomId(roomId)
+                    .orElseThrow(() -> new RuntimeException("Chat room not found"));
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid room ID", e);
+        }
+        return ChatRoomDto.fromEntity(chatRoom);
     }
 
     // 메시지 전송
@@ -169,8 +184,12 @@ public class ChatService {
 
 
         // 채팅방 참여인원 업데이트
-        chatRoom.setMemberNum(chatRoom.getMemberNum() + 1);
-        chatRoomRepository.save(chatRoom);
+        if(chatRoom.getCreator().getEmail().equals(userId)){
+            return;
+        }else{
+            chatRoom.setMemberNum(chatRoom.getMemberNum() + 1);
+            chatRoomRepository.save(chatRoom);
+        }
     }
 
     // 채팅방 퇴장
@@ -201,7 +220,7 @@ public class ChatService {
         // 해당 채팅방의 모든 웹소켓 세션 중, userId가 일치하는 세션 찾기 및 연결 해제
         Set<WebSocketSession> sessions = webSocketSessionService.getSessions(roomId);
         for (WebSocketSession session : sessions) {
-            if (userId.equals(getEmail(session.getPrincipal().getName()))) {
+            if (userId.equals(session.getAttributes().get("email"))) {
                 try {
                     session.close();
                 } catch (IOException e) {
@@ -226,11 +245,23 @@ public class ChatService {
 
                     // 이 부분은 message 객체를 어떻게 처리할지에 따라 달라질 수 있습니다.
                     // 예를 들어, message 객체가 text라는 속성을 가지고 있다면 아래와 같이 할 수 있습니다.
-                    String messageText = message.getContent();
+                    String jsonMessage = null;
+                    try {
+                        // 메시지 데이터를 JSON으로 만들기
+                        jsonMessage = objectMapper.writeValueAsString(message);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException("JSON objectMapping error!");
+                    }
+                    // content, 메시지 내용만 보내고 싶을 때 사용
+                    if(jsonMessage==null){
+                        String messageText = message.getContent();
+                        jsonMessage=messageText;
+                    }
 
                     for (WebSocketSession session : webSocketSessionService.getSessions(chatRoomId)) {
                         try {
-                            session.sendMessage(new TextMessage(messageText));
+//                            session.sendMessage(new TextMessage(messageText));
+                            session.sendMessage(new TextMessage(jsonMessage));
                         } catch (IOException e) {
                             throw new RuntimeException("createKafkaListener error!");
                         }
@@ -255,21 +286,21 @@ public class ChatService {
         }
     }
 
-    private String getEmail(String userId) {
-        // 쉼표 기준으로 문자열 분리
-        String[] infoParts = userId.split(", ");
-
-        // email 정보가 있는 부분을 찾는다.
-        String emailInfo = "";
-        for (String part : infoParts) {
-            if (part.startsWith("email=")) {
-                emailInfo = part;
-                break;
-            }
-        }
-
-        // email 정보 분리
-        String email = emailInfo.split("=")[1];
-        return email;
-    }
+//    private String getEmail(String userId) {
+//        // 쉼표 기준으로 문자열 분리
+//        String[] infoParts = userId.split(", ");
+//
+//        // email 정보가 있는 부분을 찾는다.
+//        String emailInfo = "";
+//        for (String part : infoParts) {
+//            if (part.startsWith("email=")) {
+//                emailInfo = part;
+//                break;
+//            }
+//        }
+//
+//        // email 정보 분리
+//        String email = emailInfo.split("=")[1];
+//        return email;
+//    }
 }

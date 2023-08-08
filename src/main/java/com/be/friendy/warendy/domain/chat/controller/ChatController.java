@@ -1,6 +1,7 @@
 package com.be.friendy.warendy.domain.chat.controller;
 
 import com.be.friendy.warendy.config.jwt.TokenProvider;
+import com.be.friendy.warendy.domain.chat.dto.ChatRoomDto;
 import com.be.friendy.warendy.domain.chat.dto.MessageDto;
 import com.be.friendy.warendy.domain.chat.entity.ChatRoom;
 import com.be.friendy.warendy.domain.chat.service.ChatService;
@@ -11,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -39,9 +39,19 @@ public class ChatController {
         }
     }
 
+    // 채팅방 정보 조회
+    @GetMapping("/rooms/{roomId}")
+    public ResponseEntity<ChatRoomDto> getChatRoomInfo(@RequestHeader("Authorization") String authorizationHeader, @PathVariable String roomId) {
+        try {
+            return ResponseEntity.ok(chatService.getChatRoomInfo(roomId));
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not get chatroom info", e);
+        }
+    }
+
     // 채팅방 삭제
     @DeleteMapping("/rooms/{roomId}")
-    public ResponseEntity<Void> deleteChatRoom(@PathVariable String roomId, @RequestHeader("Authorization") String authorizationHeader) throws IOException {
+    public ResponseEntity<Void> deleteChatRoom(@PathVariable String roomId, @RequestHeader("Authorization") String authorizationHeader) {
         String email;
         try {
             email = tokenProvider.getEmailFromToken(authorizationHeader);
@@ -122,4 +132,6 @@ public class ChatController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not leave chat room", e);
         }
     }
+
+
 }
