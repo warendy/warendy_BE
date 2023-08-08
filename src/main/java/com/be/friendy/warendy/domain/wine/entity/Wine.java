@@ -18,7 +18,8 @@ public class Wine {
     @Column(name = "WINE_ID") // 아이디에 해당하는 컬럼명 선언
     private Long id;
 
-    @OneToMany(mappedBy = "wine", fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "REVIEW_ID")
     private List<Review> reviewList;
 
     private String name;
