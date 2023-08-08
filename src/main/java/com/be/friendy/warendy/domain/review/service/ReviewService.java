@@ -29,22 +29,15 @@ public class ReviewService {
             , Long wineId, WineReviewCreateRequest wineReviewCreateRequest
     ) {
 
-        Member memberById = memberRepository
-                .findByNickname(wineReviewCreateRequest.getNickname())
-                .orElseThrow(() -> new RuntimeException("user does not exists"));
         Member memberByEmail = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("user does not exist"));
-
-        if (!memberById.equals(memberByEmail)) {
-            throw new RuntimeException("check the user information");
-        }
 
         Wine wine = wineRepository.findById(wineId)
                 .orElseThrow(() -> new RuntimeException("wine does not exists"));
 
         return WineReviewCreateResponse.fromEntity(reviewRepository.save(Review
                 .builder()
-                .member(memberById)
+                .member(memberByEmail)
                 .wine(wine)
                 .contents(wineReviewCreateRequest.getContents())
                 .rating(wineReviewCreateRequest.getRating())
@@ -54,38 +47,31 @@ public class ReviewService {
     public ReviewUpdateResponse updateReview(
             String email, Long reviewId, ReviewUpdateRequest reviewUpdateRequest
     ) {
-        Member memberById = memberRepository
-                .findByNickname(reviewUpdateRequest.getNickname())
-                .orElseThrow(() -> new RuntimeException("user does not exists"));
+        Review nowReview = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("the review does not exists"));
         Member memberByEmail = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("user does not exist"));
-        if (!memberById.equals(memberByEmail)) {
+        if (!nowReview.getMember().getId().equals(memberByEmail.getId())) {
             throw new RuntimeException("check the user information");
         }
 
-        Review nowReview = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new RuntimeException("the review does not exists"));
         nowReview.updateReviewInfo(reviewUpdateRequest);
         reviewRepository.save(nowReview);
         return ReviewUpdateResponse.fromEntity(nowReview);
     }
 
     public void deleteReview(String email, Long reviewId) {
-        Review review = reviewRepository.findById(reviewId)
+        Review nowReview = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new RuntimeException("the review does not exists"));
-        Member memberById = memberRepository
-                .findByNickname(review.getMember().getNickname())
-                .orElseThrow(() -> new RuntimeException("user does not exists"));
 
         Member memberByEmail = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("user does not exist"));
 
-        if (!memberById.equals(memberByEmail)) {
+        if (!nowReview.getMember().getId().equals(memberByEmail.getId())) {
             throw new RuntimeException("check the user information");
         }
-
-        reviewRepository.save(review);      // - test 코드 검증 위해
-        reviewRepository.delete(review);
+        reviewRepository.save(nowReview);      // - test 코드 검증 위해
+        reviewRepository.delete(nowReview);
     }
 
     public Page<WineReviewSearchByWineIdResponse> searchWineReviewByWineId(
@@ -98,18 +84,12 @@ public class ReviewService {
     }
 
     public Page<MyReviewSearchResponse> searchMyReview(
-            String email, String nickname, Pageable pageable
+            String email, Pageable pageable
     ) {
-        Member memberById = memberRepository.findByNickname(nickname)
-                .orElseThrow(() -> new RuntimeException("user does not exist"));
         Member memberByEmail = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("user does not exist"));
 
-        if (!memberById.equals(memberByEmail)) {
-            throw new RuntimeException("check the user information");
-        }
-        return reviewRepository.findByMember(memberById, pageable)
+        return reviewRepository.findByMember(memberByEmail, pageable)
                 .map(MyReviewSearchResponse::fromEntity);
     }
-
 }
