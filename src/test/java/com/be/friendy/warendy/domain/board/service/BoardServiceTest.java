@@ -6,6 +6,7 @@ import com.be.friendy.warendy.domain.board.dto.request.BoardUpdateRequest;
 import com.be.friendy.warendy.domain.board.dto.response.BoardCreateResponse;
 import com.be.friendy.warendy.domain.board.dto.response.BoardSearchDetailResponse;
 import com.be.friendy.warendy.domain.board.dto.response.BoardSearchResponse;
+import com.be.friendy.warendy.domain.board.dto.response.BoardUpdateResponse;
 import com.be.friendy.warendy.domain.board.entity.Board;
 import com.be.friendy.warendy.domain.board.repository.BoardRepository;
 import com.be.friendy.warendy.domain.member.entity.Member;
@@ -78,12 +79,10 @@ class BoardServiceTest {
                 .rating(1.1)
                 .reviews(1)
                 .build();
-        given(memberRepository.findById(anyLong()))
-                .willReturn(Optional.of(member1));
-        given(memberRepository.findByEmail(anyString()))
-                .willReturn(Optional.of(member1));
         given(wineBarRepository.findById(anyLong()))
                 .willReturn(Optional.of(winebar1));
+        given(memberRepository.findByEmail(anyString()))
+                .willReturn(Optional.of(member1));
         given(boardRepository.save(any()))
                 .willReturn(Board.builder()
                         .id(1L)
@@ -109,7 +108,7 @@ class BoardServiceTest {
                 .contents("hello world!")
                 .build();
         BoardCreateResponse createResponse =
-                boardService.creatBoard("AAA",13L, createRequest);
+                boardService.creatBoard("AAA", 13L, createRequest);
         //then - given에서 값과 일치
         assertEquals(13L, createResponse.getMemberId());
         assertEquals(1L, createResponse.getWinebarId());
@@ -139,7 +138,7 @@ class BoardServiceTest {
                 .rating(1.1)
                 .reviews(1)
                 .build();
-        Board board =  Board.builder()
+        Board board = Board.builder()
                 .id(1L).member(member1).winebar(winebar1).name("A")
                 .nickname("A").date("2010-1-13").time("7AM")
                 .wineName("123").headcount(4).contents("123")
@@ -204,6 +203,58 @@ class BoardServiceTest {
         //then
         assertEquals(3, MyBoardPage.getTotalElements());
         assertEquals(1, MyBoardPage.getTotalPages());
+    }
+
+    @Test
+    void successSearchBoardByWinebarId() {
+        //given
+        Member member1 = Member.builder()
+                .id(13L)
+                .email("asdf@gmail.com")
+                .password("asdfasdfasdf")
+                .nickname("nick name").avatar("asdfasdfasdf")
+                .mbti("istp")
+                .role(Role.MEMBER).oauthType("fasdf")
+                .body(1).dry(1).tannin(1).acidity(1)
+                .build();
+        Winebar winebar1 = Winebar.builder()
+                .id(1L)
+                .name("AA")
+                .picture("asdfasdf")
+                .address("tttttttt")
+                .lat(0.0)
+                .lnt(0.0)
+                .rating(1.1)
+                .reviews(1)
+                .build();
+        List<Board> boardList = Arrays.asList(
+                Board.builder()
+                        .id(1L).member(member1).winebar(winebar1).name("A")
+                        .nickname("A").date("2010-1-13").time("7AM")
+                        .wineName("123").headcount(4).contents("123")
+                        .build(),
+                Board.builder()
+                        .id(1L).member(member1).winebar(winebar1).name("Ab")
+                        .nickname("Ab").date("2010-1-13b").time("7AM")
+                        .wineName("123b").headcount(45).contents("123b")
+                        .build(),
+                Board.builder()
+                        .id(1L).member(member1).winebar(winebar1).name("Ac")
+                        .nickname("Ac").date("2010-1-13c").time("7AM")
+                        .wineName("123c").headcount(46).contents("123c")
+                        .build()
+        );
+        given(wineBarRepository.findById(anyLong()))
+                .willReturn(Optional.ofNullable(winebar1));
+        given(boardRepository.findByWinebar(any(), any()))
+                .willReturn(new PageImpl<>(boardList));
+        //when
+        Pageable pageable = PageRequest.of(0, 3);
+        Page<BoardSearchResponse> boardPage
+                = boardService.searchBoardByWinebarId(11L, pageable);
+        //then
+        assertEquals(3, boardPage.getTotalElements());
+        assertEquals(1, boardPage.getTotalPages());
     }
 
     @Test
@@ -290,12 +341,10 @@ class BoardServiceTest {
                 .date("2010-1-13").wineName("123").headcount(4).contents("123")
                 .time("7AM")
                 .build();
-        given(memberRepository.findById(anyLong()))
-                .willReturn(Optional.of(member1));
-        given(memberRepository.findByEmail(anyString()))
-                .willReturn(Optional.of(member1));
         given(boardRepository.findById(anyLong()))
                 .willReturn(Optional.of(targetBoard));
+        given(memberRepository.findByEmail(anyString()))
+                .willReturn(Optional.of(member1));
         given(boardRepository.save(any())).willReturn(targetBoard);
 
         //when
@@ -310,11 +359,10 @@ class BoardServiceTest {
                 .headcount(5)
                 .contents("empty at all")
                 .build();
-        Board board = boardService.updateBoard("AAA",13L, request);
+        BoardUpdateResponse board = boardService.updateBoard("AAA", 13L, request);
         //then
         assertEquals(5, board.getHeadcount());
-        assertEquals(13, board.getMember().getId());
-        assertEquals(16, board.getWinebar().getId());
+        assertEquals("creator!", board.getNickname());
         assertEquals("AAA", board.getWineName());
     }
 
@@ -346,15 +394,13 @@ class BoardServiceTest {
                 .date("2010-1-13").wineName("123").headcount(4).contents("123")
                 .time("7AM")
                 .build();
-        given(memberRepository.findById(anyLong()))
-                .willReturn(Optional.of(member1));
-        given(memberRepository.findByEmail(anyString()))
-                .willReturn(Optional.of(member1));
         given(boardRepository.findById(anyLong()))
                 .willReturn(Optional.of(targetBoard));
+        given(memberRepository.findByEmail(anyString()))
+                .willReturn(Optional.of(member1));
         ArgumentCaptor<Board> captor = ArgumentCaptor.forClass(Board.class);
         //when
-        boardService.deleteBoard("AAA",123L);
+        boardService.deleteBoard("AAA", 123L);
         //then
         verify(boardRepository, times(1)).save(captor.capture());
         assertEquals(1, captor.getValue().getId());
@@ -379,7 +425,7 @@ class BoardServiceTest {
                                 .contents("cont")
                                 .build()));
         //then
-        assertEquals("already exists",exception.getMessage());
+        assertEquals("already exists", exception.getMessage());
     }
 
     @Test
@@ -401,7 +447,7 @@ class BoardServiceTest {
                                 .contents("cont")
                                 .build()));
         //then
-        assertEquals("winebar does not exist",exception.getMessage());
+        assertEquals("winebar does not exist", exception.getMessage());
     }
 
     @Test
@@ -412,7 +458,7 @@ class BoardServiceTest {
         RuntimeException exception = assertThrows(RuntimeException.class,
                 () -> boardService.searchBoardDetail(1L));
         //then
-        assertEquals("the board does not exist",exception.getMessage());
+        assertEquals("the board does not exist", exception.getMessage());
     }
 
     @Test
@@ -421,11 +467,25 @@ class BoardServiceTest {
         given(memberRepository.findByEmail(anyString()))
                 .willReturn(Optional.empty());
         //when
-        Pageable pageable = PageRequest.of(0,3);
+        Pageable pageable = PageRequest.of(0, 3);
         RuntimeException exception = assertThrows(RuntimeException.class,
                 () -> boardService.searchMyBoardByEmail("AAA", pageable));
         //then
-        assertEquals("user does not exist",exception.getMessage());
+        assertEquals("user does not exist", exception.getMessage());
+    }
+
+    @Test
+    void failSearchBoardNotFoundWinebar() {
+        //given
+        given(wineBarRepository.findById(anyLong()))
+                .willReturn(Optional.empty());
+        //when
+        Pageable pageable = PageRequest.of(0, 3);
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> boardService.searchBoardByWinebarId(15L, pageable));
+        //then
+        assertEquals("the winebar does not exist", exception.getMessage());
+
     }
 
     @Test
@@ -434,11 +494,11 @@ class BoardServiceTest {
         //given
         given(wineRepository.findByName(anyString())).willReturn(Optional.empty());
         //when
-        Pageable pageable = PageRequest.of(0,3);
+        Pageable pageable = PageRequest.of(0, 3);
         RuntimeException exception = assertThrows(RuntimeException.class,
                 () -> boardService.searchBoardByWineName("A", pageable));
         //then
-        assertEquals("the wine does not exist",exception.getMessage());
+        assertEquals("the wine does not exist", exception.getMessage());
     }
 
     @Test
@@ -447,11 +507,11 @@ class BoardServiceTest {
         //given
         given(memberRepository.findByNickname(anyString())).willReturn(Optional.empty());
         //when
-        Pageable pageable = PageRequest.of(0,3);
+        Pageable pageable = PageRequest.of(0, 3);
         RuntimeException exception = assertThrows(RuntimeException.class,
                 () -> boardService.searchBoardByCreator("A", pageable));
         //then
-        assertEquals("user does not exist",exception.getMessage());
+        assertEquals("user does not exist", exception.getMessage());
     }
 
     @Test
@@ -473,7 +533,7 @@ class BoardServiceTest {
                                 .contents("cont")
                                 .build()));
         //then
-        assertEquals("the board does not exist",exception.getMessage());
+        assertEquals("the board does not exist", exception.getMessage());
     }
 
     @Test
@@ -482,9 +542,9 @@ class BoardServiceTest {
         //given
         given(boardRepository.findById(anyLong())).willReturn(Optional.empty());
         //when
-        RuntimeException exception =  assertThrows(RuntimeException.class,
+        RuntimeException exception = assertThrows(RuntimeException.class,
                 () -> boardService.deleteBoard("AAA", 1L));
         //then
-        assertEquals("the board does not exist",exception.getMessage());
+        assertEquals("the board does not exist", exception.getMessage());
     }
 }

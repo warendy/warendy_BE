@@ -7,6 +7,7 @@ import com.be.friendy.warendy.domain.board.dto.request.BoardUpdateRequest;
 import com.be.friendy.warendy.domain.board.dto.response.BoardCreateResponse;
 import com.be.friendy.warendy.domain.board.dto.response.BoardSearchDetailResponse;
 import com.be.friendy.warendy.domain.board.dto.response.BoardSearchResponse;
+import com.be.friendy.warendy.domain.board.dto.response.BoardUpdateResponse;
 import com.be.friendy.warendy.domain.board.entity.Board;
 import com.be.friendy.warendy.domain.board.service.BoardService;
 import com.be.friendy.warendy.domain.member.entity.Member;
@@ -78,7 +79,7 @@ class BoardControllerTest {
                         .build());
         //when
         //then
-        mockMvc.perform(post("/boards/winebars/1")
+        mockMvc.perform(post("/boards/winebars?winebar-id=1")
                         .contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper
                                 .writeValueAsString(BoardCreateRequest
@@ -114,7 +115,7 @@ class BoardControllerTest {
         given(tokenProvider.getEmailFromToken(any()))
                 .willReturn(email);
         given(boardService.updateBoard(anyString(), anyLong(), any()))
-                .willReturn(Board.builder().id(1L)
+                .willReturn(BoardUpdateResponse.fromEntity(Board.builder().id(1L)
                         .member(Member.builder().id(1L)
                                 .email("asdf@gmail.com")
                                 .password("asdfasdfasdf")
@@ -135,7 +136,7 @@ class BoardControllerTest {
                         .wineName("wine name")
                         .headcount(4)
                         .contents("hello world!")
-                        .build());
+                        .build()));
 
         //when
         //then
@@ -158,9 +159,9 @@ class BoardControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(
-                        jsonPath("$.member.id").value(1))
+                        jsonPath("$.nickname").value("nick name"))
                 .andExpect(
-                        jsonPath("$.winebar.id").value(1))
+                        jsonPath("$.winebarName").value("AAA"))
                 .andExpect(
                         jsonPath("$.name").value("board name"))
                 .andExpect(
@@ -243,6 +244,58 @@ class BoardControllerTest {
         mockMvc.perform(get("/boards?page=0")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer ACCESS_TOKEN")
                 )
+                .andDo(print())
+                .andExpect(jsonPath("$.content[0].nickname")
+                        .value("Hong"))
+                .andExpect(jsonPath("$.content[1].nickname")
+                        .value("Hong"))
+        ;
+    }
+
+    @Test
+    @WithMockUser(roles = "MEMBER")
+    void successSearchBoardByWinebarId() throws Exception {
+        //given
+        List<BoardSearchResponse> boardSearchResponses =
+                Arrays.asList(
+                        BoardSearchResponse.builder()
+                                .winebarName("wine bar")
+                                .name("board")
+                                .nickname("Hong")
+                                .date("2000-1-1")
+                                .time("7AM")
+                                .wineName("wine")
+                                .headcount(4)
+                                .contents("content yo")
+                                .build(),
+                        BoardSearchResponse.builder()
+                                .winebarName("wine bar2")
+                                .name("board2")
+                                .nickname("Hong")
+                                .date("2000-1-12")
+                                .time("10AM")
+                                .wineName("wine2")
+                                .headcount(5)
+                                .contents("content yo2")
+                                .build(),
+                        BoardSearchResponse.builder()
+                                .winebarName("wine bar3")
+                                .name("board3")
+                                .nickname("Hong")
+                                .date("2000-1-13")
+                                .time("8AM")
+                                .wineName("wine3")
+                                .headcount(6)
+                                .contents("content yo3")
+                                .build()
+                );
+        PageImpl<BoardSearchResponse> boardSearchResponsePage =
+                new PageImpl<>(boardSearchResponses);
+        given(boardService.searchBoardByWinebarId(anyLong(), any()))
+                .willReturn(boardSearchResponsePage);
+        //when
+        //then
+        mockMvc.perform(get("/boards/winebar-id?winebar-id=1&page=0"))
                 .andDo(print())
                 .andExpect(jsonPath("$.content[0].nickname")
                         .value("Hong"))
@@ -344,7 +397,7 @@ class BoardControllerTest {
                 .willThrow(new RuntimeException("check the user information"));
         //when
         //then
-        mockMvc.perform(post("/boards/winebars/1")
+        mockMvc.perform(post("/boards/winebars?winebar-id=1")
                         .contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper
                                 .writeValueAsString(BoardCreateRequest
@@ -401,7 +454,7 @@ class BoardControllerTest {
                 .willThrow(new RuntimeException("user does not exist"));
         //when
         //then
-        mockMvc.perform(post("/boards/winebars/1")
+        mockMvc.perform(post("/boards/winebars?winebar-id=1")
                         .contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .content(objectMapper
                                 .writeValueAsString(BoardCreateRequest

@@ -5,6 +5,7 @@ import com.be.friendy.warendy.domain.board.dto.request.BoardUpdateRequest;
 import com.be.friendy.warendy.domain.board.dto.response.BoardCreateResponse;
 import com.be.friendy.warendy.domain.board.dto.response.BoardSearchDetailResponse;
 import com.be.friendy.warendy.domain.board.dto.response.BoardSearchResponse;
+import com.be.friendy.warendy.domain.board.dto.response.BoardUpdateResponse;
 import com.be.friendy.warendy.domain.board.entity.Board;
 import com.be.friendy.warendy.domain.board.repository.BoardRepository;
 import com.be.friendy.warendy.domain.member.entity.Member;
@@ -40,19 +41,12 @@ public class BoardService {
                 .findById(winebarId)
                 .orElseThrow(() -> new RuntimeException("winebar does not exist"));
 
-        Member memberById = memberRepository.findById(createRequest.getMemberId())
-                .orElseThrow(() -> new RuntimeException("user does not exist"));
-
         Member memberByEmail = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("user does not exist"));
 
-        if (!memberById.equals(memberByEmail)) {
-            throw new RuntimeException("check the user information");
-        }
-
         return BoardCreateResponse.fromEntity(boardRepository.save(
                 Board.builder()
-                        .member(memberById)
+                        .member(memberByEmail)
                         .winebar(winebar)
                         .name(createRequest.getName())
                         .nickname(createRequest.getNickname())
@@ -81,7 +75,7 @@ public class BoardService {
         Member memberByEmail = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("user does not exist"));
 
-        return boardRepository.findByNickname(memberByEmail.getNickname(),pageable)
+        return boardRepository.findByNickname(memberByEmail.getNickname(), pageable)
                 .map(BoardSearchResponse::fromEntity);
     }
 
@@ -99,6 +93,16 @@ public class BoardService {
                 .orElseThrow(() -> new RuntimeException("the wine does not exist"));
 
         return boardRepository.findByWineName(wine.getName(), pageable)
+                .map(BoardSearchResponse::fromEntity);
+    }
+
+    public Page<BoardSearchResponse> searchBoardByWinebarId(
+            Long winebarId, Pageable pageable
+    ) {
+        Winebar winebar = wineBarRepository.findById(winebarId)
+                .orElseThrow(() -> new RuntimeException("the winebar does not exist"));
+
+        return boardRepository.findByWinebar(winebar, pageable)
                 .map(BoardSearchResponse::fromEntity);
     }
 
@@ -138,42 +142,36 @@ public class BoardService {
                 .map(BoardSearchResponse::fromEntity);
     }
 
-    public Board updateBoard(String email, Long boardId, BoardUpdateRequest request) {
+    public BoardUpdateResponse updateBoard(String email, Long boardId, BoardUpdateRequest request) {
 
         Board nowBoard = boardRepository.findById(boardId)
                 .orElseThrow(() -> new RuntimeException("the board does not exist"));
-        nowBoard.updateBoardInfo(request);
-
-        Member memberById = memberRepository.findById(request.getMemberId())
-                .orElseThrow(() -> new RuntimeException("user does not exist"));
 
         Member memberByEmail = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("user does not exist"));
 
-        if (!memberById.equals(memberByEmail)) {
+        if (!nowBoard.getMember().getId().equals(memberByEmail.getId())) {
             throw new RuntimeException("check the user information");
         }
-
-        return boardRepository.save(nowBoard);
+        nowBoard.updateBoardInfo(request);
+        boardRepository.save(nowBoard);
+        return BoardUpdateResponse.fromEntity(nowBoard);
     }
 
     public void deleteBoard(String email, Long boardId) {
 
-        Board board = boardRepository.findById(boardId)
+        Board nowBoard = boardRepository.findById(boardId)
                 .orElseThrow(() -> new RuntimeException("the board does not exist"));
-
-        Member memberById = memberRepository.findById(board.getMember().getId())
-                .orElseThrow(() -> new RuntimeException("user does not exist"));
 
         Member memberByEmail = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("user does not exist"));
 
-        if (!memberById.equals(memberByEmail)) {
+        if (!nowBoard.getMember().getId().equals(memberByEmail.getId())) {
             throw new RuntimeException("check the user information");
         }
 
-        boardRepository.save(board); // test 코드에서 확인 위한
-        boardRepository.delete(board);
+        boardRepository.save(nowBoard); // test 코드에서 확인 위한
+        boardRepository.delete(nowBoard);
     }
 
 }
