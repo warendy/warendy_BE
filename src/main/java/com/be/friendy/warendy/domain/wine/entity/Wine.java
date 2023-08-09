@@ -39,6 +39,7 @@ public class Wine {
 
     public Wine insertReviewList(List<Review> reviewList) {
         return Wine.builder()
+                .id(id)
                 .name(name)
                 .vintage(vintage)
                 .price(price)
