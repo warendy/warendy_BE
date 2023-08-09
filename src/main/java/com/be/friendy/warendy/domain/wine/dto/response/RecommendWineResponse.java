@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class RecommendWineResponse {
+    private Long id;
     private String wineName;
     private Integer vintage;
     private String price;
@@ -39,6 +40,7 @@ public class RecommendWineResponse {
                 .map(WineReviewSearchByWineIdResponse::fromEntity).toList();
 
         return RecommendWineResponse.builder()
+                .id(wine.getId())
                 .wineName(wine.getName())
                 .vintage(wine.getVintage())
                 .price(wine.getPrice())
