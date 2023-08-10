@@ -15,6 +15,8 @@ import java.util.List;
 @Builder
 public class WinebarSearchResponse {
 
+    private Long winebarId;
+
     private String name;
 
     private String picture;
@@ -33,6 +35,7 @@ public class WinebarSearchResponse {
 
     public static WinebarSearchResponse fromEntity(Winebar winebar) {
         return WinebarSearchResponse.builder()
+                .winebarId(winebar.getId())
                 .name(winebar.getName())
                 .picture(winebar.getPicture())
                 .address(winebar.getAddress())
