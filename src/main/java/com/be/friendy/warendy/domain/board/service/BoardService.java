@@ -2,10 +2,7 @@ package com.be.friendy.warendy.domain.board.service;
 
 import com.be.friendy.warendy.domain.board.dto.request.BoardCreateRequest;
 import com.be.friendy.warendy.domain.board.dto.request.BoardUpdateRequest;
-import com.be.friendy.warendy.domain.board.dto.response.BoardCreateResponse;
-import com.be.friendy.warendy.domain.board.dto.response.BoardSearchDetailResponse;
-import com.be.friendy.warendy.domain.board.dto.response.BoardSearchResponse;
-import com.be.friendy.warendy.domain.board.dto.response.BoardUpdateResponse;
+import com.be.friendy.warendy.domain.board.dto.response.*;
 import com.be.friendy.warendy.domain.board.entity.Board;
 import com.be.friendy.warendy.domain.board.repository.BoardRepository;
 import com.be.friendy.warendy.domain.member.entity.Member;
@@ -18,8 +15,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +30,7 @@ public class BoardService {
     private final WinebarRepository wineBarRepository;
     private final WineRepository wineRepository;
 
+    @Transactional(timeout = 30) // 30초
     public BoardCreateResponse creatBoard(
             String email, Long winebarId, BoardCreateRequest createRequest) {
         boolean exists = boardRepository.existsByName(createRequest.getName());
@@ -44,17 +45,21 @@ public class BoardService {
         Member memberByEmail = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("user does not exist"));
 
+        HashSet<String> partySet = new HashSet<>();
+        partySet.add(memberByEmail.getNickname());
+
         return BoardCreateResponse.fromEntity(boardRepository.save(
                 Board.builder()
-                        .member(memberByEmail)
-                        .winebar(winebar)
-                        .name(createRequest.getName())
-                        .nickname(createRequest.getNickname())
-                        .date(createRequest.getDate())
-                        .wineName(createRequest.getWineName())
-                        .headcount(createRequest.getHeadcount())
-                        .contents(createRequest.getContents())
-                        .build()
+                .member(memberByEmail)
+                .winebar(winebar)
+                .name(createRequest.getName())
+                .nickname(createRequest.getNickname())
+                .date(createRequest.getDate())
+                .wineName(createRequest.getWineName())
+                .headcount(createRequest.getHeadcount())
+                .contents(createRequest.getContents())
+                .participants(partySet)
+                .build()
         ));
     }
 
@@ -63,6 +68,7 @@ public class BoardService {
                 .map(BoardSearchResponse::fromEntity);
     }
 
+    @Transactional(readOnly = true)
     public BoardSearchDetailResponse searchBoardDetail(Long boardId) {
         return boardRepository.findById(boardId)
                 .map(BoardSearchDetailResponse::fromEntity)
@@ -142,6 +148,7 @@ public class BoardService {
                 .map(BoardSearchResponse::fromEntity);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {RuntimeException.class})
     public BoardUpdateResponse updateBoard(String email, Long boardId, BoardUpdateRequest request) {
 
         Board nowBoard = boardRepository.findById(boardId)
@@ -158,6 +165,24 @@ public class BoardService {
         return BoardUpdateResponse.fromEntity(nowBoard);
     }
 
+    public BoardParticipantResponse participantInBoard(String email, Long boardId) {
+
+        Board nowBoard = boardRepository.findById(boardId)
+                .orElseThrow(() -> new RuntimeException("the board does not exist"));
+
+//        if(nowBoard.getParticipants().size() == nowBoard.getHeadcount()) {
+//            throw new RuntimeException("이미 자리가 다 찼습니다.");
+//        }
+
+        Member memberByEmail = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("user does not exist"));
+        nowBoard.insertBoardParticipant(nowBoard, memberByEmail.getNickname());
+
+        boardRepository.save(nowBoard);
+        return BoardParticipantResponse.fromEntity(nowBoard);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {RuntimeException.class})
     public void deleteBoard(String email, Long boardId) {
 
         Board nowBoard = boardRepository.findById(boardId)

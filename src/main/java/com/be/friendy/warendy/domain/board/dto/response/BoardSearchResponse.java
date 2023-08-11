@@ -20,7 +20,7 @@ public class BoardSearchResponse {
     private String wineName;
     private Integer headcount;
     private String contents;
-
+    private Integer participants;
     public static BoardSearchResponse fromEntity(Board board) {
         return BoardSearchResponse.builder()
                 .name(board.getName())
@@ -31,6 +31,7 @@ public class BoardSearchResponse {
                 .wineName(board.getWineName())
                 .headcount(board.getHeadcount())
                 .contents(board.getContents())
+                .participants(board.getParticipants().size())
                 .build();
     }
 

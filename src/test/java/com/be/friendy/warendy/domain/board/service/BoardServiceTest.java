@@ -3,10 +3,7 @@ package com.be.friendy.warendy.domain.board.service;
 import com.be.friendy.warendy.config.jwt.TokenProvider;
 import com.be.friendy.warendy.domain.board.dto.request.BoardCreateRequest;
 import com.be.friendy.warendy.domain.board.dto.request.BoardUpdateRequest;
-import com.be.friendy.warendy.domain.board.dto.response.BoardCreateResponse;
-import com.be.friendy.warendy.domain.board.dto.response.BoardSearchDetailResponse;
-import com.be.friendy.warendy.domain.board.dto.response.BoardSearchResponse;
-import com.be.friendy.warendy.domain.board.dto.response.BoardUpdateResponse;
+import com.be.friendy.warendy.domain.board.dto.response.*;
 import com.be.friendy.warendy.domain.board.entity.Board;
 import com.be.friendy.warendy.domain.board.repository.BoardRepository;
 import com.be.friendy.warendy.domain.member.entity.Member;
@@ -28,11 +25,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -60,17 +57,19 @@ class BoardServiceTest {
     @DisplayName("success create! - board")
     void successCreateBoard() {
         //given
+        HashSet<String> partySet = new HashSet<>();
+        partySet.add("Hong");
         Member member1 = Member.builder()
                 .id(13L)
                 .email("asdf@gmail.com")
                 .password("asdfasdfasdf")
-                .nickname("nick name").avatar("asdfasdfasdf")
+                .nickname("nick name1").avatar("asdfasdfasdf")
                 .mbti("istp")
                 .role(Role.MEMBER).oauthType("fasdf")
                 .body(1).dry(1).tannin(1).acidity(1)
                 .build();
         Winebar winebar1 = Winebar.builder()
-                .id(1L)
+                .id(14L)
                 .name("AA")
                 .picture("asdfasdf")
                 .address("tttttttt")
@@ -79,23 +78,25 @@ class BoardServiceTest {
                 .rating(1.1)
                 .reviews(1)
                 .build();
+        Board createdBoard = Board.builder()
+                .id(1L)
+                .member(member1)
+                .winebar(winebar1)
+                .name("A")
+                .nickname("A")
+                .date("2010-1-13")
+                .time("7AM")
+                .wineName("123")
+                .headcount(4)
+                .contents("123")
+                .participants(partySet)
+                .build();
         given(wineBarRepository.findById(anyLong()))
                 .willReturn(Optional.of(winebar1));
         given(memberRepository.findByEmail(anyString()))
                 .willReturn(Optional.of(member1));
         given(boardRepository.save(any()))
-                .willReturn(Board.builder()
-                        .id(1L)
-                        .member(member1)
-                        .winebar(winebar1)
-                        .name("A")
-                        .nickname("A")
-                        .date("2010-1-13")
-                        .time("7AM")
-                        .wineName("123")
-                        .headcount(4)
-                        .contents("123")
-                        .build());
+                .willReturn(createdBoard);
         //when
         BoardCreateRequest createRequest = BoardCreateRequest.builder()
                 .memberId(1L)
@@ -107,13 +108,15 @@ class BoardServiceTest {
                 .headcount(6)
                 .contents("hello world!")
                 .build();
+
         BoardCreateResponse createResponse =
                 boardService.creatBoard("AAA", 13L, createRequest);
         //then - given에서 값과 일치
         assertEquals(13L, createResponse.getMemberId());
-        assertEquals(1L, createResponse.getWinebarId());
+        assertEquals(14L, createResponse.getWinebarId());
         assertEquals("A", createResponse.getNickname());
         assertEquals(4, createResponse.getHeadcount());
+        assertEquals(1, createResponse.getParticipants().size());
     }
 
     @Test
@@ -138,10 +141,13 @@ class BoardServiceTest {
                 .rating(1.1)
                 .reviews(1)
                 .build();
+        HashSet<String> partySet = new HashSet<>();
+        partySet.add(member1.getNickname());
         Board board = Board.builder()
                 .id(1L).member(member1).winebar(winebar1).name("A")
                 .nickname("A").date("2010-1-13").time("7AM")
                 .wineName("123").headcount(4).contents("123")
+                .participants(partySet)
                 .build();
         given(boardRepository.findById(board.getId()))
                 .willReturn(Optional.of(board));
@@ -150,6 +156,7 @@ class BoardServiceTest {
                 = boardService.searchBoardDetail(1L);
         //then
         assertEquals("AA", boardDetailResponse.getWinebarName());
+        assertEquals(1, boardDetailResponse.getParticipants().size());
 
     }
 
@@ -175,21 +182,26 @@ class BoardServiceTest {
                 .rating(1.1)
                 .reviews(1)
                 .build();
+        HashSet<String> partySet = new HashSet<>();
+        partySet.add(member1.getNickname());
         List<Board> boardList = Arrays.asList(
                 Board.builder()
                         .id(1L).member(member1).winebar(winebar1).name("A")
                         .nickname("A").date("2010-1-13").time("7AM")
                         .wineName("123").headcount(4).contents("123")
+                        .participants(partySet)
                         .build(),
                 Board.builder()
                         .id(1L).member(member1).winebar(winebar1).name("Ab")
                         .nickname("Ab").date("2010-1-13b").time("7AM")
                         .wineName("123b").headcount(45).contents("123b")
+                        .participants(partySet)
                         .build(),
                 Board.builder()
                         .id(1L).member(member1).winebar(winebar1).name("Ac")
                         .nickname("Ac").date("2010-1-13c").time("7AM")
                         .wineName("123c").headcount(46).contents("123c")
+                        .participants(partySet)
                         .build()
         );
         given(memberRepository.findByEmail(anyString()))
@@ -227,21 +239,26 @@ class BoardServiceTest {
                 .rating(1.1)
                 .reviews(1)
                 .build();
+        HashSet<String> partySet = new HashSet<>();
+        partySet.add(member1.getNickname());
         List<Board> boardList = Arrays.asList(
                 Board.builder()
                         .id(1L).member(member1).winebar(winebar1).name("A")
                         .nickname("A").date("2010-1-13").time("7AM")
                         .wineName("123").headcount(4).contents("123")
+                        .participants(partySet)
                         .build(),
                 Board.builder()
                         .id(1L).member(member1).winebar(winebar1).name("Ab")
                         .nickname("Ab").date("2010-1-13b").time("7AM")
                         .wineName("123b").headcount(45).contents("123b")
+                        .participants(partySet)
                         .build(),
                 Board.builder()
                         .id(1L).member(member1).winebar(winebar1).name("Ac")
                         .nickname("Ac").date("2010-1-13c").time("7AM")
                         .wineName("123c").headcount(46).contents("123c")
+                        .participants(partySet)
                         .build()
         );
         given(wineBarRepository.findById(anyLong()))
@@ -280,25 +297,30 @@ class BoardServiceTest {
                 .rating(1.1)
                 .reviews(1)
                 .build();
+        HashSet<String> partySet = new HashSet<>();
+        partySet.add(member1.getNickname());
         List<Board> boardList = Arrays.asList(
                 Board.builder()
                         .id(1L).member(member1).winebar(winebar1).name("A")
                         .nickname("A").date("2010-1-13").time("7AM")
                         .wineName("123").headcount(4).contents("123")
+                        .participants(partySet)
                         .build(),
                 Board.builder()
                         .id(1L).member(member1).winebar(winebar1).name("Ab")
                         .nickname("Ab").date("2010-1-13b").time("7AM")
                         .wineName("123b").headcount(45).contents("123b")
+                        .participants(partySet)
                         .build(),
                 Board.builder()
                         .id(1L).member(member1).winebar(winebar1).name("Ac")
                         .nickname("Ac").date("2010-1-13c").time("7AM")
                         .wineName("123c").headcount(46).contents("123c")
+                        .participants(partySet)
                         .build()
         );
         given(memberRepository.findByNickname(anyString()))
-                .willReturn(Optional.ofNullable(member1));
+                .willReturn(Optional.of(member1));
         given(boardRepository.findByNickname(anyString(), any()))
                 .willReturn(new PageImpl<>(boardList));
         //when
@@ -336,10 +358,12 @@ class BoardServiceTest {
                 .rating(1.1)
                 .reviews(1)
                 .build();
+        HashSet<String> partySet = new HashSet<>();
+        partySet.add(member1.getNickname());
         Board targetBoard = Board.builder()
                 .id(1L).member(member1).winebar(winebar1).name("A").nickname("A")
                 .date("2010-1-13").wineName("123").headcount(4).contents("123")
-                .time("7AM")
+                .time("7AM").participants(partySet)
                 .build();
         given(boardRepository.findById(anyLong()))
                 .willReturn(Optional.of(targetBoard));
@@ -359,11 +383,65 @@ class BoardServiceTest {
                 .headcount(5)
                 .contents("empty at all")
                 .build();
-        BoardUpdateResponse board = boardService.updateBoard("AAA", 13L, request);
+        BoardUpdateResponse board = boardService
+                .updateBoard("AAA", 13L, request);
         //then
         assertEquals(5, board.getHeadcount());
         assertEquals("creator!", board.getNickname());
         assertEquals("AAA", board.getWineName());
+    }
+
+    @Test
+    void successParticipantInBoard() {
+        //given
+        Member member1 = Member.builder()
+                .id(13L)
+                .email("asdf@gmail.com")
+                .password("asdfasdfasdf")
+                .nickname("nick name").avatar("asdfasdfasdf")
+                .mbti("istp")
+                .role(Role.MEMBER).oauthType("fasdf")
+                .body(1).dry(1).tannin(1).acidity(1)
+                .build();
+        Member member2 = Member.builder()
+                .id(10L)
+                .email("asdf@gmail.com")
+                .password("asdfasdfasdf")
+                .nickname("creator!").avatar("asdfasdfasdf")
+                .mbti("istp")
+                .role(Role.MEMBER).oauthType("fasdf")
+                .body(1).dry(1).tannin(1).acidity(1)
+                .build();
+        Winebar winebar1 = Winebar.builder()
+                .id(16L)
+                .name("AA")
+                .picture("asdfasdf")
+                .address("tttttttt")
+                .lat(0.0)
+                .lnt(0.0)
+                .rating(1.1)
+                .reviews(1)
+                .build();
+        Board targetBoard = Board.builder()
+                .id(1L).member(member1).winebar(winebar1).name("A").nickname("A")
+                .date("2010-1-13").wineName("123").headcount(4).contents("123")
+                .time("7AM").participants(new HashSet<>())
+                .build();
+        targetBoard.insertBoardParticipant(targetBoard,targetBoard.getNickname());
+        given(boardRepository.findById(anyLong()))
+                .willReturn(Optional.of(targetBoard));
+        given(memberRepository.findByEmail(anyString()))
+                .willReturn(Optional.of(member2));
+        given(boardRepository.save(any())).willReturn(targetBoard);
+        //when
+        BoardParticipantResponse board = boardService
+                .participantInBoard("AAA", 1L);
+        //then
+        assertEquals(4, board.getHeadcount());
+        assertEquals("A", board.getNickname());
+        assertEquals("AA", board.getWinebarName());
+        assertEquals(2, board.getParticipants().size());
+        assertTrue(board.getParticipants().contains("creator!"));
     }
 
     @Test
@@ -532,6 +610,17 @@ class BoardServiceTest {
                                 .headcount(1)
                                 .contents("cont")
                                 .build()));
+        //then
+        assertEquals("the board does not exist", exception.getMessage());
+    }
+
+    @Test
+    void failedParticipantInBoardNotFoundBoard() {
+        //given
+        given(boardRepository.findById(anyLong())).willReturn(Optional.empty());
+        //when
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> boardService.participantInBoard("AAA", 1L));
         //then
         assertEquals("the board does not exist", exception.getMessage());
     }
