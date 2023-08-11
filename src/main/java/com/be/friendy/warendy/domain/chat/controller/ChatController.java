@@ -41,9 +41,23 @@ public class ChatController {
 
     // 채팅방 정보 조회
     @GetMapping("/rooms/{roomId}")
-    public ResponseEntity<ChatRoomDto> getChatRoomInfo(@RequestHeader("Authorization") String authorizationHeader, @PathVariable String roomId) {
+    public ResponseEntity<ChatRoomDto> getChatRoomInfo(@PathVariable String roomId) {
         try {
             return ResponseEntity.ok(chatService.getChatRoomInfo(roomId));
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not get chatroom info", e);
+        }
+    }
+
+    // 사용자 채팅방 정보 조회
+    @PostMapping("/rooms")
+    public ResponseEntity<List<ChatRoomDto>> getMemberChatRoomInfo(@RequestHeader("Authorization") String authorizationHeader) {
+        String email;
+        try {
+            email = tokenProvider.getEmailFromToken(authorizationHeader);
+            return ResponseEntity.ok(chatService.getMemberChatRoomInfo(email));
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid authorization header", e);
         } catch (RuntimeException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not get chatroom info", e);
         }
