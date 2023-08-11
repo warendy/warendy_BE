@@ -131,7 +131,7 @@ public class BoardController {
     public ResponseEntity<BoardUpdateResponse> boardUpdate(
             @RequestHeader("Authorization") String authorizationHeader,
             @PathVariable(value = "board-id") Long boardId,
-            @RequestBody BoardUpdateRequest boardUpdateRequest
+            @Valid @RequestBody BoardUpdateRequest boardUpdateRequest
     ) {
         String email = tokenProvider.getEmailFromToken(authorizationHeader);
         return ResponseEntity.ok(
