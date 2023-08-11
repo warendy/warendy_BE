@@ -212,6 +212,40 @@ class BoardControllerTest {
 
     @Test
     @WithMockUser(roles = "MEMBER")
+    void successParticipantOutBoard() throws Exception {
+        //given
+        String email = "AAA";
+        given(tokenProvider.getEmailFromToken(any()))
+                .willReturn(email);
+        HashSet<String> partySet = new HashSet<>();
+        partySet.add("D");
+        given(boardService.participantOutBoard(anyString(), any()))
+                .willReturn(BoardParticipantResponse.builder()
+                        .name("A")
+                        .nickname("D")
+                        .winebarName("B")
+                        .date("2020-1-1")
+                        .time("7PM")
+                        .wineName("E")
+                        .headcount(3)
+                        .contents("F")
+                        .participants(partySet)
+                        .build());
+        //when
+        //then
+        mockMvc.perform(put("/boards/participants-out?board-id=1")
+                        .contentType(MediaType.APPLICATION_JSON).with(csrf())
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer ACCESS_TOKEN")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nickname").value("D"))
+                .andExpect(jsonPath("$.participants[0]").value("D"))
+                .andDo(print())
+        ;
+    }
+
+    @Test
+    @WithMockUser(roles = "MEMBER")
     @DisplayName("success Search Detail! - board")
     void successSearchBoardDetail() throws Exception {
         //given
@@ -544,6 +578,22 @@ class BoardControllerTest {
         //when
         //then
         mockMvc.perform(put("/boards/participants?board-id=1")
+                        .contentType(MediaType.APPLICATION_JSON).with(csrf())
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer ACCESS_TOKEN")
+                )
+                .andExpect(status().isOk())
+        ;
+    }
+
+    @Test
+    @WithMockUser(roles = "MEMBER")
+    void failedParticipantOutBoard() throws Exception {
+        //given
+        given(boardService.participantOutBoard(anyString(), anyLong()))
+                .willThrow(new RuntimeException("the board does not exist"));
+        //when
+        //then
+        mockMvc.perform(put("/boards/participants-out?board-id=1")
                         .contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .header(HttpHeaders.AUTHORIZATION, "Bearer ACCESS_TOKEN")
                 )

@@ -50,16 +50,16 @@ public class BoardService {
 
         return BoardCreateResponse.fromEntity(boardRepository.save(
                 Board.builder()
-                .member(memberByEmail)
-                .winebar(winebar)
-                .name(createRequest.getName())
-                .nickname(createRequest.getNickname())
-                .date(createRequest.getDate())
-                .wineName(createRequest.getWineName())
-                .headcount(createRequest.getHeadcount())
-                .contents(createRequest.getContents())
-                .participants(partySet)
-                .build()
+                        .member(memberByEmail)
+                        .winebar(winebar)
+                        .name(createRequest.getName())
+                        .nickname(createRequest.getNickname())
+                        .date(createRequest.getDate())
+                        .wineName(createRequest.getWineName())
+                        .headcount(createRequest.getHeadcount())
+                        .contents(createRequest.getContents())
+                        .participants(partySet)
+                        .build()
         ));
     }
 
@@ -177,6 +177,24 @@ public class BoardService {
         Member memberByEmail = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("user does not exist"));
         nowBoard.insertBoardParticipant(nowBoard, memberByEmail.getNickname());
+
+        boardRepository.save(nowBoard);
+        return BoardParticipantResponse.fromEntity(nowBoard);
+    }
+
+    public BoardParticipantResponse participantOutBoard(String email, Long boardId) {
+
+        Board nowBoard = boardRepository.findById(boardId)
+                .orElseThrow(() -> new RuntimeException("the board does not exist"));
+        Member memberByEmail = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("user does not exist"));
+
+//        if(Objects.equals(nowBoard.getMember().getNickname()
+//                , memberByEmail.getNickname())) {
+//            throw new RuntimeException("자기 자신은 나갈 수 없습니다.");
+//        }
+
+        nowBoard.deleteBoardParticipant(nowBoard, memberByEmail.getNickname());
 
         boardRepository.save(nowBoard);
         return BoardParticipantResponse.fromEntity(nowBoard);

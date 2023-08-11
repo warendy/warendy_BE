@@ -445,6 +445,59 @@ class BoardServiceTest {
     }
 
     @Test
+    void successParticipantOutBoard() {
+        //given
+        Member member1 = Member.builder()
+                .id(13L)
+                .email("asdf@gmail.com")
+                .password("asdfasdfasdf")
+                .nickname("nick name").avatar("asdfasdfasdf")
+                .mbti("istp")
+                .role(Role.MEMBER).oauthType("fasdf")
+                .body(1).dry(1).tannin(1).acidity(1)
+                .build();
+        Member member2 = Member.builder()
+                .id(10L)
+                .email("asdf@gmail.com")
+                .password("asdfasdfasdf")
+                .nickname("creator!").avatar("asdfasdfasdf")
+                .mbti("istp")
+                .role(Role.MEMBER).oauthType("fasdf")
+                .body(1).dry(1).tannin(1).acidity(1)
+                .build();
+        Winebar winebar1 = Winebar.builder()
+                .id(16L)
+                .name("AA")
+                .picture("asdfasdf")
+                .address("tttttttt")
+                .lat(0.0)
+                .lnt(0.0)
+                .rating(1.1)
+                .reviews(1)
+                .build();
+        Board targetBoard = Board.builder()
+                .id(1L).member(member1).winebar(winebar1).name("A").nickname("A")
+                .date("2010-1-13").wineName("123").headcount(4).contents("123")
+                .time("7AM").participants(new HashSet<>())
+                .build();
+        targetBoard.deleteBoardParticipant(targetBoard,targetBoard.getNickname());
+        given(boardRepository.findById(anyLong()))
+                .willReturn(Optional.of(targetBoard));
+        given(memberRepository.findByEmail(anyString()))
+                .willReturn(Optional.of(member2));
+        given(boardRepository.save(any())).willReturn(targetBoard);
+        //when
+        BoardParticipantResponse board = boardService
+                .participantInBoard("AAA", 1L);
+        //then
+        assertEquals(4, board.getHeadcount());
+        assertEquals("A", board.getNickname());
+        assertEquals("AA", board.getWinebarName());
+        assertEquals(1, board.getParticipants().size());
+        assertTrue(board.getParticipants().contains("creator!"));
+    }
+
+    @Test
     @DisplayName("success delete! - board")
     void successDeleteBoard() {
         //given

@@ -147,6 +147,15 @@ public class BoardController {
         return ResponseEntity.ok(boardService.participantInBoard(email, boardId));
     }
 
+    @PutMapping("/participants-out")
+    public ResponseEntity<BoardParticipantResponse> boardParticipantOut(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @RequestParam(value = "board-id") Long boardId
+    ) {
+        String email = tokenProvider.getEmailFromToken(authorizationHeader);
+        return ResponseEntity.ok(boardService.participantOutBoard(email, boardId));
+    }
+
 
     @DeleteMapping("/{board-id}")
     public ResponseEntity<String> boardDelete(

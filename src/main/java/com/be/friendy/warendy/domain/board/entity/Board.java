@@ -71,10 +71,10 @@ public class Board extends BaseEntity {
         participants = boardParticipants;
     }
 
-//    public void deleteBoardParticipant(Board board, String nickname) {
-//        Set<String> boardParticipants = board.getParticipants();
-//        boardParticipants.remove(nickname);
-//        participants = boardParticipants;
-//    }
+    public void deleteBoardParticipant(Board board, String nickname) {
+        Set<String> boardParticipants = board.getParticipants();
+        boardParticipants.remove(nickname);
+        participants = boardParticipants;
+    }
 
 }
