@@ -4,10 +4,7 @@ import com.be.friendy.warendy.config.jwt.TokenProvider;
 import com.be.friendy.warendy.config.jwt.filter.JwtAuthenticationFilter;
 import com.be.friendy.warendy.domain.board.dto.request.BoardCreateRequest;
 import com.be.friendy.warendy.domain.board.dto.request.BoardUpdateRequest;
-import com.be.friendy.warendy.domain.board.dto.response.BoardCreateResponse;
-import com.be.friendy.warendy.domain.board.dto.response.BoardSearchDetailResponse;
-import com.be.friendy.warendy.domain.board.dto.response.BoardSearchResponse;
-import com.be.friendy.warendy.domain.board.dto.response.BoardUpdateResponse;
+import com.be.friendy.warendy.domain.board.dto.response.*;
 import com.be.friendy.warendy.domain.board.entity.Board;
 import com.be.friendy.warendy.domain.board.service.BoardService;
 import com.be.friendy.warendy.domain.member.entity.Member;
@@ -28,6 +25,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -63,6 +61,8 @@ class BoardControllerTest {
     void successCreateBoard() throws Exception {
         //given
         String email = "AAA";
+        HashSet<String> set = new HashSet<>();
+        set.add("nick name");
         given(tokenProvider.getEmailFromToken(any()))
                 .willReturn(email);
         given(boardService.creatBoard(anyString(), anyLong(), any()))
@@ -76,6 +76,7 @@ class BoardControllerTest {
                         .wineName("wine name")
                         .headcount(4)
                         .contents("hello world!")
+                        .participants(set)
                         .build());
         //when
         //then
@@ -103,6 +104,9 @@ class BoardControllerTest {
                 .andExpect(
                         jsonPath("$.contents")
                                 .value("hello world!"))
+                .andExpect(
+                        jsonPath("$.participants[0]")
+                                .value("nick name"))
                 .andDo(print());
     }
 
@@ -112,6 +116,8 @@ class BoardControllerTest {
     void successUpdateBoard() throws Exception {
         //given
         String email = "AAA";
+        HashSet<String> set = new HashSet<>();
+        set.add("nick name");
         given(tokenProvider.getEmailFromToken(any()))
                 .willReturn(email);
         given(boardService.updateBoard(anyString(), anyLong(), any()))
@@ -136,6 +142,7 @@ class BoardControllerTest {
                         .wineName("wine name")
                         .headcount(4)
                         .contents("hello world!")
+                        .participants(set)
                         .build()));
 
         //when
@@ -171,9 +178,79 @@ class BoardControllerTest {
 
     @Test
     @WithMockUser(roles = "MEMBER")
+    void successParticipantInBoard() throws Exception {
+        //given
+        String email = "AAA";
+        given(tokenProvider.getEmailFromToken(any()))
+                .willReturn(email);
+        HashSet<String> partySet = new HashSet<>();
+        partySet.add("Hong");
+        given(boardService.participantInBoard(anyString(), any()))
+                .willReturn(BoardParticipantResponse.builder()
+                        .name("A")
+                        .nickname("D")
+                        .winebarName("B")
+                        .date("2020-1-1")
+                        .time("7PM")
+                        .wineName("E")
+                        .headcount(3)
+                        .contents("F")
+                        .participants(partySet)
+                        .build());
+        //when
+        //then
+        mockMvc.perform(put("/boards/participants?board-id=1")
+                        .contentType(MediaType.APPLICATION_JSON).with(csrf())
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer ACCESS_TOKEN")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nickname").value("D"))
+                .andExpect(jsonPath("$.participants[0]").value("Hong"))
+                .andDo(print())
+        ;
+    }
+
+    @Test
+    @WithMockUser(roles = "MEMBER")
+    void successParticipantOutBoard() throws Exception {
+        //given
+        String email = "AAA";
+        given(tokenProvider.getEmailFromToken(any()))
+                .willReturn(email);
+        HashSet<String> partySet = new HashSet<>();
+        partySet.add("D");
+        given(boardService.participantOutBoard(anyString(), any()))
+                .willReturn(BoardParticipantResponse.builder()
+                        .name("A")
+                        .nickname("D")
+                        .winebarName("B")
+                        .date("2020-1-1")
+                        .time("7PM")
+                        .wineName("E")
+                        .headcount(3)
+                        .contents("F")
+                        .participants(partySet)
+                        .build());
+        //when
+        //then
+        mockMvc.perform(put("/boards/participants-out?board-id=1")
+                        .contentType(MediaType.APPLICATION_JSON).with(csrf())
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer ACCESS_TOKEN")
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nickname").value("D"))
+                .andExpect(jsonPath("$.participants[0]").value("D"))
+                .andDo(print())
+        ;
+    }
+
+    @Test
+    @WithMockUser(roles = "MEMBER")
     @DisplayName("success Search Detail! - board")
     void successSearchBoardDetail() throws Exception {
         //given
+        HashSet<String> set = new HashSet<>();
+        set.add("nick name");
         given(boardService.searchBoardDetail(anyLong()))
                 .willReturn(BoardSearchDetailResponse.builder()
                         .name("A")
@@ -185,6 +262,7 @@ class BoardControllerTest {
                         .wineName("E")
                         .headcount(3)
                         .contents("F")
+                        .participants(set)
                         .build());
         //when
         //then
@@ -213,6 +291,7 @@ class BoardControllerTest {
                                 .wineName("wine")
                                 .headcount(4)
                                 .contents("content yo")
+                                .participants(1)
                                 .build(),
                         BoardSearchResponse.builder()
                                 .winebarName("wine bar2")
@@ -223,6 +302,7 @@ class BoardControllerTest {
                                 .wineName("wine2")
                                 .headcount(5)
                                 .contents("content yo2")
+                                .participants(1)
                                 .build(),
                         BoardSearchResponse.builder()
                                 .winebarName("wine bar3")
@@ -233,6 +313,7 @@ class BoardControllerTest {
                                 .wineName("wine3")
                                 .headcount(6)
                                 .contents("content yo3")
+                                .participants(1)
                                 .build()
                 );
         PageImpl<BoardSearchResponse> boardSearchResponsePage =
@@ -362,21 +443,6 @@ class BoardControllerTest {
     @DisplayName("success Delete - board")
     void successDeleteBoard() throws Exception {
         //given
-        String email = "AAA";
-        given(tokenProvider.getEmailFromToken(any()))
-                .willReturn(email);
-        given(boardService.creatBoard(anyString(), anyLong(), any()))
-                .willReturn(BoardCreateResponse.builder()
-                        .memberId(1L)
-                        .winebarId(1L)
-                        .name("board name")
-                        .nickname("nick name")
-                        .date("2010-1-1")
-                        .time("7AM")
-                        .wineName("wine name")
-                        .headcount(4)
-                        .contents("hello world!")
-                        .build());
         Long deletedBoardID = 1L;
         //when
         //then
@@ -497,6 +563,38 @@ class BoardControllerTest {
                                         .headcount(4)
                                         .contents("hello world!1")
                                         .build()))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer ACCESS_TOKEN")
+                )
+                .andExpect(status().isOk())
+        ;
+    }
+
+    @Test
+    @WithMockUser(roles = "MEMBER")
+    void failedParticipantInBoard() throws Exception {
+        //given
+        given(boardService.participantInBoard(anyString(), anyLong()))
+                .willThrow(new RuntimeException("the board does not exist"));
+        //when
+        //then
+        mockMvc.perform(put("/boards/participants?board-id=1")
+                        .contentType(MediaType.APPLICATION_JSON).with(csrf())
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer ACCESS_TOKEN")
+                )
+                .andExpect(status().isOk())
+        ;
+    }
+
+    @Test
+    @WithMockUser(roles = "MEMBER")
+    void failedParticipantOutBoard() throws Exception {
+        //given
+        given(boardService.participantOutBoard(anyString(), anyLong()))
+                .willThrow(new RuntimeException("the board does not exist"));
+        //when
+        //then
+        mockMvc.perform(put("/boards/participants-out?board-id=1")
+                        .contentType(MediaType.APPLICATION_JSON).with(csrf())
                         .header(HttpHeaders.AUTHORIZATION, "Bearer ACCESS_TOKEN")
                 )
                 .andExpect(status().isOk())

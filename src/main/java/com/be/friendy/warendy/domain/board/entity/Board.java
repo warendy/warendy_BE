@@ -6,9 +6,13 @@ import com.be.friendy.warendy.domain.common.BaseEntity;
 import com.be.friendy.warendy.domain.member.entity.Member;
 import com.be.friendy.warendy.domain.winebar.entity.Winebar;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -35,13 +39,21 @@ public class Board extends BaseEntity {
     @JoinColumn(name = "WINEBAR_ID", nullable = false)
     private Winebar winebar;
 
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private String nickname;
     private String date;
     private String time;
     private String wineName;
+
+    @Positive(message = "Headcount must be a positive number")
     private Integer headcount;
     private String contents;
+
+    @ElementCollection
+    private Set<String> participants = new HashSet<>();
 
     public void updateBoardInfo(BoardUpdateRequest request) {
         name = request.getName();
@@ -51,6 +63,18 @@ public class Board extends BaseEntity {
         wineName = request.getWineName();
         headcount = request.getHeadcount();
         contents = request.getContents();
+    }
+
+    public void insertBoardParticipant(Board board, String nickname) {
+        Set<String> boardParticipants = board.getParticipants();
+        boardParticipants.add(nickname);
+        participants = boardParticipants;
+    }
+
+    public void deleteBoardParticipant(Board board, String nickname) {
+        Set<String> boardParticipants = board.getParticipants();
+        boardParticipants.remove(nickname);
+        participants = boardParticipants;
     }
 
 }

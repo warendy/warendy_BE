@@ -3,6 +3,8 @@ package com.be.friendy.warendy.domain.board.dto.response;
 import com.be.friendy.warendy.domain.board.entity.Board;
 import lombok.*;
 
+import java.util.Set;
+
 @Setter
 @Getter
 @ToString
@@ -18,6 +20,7 @@ public class BoardUpdateResponse {
     private String wineName;
     private Integer headcount;
     private String contents;
+    private Set<String> participants;
 
     public static BoardUpdateResponse fromEntity(Board board) {
         return BoardUpdateResponse.builder()
@@ -29,6 +32,7 @@ public class BoardUpdateResponse {
                 .wineName(board.getWineName())
                 .headcount(board.getHeadcount())
                 .contents(board.getContents())
+                .participants(board.getParticipants())
                 .build();
     }
 }

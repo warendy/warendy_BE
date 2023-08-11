@@ -4,11 +4,9 @@ package com.be.friendy.warendy.domain.board.controller;
 import com.be.friendy.warendy.config.jwt.TokenProvider;
 import com.be.friendy.warendy.domain.board.dto.request.BoardCreateRequest;
 import com.be.friendy.warendy.domain.board.dto.request.BoardUpdateRequest;
-import com.be.friendy.warendy.domain.board.dto.response.BoardCreateResponse;
-import com.be.friendy.warendy.domain.board.dto.response.BoardSearchDetailResponse;
-import com.be.friendy.warendy.domain.board.dto.response.BoardSearchResponse;
-import com.be.friendy.warendy.domain.board.dto.response.BoardUpdateResponse;
+import com.be.friendy.warendy.domain.board.dto.response.*;
 import com.be.friendy.warendy.domain.board.service.BoardService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -32,7 +30,7 @@ public class BoardController {
     public ResponseEntity<BoardCreateResponse> boardCreate(
             @RequestHeader("Authorization") String authorizationHeader,
             @RequestParam(value = "winebar-id") Long winebarId,
-            @RequestBody BoardCreateRequest request
+            @Valid @RequestBody BoardCreateRequest request
     ) {
         String email = tokenProvider.getEmailFromToken(authorizationHeader);
         return ResponseEntity.ok(boardService.creatBoard(email, winebarId, request));
@@ -133,12 +131,31 @@ public class BoardController {
     public ResponseEntity<BoardUpdateResponse> boardUpdate(
             @RequestHeader("Authorization") String authorizationHeader,
             @PathVariable(value = "board-id") Long boardId,
-            @RequestBody BoardUpdateRequest boardUpdateRequest
+            @Valid @RequestBody BoardUpdateRequest boardUpdateRequest
     ) {
         String email = tokenProvider.getEmailFromToken(authorizationHeader);
         return ResponseEntity.ok(
                 boardService.updateBoard(email, boardId, boardUpdateRequest));
     }
+
+    @PutMapping("/participants")
+    public ResponseEntity<BoardParticipantResponse> boardParticipant(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @RequestParam(value = "board-id") Long boardId
+    ) {
+        String email = tokenProvider.getEmailFromToken(authorizationHeader);
+        return ResponseEntity.ok(boardService.participantInBoard(email, boardId));
+    }
+
+    @PutMapping("/participants-out")
+    public ResponseEntity<BoardParticipantResponse> boardParticipantOut(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @RequestParam(value = "board-id") Long boardId
+    ) {
+        String email = tokenProvider.getEmailFromToken(authorizationHeader);
+        return ResponseEntity.ok(boardService.participantOutBoard(email, boardId));
+    }
+
 
     @DeleteMapping("/{board-id}")
     public ResponseEntity<String> boardDelete(

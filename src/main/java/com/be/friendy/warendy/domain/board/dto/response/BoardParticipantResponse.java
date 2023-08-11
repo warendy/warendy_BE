@@ -4,6 +4,8 @@ package com.be.friendy.warendy.domain.board.dto.response;
 import com.be.friendy.warendy.domain.board.entity.Board;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Setter
@@ -12,11 +14,11 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BoardSearchDetailResponse {
-    private String name;        // board 제목
-    private String winebarName;
-    private String winebarAddress;
+public class BoardParticipantResponse {
+
+    private String name;
     private String nickname;
+    private String winebarName;
     private String date;
     private String time;
     private String wineName;
@@ -24,12 +26,12 @@ public class BoardSearchDetailResponse {
     private String contents;
     private Set<String> participants;
 
-    public static BoardSearchDetailResponse fromEntity(Board board) {
-        return BoardSearchDetailResponse.builder()
+    public static BoardParticipantResponse fromEntity(Board board) {
+
+        return BoardParticipantResponse.builder()
                 .name(board.getName())
-                .winebarName(board.getWinebar().getName())
-                .winebarAddress(board.getWinebar().getAddress())
                 .nickname(board.getNickname())
+                .winebarName(board.getWinebar().getName())
                 .date(board.getDate())
                 .time(board.getTime())
                 .wineName(board.getWineName())
