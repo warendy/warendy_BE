@@ -11,6 +11,8 @@ import lombok.*;
 @Builder
 public class MyReviewSearchResponse {
 
+    private Long reviewId;
+    private Long wineId;
     String wineName;
     String winePicture;
     String contents;
@@ -20,6 +22,8 @@ public class MyReviewSearchResponse {
 
     public static MyReviewSearchResponse fromEntity(Review review) {
         return MyReviewSearchResponse.builder()
+                .reviewId(review.getId())
+                .wineId(review.getWine().getId())
                 .wineName(review.getWine().getName())
                 .winePicture(review.getWine().getPicture())
                 .contents(review.getContents())
