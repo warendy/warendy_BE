@@ -111,6 +111,7 @@ public class ChatService {
 
     }
 
+    // 채팅방 정보 조회
     public ChatRoomDto getChatRoomInfo(String roomId){
         ChatRoom chatRoom;
         try {
@@ -120,6 +121,20 @@ public class ChatService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid room ID", e);
         }
         return ChatRoomDto.fromEntity(chatRoom);
+    }
+
+    // 사용자 채팅방 정보 조회
+    public List<ChatRoomDto> getMemberChatRoomInfo(String email){
+        List<ChatRoom> chatRooms;
+        try {
+            Member member = memberRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("Member not found"));
+            chatRooms = chatRoomRepository.findByCreator(member)
+                    .orElseThrow(() -> new RuntimeException("Chat room not found"));
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid room email : ", e);
+        }
+        return ChatRoomDto.fromEntityList(chatRooms);
     }
 
     // 메시지 전송

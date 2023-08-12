@@ -3,6 +3,9 @@ package com.be.friendy.warendy.domain.chat.dto;
 import com.be.friendy.warendy.domain.chat.entity.ChatRoom;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -22,5 +25,13 @@ public class ChatRoomDto {
                 .name(chatRoom.getName())
                 .memberNum(chatRoom.getMemberNum())
                 .build();
+    }
+
+    public static List<ChatRoomDto> fromEntityList(List<ChatRoom> chatRooms){
+        List<ChatRoomDto> chatRoomDtoList = new ArrayList<>();
+        for(ChatRoom chatRoom : chatRooms){
+            chatRoomDtoList.add(fromEntity(chatRoom));
+        }
+        return chatRoomDtoList;
     }
 }
