@@ -1,6 +1,5 @@
 package com.be.friendy.warendy.domain.member.service;
 
-import com.be.friendy.warendy.config.jwt.TokenProvider;
 import com.be.friendy.warendy.domain.favorite.dto.request.PasswordCheck;
 import com.be.friendy.warendy.domain.member.dto.request.SignInRequest;
 import com.be.friendy.warendy.domain.member.dto.request.SignUpRequest;
@@ -90,9 +89,5 @@ public class MemberService extends DefaultOAuth2UserService {
                 .tannin(request.getTannin())
                 .acidity(request.getAcidity())
                 .build();
-    }
-
-    private void sendTokenToHeader(String token, HttpServletResponse response){
-        response.addHeader("Authorization", "BEARER" + " " + token);
     }
 }
