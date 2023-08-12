@@ -4,9 +4,11 @@ spring:
       fail-on-empty-beans: false
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     generate-ddl: true
     show-sql: true
+    properties:
+      hibernate.format_sql: true
   datasource:
     url: jdbc:mysql://localhost:3306/warendy
     driver-class-name: com.mysql.cj.jdbc.Driver

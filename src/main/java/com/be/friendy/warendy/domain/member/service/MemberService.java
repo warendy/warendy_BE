@@ -1,6 +1,6 @@
 package com.be.friendy.warendy.domain.member.service;
 
-import com.be.friendy.warendy.config.jwt.TokenProvider;
+import com.be.friendy.warendy.domain.favorite.dto.request.PasswordCheck;
 import com.be.friendy.warendy.domain.member.dto.request.SignInRequest;
 import com.be.friendy.warendy.domain.member.dto.request.SignUpRequest;
 import com.be.friendy.warendy.domain.member.dto.request.UpdateRequest;
@@ -68,6 +68,15 @@ public class MemberService extends DefaultOAuth2UserService {
                 .orElseThrow(() -> new RuntimeException("already exist"));
     }
 
+    public void checkPassword(String email,PasswordCheck request){
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("user does not exist"));
+
+        if (!this.passwordEncoder.matches(request.getPassword(), member.getPassword())) {
+            throw new RuntimeException("wrong password");
+        }
+    }
+
     private Member setAccount(SignUpRequest request) {
         return Member.builder()
                 .email(request.getEmail())
@@ -80,9 +89,5 @@ public class MemberService extends DefaultOAuth2UserService {
                 .tannin(request.getTannin())
                 .acidity(request.getAcidity())
                 .build();
-    }
-
-    private void sendTokenToHeader(String token, HttpServletResponse response){
-        response.addHeader("Authorization", "BEARER" + " " + token);
     }
 }
