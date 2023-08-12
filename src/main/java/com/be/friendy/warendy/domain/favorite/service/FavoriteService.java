@@ -33,11 +33,12 @@ public class FavoriteService {
         favoriteRepository.save(Favorite.builder()
                 .member(member)
                 .wine(wineData)
+                .wineName(wineData.getName())
                 .picture(wineData.getPicture())
                 .build());
     }
 
-    public void addWineToCategory(String email, CreateCategory request){
+    public void updateCategory(String email, CreateCategory request){
         memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("user does not exist"));
         request.getList().forEach((e) -> {
@@ -45,7 +46,7 @@ public class FavoriteService {
                 for(int i = 0; i < wineList.length; i++){
                     Favorite data = favoriteRepository.findByWineId(Long.parseLong(wineList[i]))
                             .orElseThrow(() -> new RuntimeException("wine does not exist in your collection"));
-                    Favorite updatedFavorite = addCategory(data, e.getName());
+                    Favorite updatedFavorite = updateCategory(data, e.getName());
                     favoriteRepository.save(updatedFavorite);
                 }});
     }
@@ -68,7 +69,7 @@ public class FavoriteService {
 
         for (Favorite favorite : favorites) {
             String categoryName = favorite.getCategory();
-            WineInfo wineInfo = new WineInfo(favorite.getWine().getId(), favorite.getPicture());
+            WineInfo wineInfo = new WineInfo(favorite.getWine().getId(), favorite.getWine().getName(), favorite.getPicture());
             if (categoryName == null) {
                 wineInfoList.add(wineInfo);
             } else {
@@ -81,10 +82,21 @@ public class FavoriteService {
         return new Collection(wineInfoList, categoryList);
     }
 
-    private Favorite addCategory(Favorite data, String element){
+    private Favorite updateCategory(Favorite data, String element){
+        if(element == null){
+            return  Favorite.builder()
+                    .id(data.getId())
+                    .category(null)
+                    .wineName(data.getWineName())
+                    .member(data.getMember())
+                    .picture(data.getPicture())
+                    .wine(data.getWine())
+                    .build();
+        }
         return  Favorite.builder()
                             .id(data.getId())
                             .category(element)
+                            .wineName(data.getWineName())
                             .member(data.getMember())
                             .picture(data.getPicture())
                             .wine(data.getWine())

@@ -2,8 +2,8 @@ package com.be.friendy.warendy.domain.favorite.controller;
 
 
 import com.be.friendy.warendy.config.jwt.TokenProvider;
-import com.be.friendy.warendy.domain.favorite.dto.request.GivenWineInfo;
 import com.be.friendy.warendy.domain.favorite.dto.request.CreateCategory;
+import com.be.friendy.warendy.domain.favorite.dto.request.GivenWineInfo;
 import com.be.friendy.warendy.domain.favorite.dto.response.Collection;
 import com.be.friendy.warendy.domain.favorite.service.FavoriteService;
 import lombok.RequiredArgsConstructor;
@@ -26,12 +26,12 @@ public class FavoriteController {
         favoriteService.addWineToFavorite(email, request);
     }
 
-    @PostMapping("/add/category")
+    @PostMapping("/update/category")
     @ResponseStatus(HttpStatus.OK)
-    public void addToCollection(@RequestHeader("Authorization") String authorizationHeader,
+    public void updateCollection(@RequestHeader("Authorization") String authorizationHeader,
                                 @RequestBody CreateCategory request){
         String email = tokenProvider.getEmailFromToken(authorizationHeader);
-        favoriteService.addWineToCategory(email, request);
+        favoriteService.updateCategory(email, request);
     }
 
     @GetMapping("/wines")

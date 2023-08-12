@@ -45,7 +45,7 @@ public class Member extends BaseEntity {
 
     // Member 엔티티에서 원하는 필드만 수정하는 메서드
     public void updateMemberInfo(String email, String password, String nickname,
-                                 String avatar, String mbti, Integer body,
+                                 String avatar, Integer body,
                                  Integer dry, Integer tannin, Integer acidity) {
         if (email != null) {
             this.email = email;
@@ -58,9 +58,6 @@ public class Member extends BaseEntity {
         }
         if (avatar != null) {
             this.avatar = avatar;
-        }
-        if (mbti != null) {
-            this.mbti = mbti;
         }
         if (body != null) {
             this.body = body;
