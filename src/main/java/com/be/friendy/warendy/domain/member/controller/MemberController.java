@@ -1,6 +1,7 @@
 package com.be.friendy.warendy.domain.member.controller;
 
 import com.be.friendy.warendy.config.jwt.TokenProvider;
+import com.be.friendy.warendy.domain.favorite.dto.request.PasswordCheck;
 import com.be.friendy.warendy.domain.member.dto.request.SignInRequest;
 import com.be.friendy.warendy.domain.member.dto.request.SignUpRequest;
 import com.be.friendy.warendy.domain.member.dto.request.UpdateRequest;
@@ -13,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.sql.Update;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -67,6 +69,14 @@ public class MemberController {
             throws JsonProcessingException {
         System.out.println(code);
         return kakaoUserService.kakaoLogin(code, response);
+    }
+
+    @PostMapping("/members/check")
+    @ResponseStatus(HttpStatus.OK)
+    public void passwordCheckBeforeUpdate(@RequestHeader("Authorization") String authorizationHeader,
+                                          @RequestBody PasswordCheck request){
+        String email = tokenProvider.getEmailFromToken(authorizationHeader);
+        memberService.checkPassword(email, request);
     }
 }
 
