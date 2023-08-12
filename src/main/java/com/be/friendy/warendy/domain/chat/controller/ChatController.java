@@ -50,7 +50,7 @@ public class ChatController {
     }
 
     // 사용자 채팅방 정보 조회
-    @PostMapping("/rooms")
+    @GetMapping("/rooms")
     public ResponseEntity<List<ChatRoomDto>> getMemberChatRoomInfo(@RequestHeader("Authorization") String authorizationHeader) {
         String email;
         try {
