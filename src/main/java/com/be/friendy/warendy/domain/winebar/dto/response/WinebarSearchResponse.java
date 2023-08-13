@@ -36,15 +36,13 @@ public class WinebarSearchResponse {
     private List<BoardSearchResponse> boardList;
 
     public static WinebarSearchResponse fromEntity(Winebar winebar) {
-        String address = winebar.getAddress();
-        String regionFromAddress = address.split(" ")[0];
 
         return WinebarSearchResponse.builder()
                 .winebarId(winebar.getId())
                 .name(winebar.getName())
                 .picture(winebar.getPicture())
-                .region(regionFromAddress)
-                .address(address)
+                .region(winebar.getRegion())
+                .address(winebar.getAddress())
                 .lnt(winebar.getLnt())
                 .lat(winebar.getLat())
                 .rating(winebar.getRating())
