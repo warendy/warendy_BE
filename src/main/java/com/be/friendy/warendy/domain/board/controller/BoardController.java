@@ -122,7 +122,7 @@ public class BoardController {
     }
 
     @GetMapping("/region")
-    public ResponseEntity<?> boardSearchByRegion(
+    public ResponseEntity<Page<BoardSearchResponse>> boardSearchByRegion(
             @RequestParam String region,
             @PageableDefault(size = 10) Pageable pageable
     ) {
