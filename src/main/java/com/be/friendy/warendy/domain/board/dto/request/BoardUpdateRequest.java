@@ -16,6 +16,7 @@ public class BoardUpdateRequest {
     private String nickname;
     private String date;
     private String time;
+    private String region;
     private String wineName;
     private Integer headcount;
     private String contents;

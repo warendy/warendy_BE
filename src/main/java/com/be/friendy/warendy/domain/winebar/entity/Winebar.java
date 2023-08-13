@@ -28,6 +28,8 @@ public class Winebar extends BaseEntity {
 
     private String picture;
 
+    private String region;
+
     private String address;
 
     private Double lnt;

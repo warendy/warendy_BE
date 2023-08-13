@@ -440,6 +440,62 @@ class BoardControllerTest {
 
     @Test
     @WithMockUser(roles = "MEMBER")
+    @DisplayName("success Search with a Region! - board")
+    void successSearchBoardByRegion() throws Exception {
+        //given
+        List<BoardSearchResponse> boardSearchResponses =
+                Arrays.asList(
+                        BoardSearchResponse.builder()
+                                .winebarName("wine bar")
+                                .name("board")
+                                .nickname("Hong")
+                                .date("2000-1-1")
+                                .time("7AM")
+                                .region("seoul")
+                                .wineName("wine")
+                                .headcount(4)
+                                .contents("content yo")
+                                .build(),
+                        BoardSearchResponse.builder()
+                                .winebarName("wine bar2")
+                                .name("board2")
+                                .nickname("Hong")
+                                .date("2000-1-12")
+                                .time("10AM")
+                                .region("seoul")
+                                .wineName("wine2")
+                                .headcount(5)
+                                .contents("content yo2")
+                                .build(),
+                        BoardSearchResponse.builder()
+                                .winebarName("wine bar3")
+                                .name("board3")
+                                .nickname("Hong")
+                                .date("2000-1-13")
+                                .time("8AM")
+                                .region("seoul")
+                                .wineName("wine3")
+                                .headcount(6)
+                                .contents("content yo3")
+                                .build()
+                );
+        PageImpl<BoardSearchResponse> boardSearchResponsePage =
+                new PageImpl<>(boardSearchResponses);
+        given(boardService.searchBoardByRegion(anyString(), any()))
+                .willReturn(boardSearchResponsePage);
+        //when
+        //then
+        mockMvc.perform(get("/boards/region?region=1&page=0"))
+                .andDo(print())
+                .andExpect(jsonPath("$.content[0].nickname")
+                        .value("Hong"))
+                .andExpect(jsonPath("$.content[0].region")
+                        .value("seoul"))
+        ;
+    }
+
+    @Test
+    @WithMockUser(roles = "MEMBER")
     @DisplayName("success Delete - board")
     void successDeleteBoard() throws Exception {
         //given
