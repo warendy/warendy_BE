@@ -15,7 +15,8 @@ public record InfoResponse (
         int body,
         int dry,
         int tannin,
-        int acidity
+        int acidity,
+        String InBoardIdList
 ) {
 
     public static InfoResponse fromEntity(Member member) {
@@ -27,6 +28,7 @@ public record InfoResponse (
                 .dry(member.getDry())
                 .tannin(member.getTannin())
                 .acidity(member.getAcidity())
+                .InBoardIdList(member.getInBoardIdList())
                 .build();
     }
 }
