@@ -95,6 +95,10 @@ public class BoardService {
         Member memberByEmail = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("user does not exist"));
 
+        if(memberByEmail.getInBoardIdList() == null) {
+            return new PageImpl<>(new ArrayList<>());
+        }
+
         String[] boardIdList = memberByEmail.getInBoardIdList().split(",");
         List<Board> boardInPartyList = new ArrayList<>();
         for (String boardId : boardIdList) {
