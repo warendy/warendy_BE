@@ -8,7 +8,9 @@ import com.be.friendy.warendy.domain.member.dto.response.InfoResponse;
 import com.be.friendy.warendy.domain.member.entity.Member;
 import com.be.friendy.warendy.domain.member.entity.constant.Role;
 import com.be.friendy.warendy.domain.member.repository.MemberRepository;
-import jakarta.servlet.http.HttpServletResponse;
+import com.be.friendy.warendy.exception.member.DuplicatedUserException;
+import com.be.friendy.warendy.exception.member.UserDoesNotExistException;
+import com.be.friendy.warendy.exception.member.WrongPasswordException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -25,7 +27,7 @@ public class MemberService extends DefaultOAuth2UserService {
         //이미 들록된 유저인지 확인
         boolean exists = memberRepository.existsByEmail(request.getEmail());
         if (exists) {
-            throw new RuntimeException("already exists");
+            throw new DuplicatedUserException();
         }
 
         request.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -34,17 +36,17 @@ public class MemberService extends DefaultOAuth2UserService {
 
     public Member signIn(SignInRequest member) {
         Member user = memberRepository.findByEmail(member.getEmail())
-                .orElseThrow(() -> new RuntimeException("user does not exist"));
+                .orElseThrow(UserDoesNotExistException::new);
 
         if (!this.passwordEncoder.matches(member.getPassword(), user.getPassword())) {
-            throw new RuntimeException("wrong password");
+            throw new WrongPasswordException();
         }
         return user;
     }
 
     public void updateMember(UpdateRequest request, String email) {
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("user does not exist"));
+                .orElseThrow(UserDoesNotExistException::new);
         member.updateMemberInfo(request.getEmail(), passwordEncoder.encode(request.getPassword()), request.getNickname(), request.getAvatar(),
                 request.getBody(), request.getDry(), request.getTannin(), request.getAcidity());
         memberRepository.save(member);
@@ -52,28 +54,28 @@ public class MemberService extends DefaultOAuth2UserService {
 
     public InfoResponse getMemberInfo(String email) {
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("user does not exist"));
+                .orElseThrow(UserDoesNotExistException::new);
 
         return InfoResponse.fromEntity(member);
     }
 
     public void deleteAccount(Long memberId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("user does not exist"));
+                .orElseThrow(UserDoesNotExistException::new);
         memberRepository.delete(member);
     }
 
     public Member loadUserByEmail(String email) {
         return memberRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("already exist"));
+                .orElseThrow(UserDoesNotExistException::new);
     }
 
     public void checkPassword(String email,PasswordCheck request){
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("user does not exist"));
+                .orElseThrow(UserDoesNotExistException::new);
 
         if (!this.passwordEncoder.matches(request.getPassword(), member.getPassword())) {
-            throw new RuntimeException("wrong password");
+            throw new WrongPasswordException();
         }
     }
 

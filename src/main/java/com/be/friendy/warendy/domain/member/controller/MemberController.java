@@ -1,6 +1,7 @@
 package com.be.friendy.warendy.domain.member.controller;
 
 import com.be.friendy.warendy.config.jwt.TokenProvider;
+import com.be.friendy.warendy.domain.common.ApiResponse;
 import com.be.friendy.warendy.domain.favorite.dto.request.PasswordCheck;
 import com.be.friendy.warendy.domain.member.dto.request.SignInRequest;
 import com.be.friendy.warendy.domain.member.dto.request.SignUpRequest;
@@ -26,41 +27,41 @@ public class MemberController {
     private final KakaoUserService kakaoUserService;
 
     @PostMapping("/signup")
-    public ResponseEntity<InfoResponse> signUp(@RequestBody SignUpRequest request){
+    public ApiResponse<InfoResponse> signUp(@RequestBody SignUpRequest request){
         InfoResponse result = memberService.signUp(request);
-        return ResponseEntity.ok(result);
+        return ApiResponse.createSuccess(result);
     }
 
     @PostMapping("/signin")
-    public InfoResponse signIn(@RequestBody SignInRequest request, HttpServletResponse response){
+    public ApiResponse<InfoResponse> signIn(@RequestBody SignInRequest request, HttpServletResponse response){
         Member user = memberService.signIn(request);
         String token = tokenProvider.generateToken(user.getEmail());
         response.addHeader("Authorization", "Bearer" + " " + token);
         log.info("user login -> " + request.getEmail());
-        return InfoResponse.fromEntity(user);
+        return ApiResponse.createSuccess(InfoResponse.fromEntity(user));
     }
 
     @GetMapping("/members")
-    public ResponseEntity<?> getInfo(@RequestHeader("Authorization") String authorizationHeader){
+    public ApiResponse<InfoResponse> getInfo(@RequestHeader("Authorization") String authorizationHeader){
         String jwtToken = authorizationHeader.substring(7);
         String email = tokenProvider.getEmail(jwtToken);
         InfoResponse result = memberService.getMemberInfo(email);
-        return ResponseEntity.ok(result);
+        return ApiResponse.createSuccess(result);
     }
 
     @PatchMapping("/members")
-    public ResponseEntity<?> updateAccount(@RequestHeader("Authorization") String authorizationHeader,
+    public ApiResponse<?> updateAccount(@RequestHeader("Authorization") String authorizationHeader,
                                            @RequestBody UpdateRequest request){
         String jwtToken = authorizationHeader.substring(7);
         String email = tokenProvider.getEmail(jwtToken);
         memberService.updateMember(request, email);
-        return ResponseEntity.ok("updated");
+        return ApiResponse.createSuccess("수정완료!");
     }
 
     @DeleteMapping("/members/{memberId}")
-    public ResponseEntity<?> deleteAccount(@PathVariable Long memberId) {
+    public ApiResponse<?> deleteAccount(@PathVariable Long memberId) {
         memberService.deleteAccount(memberId);
-        return ResponseEntity.ok("삭제 성공");
+        return ApiResponse.createSuccess("삭제완료!");
     }
 
     @GetMapping("/oauth2/callback/kakao")
@@ -72,10 +73,11 @@ public class MemberController {
 
     @PostMapping("/members/check")
     @ResponseStatus(HttpStatus.OK)
-    public void passwordCheckBeforeUpdate(@RequestHeader("Authorization") String authorizationHeader,
+    public ApiResponse<?> passwordCheckBeforeUpdate(@RequestHeader("Authorization") String authorizationHeader,
                                           @RequestBody PasswordCheck request){
         String email = tokenProvider.getEmailFromToken(authorizationHeader);
         memberService.checkPassword(email, request);
+        return ApiResponse.createSuccess("비밀번호가 일치합니다");
     }
 }
 
