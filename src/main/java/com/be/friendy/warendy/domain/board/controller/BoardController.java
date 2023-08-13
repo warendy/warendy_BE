@@ -59,6 +59,14 @@ public class BoardController {
         return ResponseEntity.ok(boardService.searchMyBoardByEmail(email, pageable));
     }
 
+    @GetMapping("/in-party")
+    public ResponseEntity<Page<BoardSearchResponse>> boardSearchParticipantInBoards(
+            @RequestHeader("Authorization") String authorizationHeader
+    ) {
+        String email = tokenProvider.getEmailFromToken(authorizationHeader);
+        return ResponseEntity.ok(boardService.searchParticipantInBoards(email));
+    }
+
     @GetMapping("/board-name")
     public ResponseEntity<Page<BoardSearchResponse>> boardSearchByBoardName(
             @RequestParam String boardName,

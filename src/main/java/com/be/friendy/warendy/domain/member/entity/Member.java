@@ -43,6 +43,37 @@ public class Member extends BaseEntity {
     private int tannin;
     private int acidity;
 
+    private String inBoardIdList;
+
+    public void InBoard(Long boardId) {
+
+        if(inBoardIdList != null){
+            StringBuilder targetBoard = new StringBuilder();
+            targetBoard.append(boardId).append(",");
+            if(inBoardIdList.contains(targetBoard.toString())
+                    || inBoardIdList.contains(String.valueOf(boardId))) {
+
+            } else {
+                targetBoard.append(inBoardIdList);
+                inBoardIdList = targetBoard.toString();
+            }
+        } else {
+            inBoardIdList = String.valueOf(boardId);
+        }
+
+    }
+
+    public void OutBoard(Long boardId) {
+
+        String targetBoard = boardId + ",";
+        if(inBoardIdList.contains(targetBoard)){
+            inBoardIdList = inBoardIdList.replace(targetBoard,"");
+        } else {
+            inBoardIdList = inBoardIdList.replace(
+                    String.valueOf(boardId),"");
+        }
+    }
+
     // Member 엔티티에서 원하는 필드만 수정하는 메서드
     public void updateMemberInfo(String email, String password, String nickname,
                                  String avatar, Integer body,

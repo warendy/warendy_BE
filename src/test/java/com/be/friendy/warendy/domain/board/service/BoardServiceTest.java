@@ -24,10 +24,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -212,6 +209,68 @@ class BoardServiceTest {
         Pageable pageable = PageRequest.of(0, 3);
         Page<BoardSearchResponse> MyBoardPage
                 = boardService.searchMyBoardByEmail("AAA", pageable);
+        //then
+        assertEquals(3, MyBoardPage.getTotalElements());
+        assertEquals(1, MyBoardPage.getTotalPages());
+    }
+
+    @Test
+    void successSearchParticipantInBoard() {
+        //given
+        String boardIdList = "4,1,2";
+        Member member1 = Member.builder()
+                .id(13L)
+                .email("asdf@gmail.com")
+                .password("asdfasdfasdf")
+                .nickname("nick name").avatar("asdfasdfasdf")
+                .mbti("istp")
+                .role(Role.MEMBER).oauthType("fasdf")
+                .body(1).dry(1).tannin(1).acidity(1)
+                .inBoardIdList(boardIdList)
+                .build();
+        Winebar winebar1 = Winebar.builder()
+                .id(1L)
+                .name("AA")
+                .picture("asdfasdf")
+                .address("tttttttt")
+                .lat(0.0)
+                .lnt(0.0)
+                .rating(1.1)
+                .reviews(1)
+                .build();
+        HashSet<String> partySet = new HashSet<>();
+        partySet.add(member1.getNickname());
+        List<Board> boardList = Arrays.asList(
+                Board.builder()
+                        .id(1L).member(member1).winebar(winebar1).name("A")
+                        .nickname("A").date("2010-1-13").time("7AM")
+                        .wineName("123").headcount(4).contents("123")
+                        .participants(partySet)
+                        .build(),
+                Board.builder()
+                        .id(1L).member(member1).winebar(winebar1).name("Ab")
+                        .nickname("Ab").date("2010-1-13b").time("7AM")
+                        .wineName("123b").headcount(45).contents("123b")
+                        .participants(partySet)
+                        .build(),
+                Board.builder()
+                        .id(1L).member(member1).winebar(winebar1).name("Ac")
+                        .nickname("Ac").date("2010-1-13c").time("7AM")
+                        .wineName("123c").headcount(46).contents("123c")
+                        .participants(partySet)
+                        .build()
+        );
+        given(memberRepository.findByEmail(anyString()))
+                .willReturn(Optional.of(member1));
+        for(Board board  : boardList) {
+            given(boardRepository.existsById(anyLong())).willReturn(true);
+            given(boardRepository.findById(anyLong()))
+                    .willReturn(Optional.of(board));
+        }
+        //when
+        Pageable pageable = PageRequest.of(0, 3);
+        Page<BoardSearchResponse> MyBoardPage
+                = boardService.searchParticipantInBoards("AAA");
         //then
         assertEquals(3, MyBoardPage.getTotalElements());
         assertEquals(1, MyBoardPage.getTotalPages());
@@ -492,6 +551,7 @@ class BoardServiceTest {
                 .willReturn(Optional.of(targetBoard));
         given(memberRepository.findByEmail(anyString()))
                 .willReturn(Optional.of(member2));
+        given(memberRepository.save(any())).willReturn(member2);
         given(boardRepository.save(any())).willReturn(targetBoard);
         //when
         BoardParticipantResponse board = boardService
@@ -545,6 +605,7 @@ class BoardServiceTest {
                 .willReturn(Optional.of(targetBoard));
         given(memberRepository.findByEmail(anyString()))
                 .willReturn(Optional.of(member2));
+        given(memberRepository.save(any())).willReturn(member2);
         given(boardRepository.save(any())).willReturn(targetBoard);
         //when
         BoardParticipantResponse board = boardService

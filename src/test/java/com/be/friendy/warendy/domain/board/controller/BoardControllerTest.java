@@ -335,6 +335,67 @@ class BoardControllerTest {
 
     @Test
     @WithMockUser(roles = "MEMBER")
+    @DisplayName("success Search My board! - board")
+    void successSearchParticipantInBoards() throws Exception {
+        //given
+        String email = "AAA";
+        given(tokenProvider.getEmailFromToken(any()))
+                .willReturn(email);
+        List<BoardSearchResponse> boardSearchResponses =
+                Arrays.asList(
+                        BoardSearchResponse.builder()
+                                .winebarName("wine bar")
+                                .name("board")
+                                .nickname("Hong")
+                                .date("2000-1-1")
+                                .time("7AM")
+                                .wineName("wine")
+                                .headcount(4)
+                                .contents("content yo")
+                                .participants(1)
+                                .build(),
+                        BoardSearchResponse.builder()
+                                .winebarName("wine bar2")
+                                .name("board2")
+                                .nickname("Hong")
+                                .date("2000-1-12")
+                                .time("10AM")
+                                .wineName("wine2")
+                                .headcount(5)
+                                .contents("content yo2")
+                                .participants(1)
+                                .build(),
+                        BoardSearchResponse.builder()
+                                .winebarName("wine bar3")
+                                .name("board3")
+                                .nickname("Hong")
+                                .date("2000-1-13")
+                                .time("8AM")
+                                .wineName("wine3")
+                                .headcount(6)
+                                .contents("content yo3")
+                                .participants(1)
+                                .build()
+                );
+        PageImpl<BoardSearchResponse> boardSearchResponsePage =
+                new PageImpl<>(boardSearchResponses);
+        given(boardService.searchParticipantInBoards(anyString()))
+                .willReturn(boardSearchResponsePage);
+        //when
+        //then
+        mockMvc.perform(get("/boards/in-party?page=1")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer ACCESS_TOKEN")
+                )
+                .andDo(print())
+                .andExpect(jsonPath("$.content[0].nickname")
+                        .value("Hong"))
+                .andExpect(jsonPath("$.content[1].nickname")
+                        .value("Hong"))
+        ;
+    }
+
+    @Test
+    @WithMockUser(roles = "MEMBER")
     void successSearchBoardByWinebarId() throws Exception {
         //given
         List<BoardSearchResponse> boardSearchResponses =
