@@ -21,6 +21,8 @@ public class WinebarSearchResponse {
 
     private String picture;
 
+    private String region;
+
     private String address;
 
     private Double lnt;
@@ -34,11 +36,15 @@ public class WinebarSearchResponse {
     private List<BoardSearchResponse> boardList;
 
     public static WinebarSearchResponse fromEntity(Winebar winebar) {
+        String address = winebar.getAddress();
+        String regionFromAddress = address.split(" ")[0];
+
         return WinebarSearchResponse.builder()
                 .winebarId(winebar.getId())
                 .name(winebar.getName())
                 .picture(winebar.getPicture())
-                .address(winebar.getAddress())
+                .region(regionFromAddress)
+                .address(address)
                 .lnt(winebar.getLnt())
                 .lat(winebar.getLat())
                 .rating(winebar.getRating())

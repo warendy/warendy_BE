@@ -336,6 +336,66 @@ class BoardServiceTest {
     }
 
     @Test
+    @DisplayName("success search with a region! - board")
+    void successSearchBoardByRegion() {
+        //given
+        Member member1 = Member.builder()
+                .id(13L)
+                .email("asdf@gmail.com")
+                .password("asdfasdfasdf")
+                .nickname("nick name").avatar("asdfasdfasdf")
+                .mbti("istp")
+                .role(Role.MEMBER).oauthType("fasdf")
+                .body(1).dry(1).tannin(1).acidity(1)
+                .build();
+        Winebar winebar1 = Winebar.builder()
+                .id(1L)
+                .name("AA")
+                .picture("asdfasdf")
+                .region("서울")
+                .address("tttttttt")
+                .lat(0.0)
+                .lnt(0.0)
+                .rating(1.1)
+                .reviews(1)
+                .build();
+        HashSet<String> partySet = new HashSet<>();
+        partySet.add(member1.getNickname());
+        List<Board> boardList = Arrays.asList(
+                Board.builder()
+                        .id(1L).member(member1).winebar(winebar1).name("A")
+                        .nickname("A").date("2010-1-13").time("7AM")
+                        .wineName("123").headcount(4).contents("123")
+                        .participants(partySet).region("경북")
+                        .build(),
+                Board.builder()
+                        .id(1L).member(member1).winebar(winebar1).name("Ab")
+                        .nickname("Ab").date("2010-1-13b").time("7AM")
+                        .wineName("123b").headcount(45).contents("123b")
+                        .participants(partySet).region("경남")
+                        .build(),
+                Board.builder()
+                        .id(1L).member(member1).winebar(winebar1).name("Ac")
+                        .nickname("Ac").date("2010-1-13c").time("7AM")
+                        .wineName("123c").headcount(46).contents("123c")
+                        .participants(partySet).region("호남")
+                        .build()
+        );
+        given(boardRepository.findByRegion(anyString(), any()))
+                .willReturn(new PageImpl<>(boardList));
+        //when
+        Pageable pageable = PageRequest.of(0, 3);
+        Page<BoardSearchResponse> boardPage
+                = boardService.searchBoardByRegion("a", pageable);
+        //then
+        assertEquals(3, boardPage.getTotalElements());
+        assertEquals(1, boardPage.getTotalPages());
+        assertEquals("경북", boardPage.getContent().get(0).getRegion());
+        assertEquals("경남", boardPage.getContent().get(1).getRegion());
+        assertEquals("호남", boardPage.getContent().get(2).getRegion());
+    }
+
+    @Test
     @DisplayName("success update! - board")
     void successUpdateBoard() {
         //given

@@ -56,6 +56,7 @@ public class BoardService {
                         .nickname(createRequest.getNickname())
                         .date(createRequest.getDate())
                         .time(createRequest.getTime())
+                        .region(createRequest.getRegion())
                         .wineName(createRequest.getWineName())
                         .headcount(createRequest.getHeadcount())
                         .contents(createRequest.getContents())
@@ -146,6 +147,13 @@ public class BoardService {
             String time, Pageable pageable
     ) {
         return boardRepository.findByTime(time, pageable)
+                .map(BoardSearchResponse::fromEntity);
+    }
+
+    public Page<BoardSearchResponse> searchBoardByRegion(
+            String region, Pageable pageable
+    ) {
+        return boardRepository.findByRegion(region, pageable)
                 .map(BoardSearchResponse::fromEntity);
     }
 
