@@ -55,6 +55,7 @@ public class BoardService {
                         .name(createRequest.getName())
                         .nickname(createRequest.getNickname())
                         .date(createRequest.getDate())
+                        .time(createRequest.getTime())
                         .wineName(createRequest.getWineName())
                         .headcount(createRequest.getHeadcount())
                         .contents(createRequest.getContents())
