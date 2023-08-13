@@ -40,7 +40,7 @@ public class ReviewController {
     public ResponseEntity<Page<WineReviewSearchByWineIdResponse>>
     wineReviewSearchByWineId(
             @RequestParam(value = "wine-id") Long wineId,
-            @PageableDefault(size = 3) Pageable pageable) {
+            @PageableDefault(size = 10) Pageable pageable) {
 
         return ResponseEntity.ok(
                 reviewService.searchWineReviewByWineId(wineId, pageable));
@@ -49,7 +49,7 @@ public class ReviewController {
     @GetMapping("/my")
     public ResponseEntity<Page<MyReviewSearchResponse>> MyReviewSearch(
             @RequestHeader("Authorization") String authorizationHeader,
-            @PageableDefault(size = 3) Pageable pageable
+            @PageableDefault(size = 10) Pageable pageable
     ) {
         String email = tokenProvider.getEmailFromToken(authorizationHeader);
         return ResponseEntity.ok(

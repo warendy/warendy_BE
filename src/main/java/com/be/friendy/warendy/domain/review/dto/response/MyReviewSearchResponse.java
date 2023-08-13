@@ -13,10 +13,13 @@ public class MyReviewSearchResponse {
 
     private Long reviewId;
     private Long wineId;
-    String wineName;
-    String winePicture;
-    String contents;
-    float rating;                   // 유저 평점.
+    private String wineName;
+    private String winePicture;
+    private String wineType;
+    private String winePairing;
+    private Float wineRating;
+    private String contents;
+    private Float rating;                   // 유저 평점.
     private String createdAt;
     private String modifiedAt;
 
@@ -26,6 +29,9 @@ public class MyReviewSearchResponse {
                 .wineId(review.getWine().getId())
                 .wineName(review.getWine().getName())
                 .winePicture(review.getWine().getPicture())
+                .wineType(review.getWine().getType())
+                .winePairing(review.getWine().getPairing())
+                .wineRating(review.getWine().getRating())
                 .contents(review.getContents())
                 .rating(review.getRating())
                 .createdAt(review.getCreatedAt())
