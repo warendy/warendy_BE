@@ -14,6 +14,7 @@ import java.util.Set;
 @Builder
 public class BoardCreateResponse {
 
+    private Long boardId;
     private Long memberId;
     private Long winebarId;
     private String name;
@@ -27,6 +28,7 @@ public class BoardCreateResponse {
 
     public static BoardCreateResponse fromEntity(Board board) {
         return BoardCreateResponse.builder()
+                .boardId(board.getId())
                 .memberId(board.getMember().getId())
                 .winebarId(board.getWinebar().getId())
                 .name(board.getName())
