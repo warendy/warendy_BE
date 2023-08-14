@@ -86,7 +86,7 @@ public class BoardService {
         Member memberByEmail = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("user does not exist"));
 
-        return boardRepository.findByNickname(memberByEmail.getNickname(), pageable)
+        return boardRepository.findAllById(memberByEmail.getId(), pageable)
                 .map(BoardSearchResponse::fromEntity);
     }
 
