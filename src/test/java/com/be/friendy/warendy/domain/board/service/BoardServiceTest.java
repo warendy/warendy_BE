@@ -203,7 +203,7 @@ class BoardServiceTest {
         );
         given(memberRepository.findByEmail(anyString()))
                 .willReturn(Optional.of(member1));
-        given(boardRepository.findAllById(anyLong(), any()))
+        given(boardRepository.findByMember_Id(anyLong(), any()))
                 .willReturn(new PageImpl<>(boardList));
         //when
         Pageable pageable = PageRequest.of(0, 3);
