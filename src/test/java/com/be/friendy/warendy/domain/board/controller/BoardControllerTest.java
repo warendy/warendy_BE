@@ -291,7 +291,6 @@ class BoardControllerTest {
                                 .wineName("wine")
                                 .headcount(4)
                                 .contents("content yo")
-                                .participants(1)
                                 .build(),
                         BoardSearchResponse.builder()
                                 .winebarName("wine bar2")
@@ -302,7 +301,6 @@ class BoardControllerTest {
                                 .wineName("wine2")
                                 .headcount(5)
                                 .contents("content yo2")
-                                .participants(1)
                                 .build(),
                         BoardSearchResponse.builder()
                                 .winebarName("wine bar3")
@@ -313,7 +311,6 @@ class BoardControllerTest {
                                 .wineName("wine3")
                                 .headcount(6)
                                 .contents("content yo3")
-                                .participants(1)
                                 .build()
                 );
         PageImpl<BoardSearchResponse> boardSearchResponsePage =
@@ -352,7 +349,6 @@ class BoardControllerTest {
                                 .wineName("wine")
                                 .headcount(4)
                                 .contents("content yo")
-                                .participants(1)
                                 .build(),
                         BoardSearchResponse.builder()
                                 .winebarName("wine bar2")
@@ -363,7 +359,6 @@ class BoardControllerTest {
                                 .wineName("wine2")
                                 .headcount(5)
                                 .contents("content yo2")
-                                .participants(1)
                                 .build(),
                         BoardSearchResponse.builder()
                                 .winebarName("wine bar3")
@@ -374,7 +369,6 @@ class BoardControllerTest {
                                 .wineName("wine3")
                                 .headcount(6)
                                 .contents("content yo3")
-                                .participants(1)
                                 .build()
                 );
         PageImpl<BoardSearchResponse> boardSearchResponsePage =
