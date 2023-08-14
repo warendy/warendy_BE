@@ -12,28 +12,30 @@ import com.be.friendy.warendy.domain.member.service.KakaoUserService;
 import com.be.friendy.warendy.domain.member.service.MemberService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@Validated
 public class MemberController {
     private final MemberService memberService;
     private final TokenProvider tokenProvider;
     private final KakaoUserService kakaoUserService;
 
     @PostMapping("/signup")
-    public ApiResponse<InfoResponse> signUp(@RequestBody SignUpRequest request){
+    public ApiResponse<InfoResponse> signUp(@Valid @RequestBody SignUpRequest request){
         InfoResponse result = memberService.signUp(request);
         return ApiResponse.createSuccess(result);
     }
 
     @PostMapping("/signin")
-    public ApiResponse<InfoResponse> signIn(@RequestBody SignInRequest request, HttpServletResponse response){
+    public ApiResponse<InfoResponse> signIn(@Valid @RequestBody SignInRequest request, HttpServletResponse response){
         Member user = memberService.signIn(request);
         String token = tokenProvider.generateToken(user.getEmail());
         response.addHeader("Authorization", "Bearer" + " " + token);
@@ -51,7 +53,7 @@ public class MemberController {
 
     @PatchMapping("/members")
     public ApiResponse<?> updateAccount(@RequestHeader("Authorization") String authorizationHeader,
-                                           @RequestBody UpdateRequest request){
+                                        @RequestBody @Valid UpdateRequest request){
         String jwtToken = authorizationHeader.substring(7);
         String email = tokenProvider.getEmail(jwtToken);
         memberService.updateMember(request, email);
@@ -73,7 +75,7 @@ public class MemberController {
 
     @PostMapping("/members/check")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<?> passwordCheckBeforeUpdate(@RequestHeader("Authorization") String authorizationHeader,
+    public ApiResponse<?> passwordCheckBeforeUpdate(@Valid @RequestHeader("Authorization") String authorizationHeader,
                                           @RequestBody PasswordCheck request){
         String email = tokenProvider.getEmailFromToken(authorizationHeader);
         memberService.checkPassword(email, request);

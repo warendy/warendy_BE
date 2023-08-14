@@ -9,6 +9,7 @@ import com.be.friendy.warendy.domain.member.entity.Member;
 import com.be.friendy.warendy.domain.member.entity.constant.Role;
 import com.be.friendy.warendy.domain.member.repository.MemberRepository;
 import com.be.friendy.warendy.exception.member.DuplicatedUserException;
+import com.be.friendy.warendy.exception.member.DuplicatedUserNicknameException;
 import com.be.friendy.warendy.exception.member.UserDoesNotExistException;
 import com.be.friendy.warendy.exception.member.WrongPasswordException;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,10 @@ public class MemberService extends DefaultOAuth2UserService {
         boolean exists = memberRepository.existsByEmail(request.getEmail());
         if (exists) {
             throw new DuplicatedUserException();
+        }
+        boolean alreadyInUse = memberRepository.existsByNickname((request.getNickname()));
+        if(alreadyInUse){
+            throw new DuplicatedUserNicknameException();
         }
 
         request.setPassword(passwordEncoder.encode(request.getPassword()));

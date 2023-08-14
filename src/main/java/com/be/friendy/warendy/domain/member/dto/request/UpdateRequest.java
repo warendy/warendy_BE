@@ -1,5 +1,6 @@
 package com.be.friendy.warendy.domain.member.dto.request;
-
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 
 @Setter
@@ -14,9 +15,22 @@ public class UpdateRequest {
     private String password;
     private String nickname;
     private String avatar;
-    private String mbti;
-    private int body;
-    private int dry;
-    private int tannin;
-    private int acidity;
+
+    @Min(0)
+    @Max(4)
+    private Integer body;
+
+    @Min(0)
+    @Max(4)
+    private Integer dry;
+
+    @Min(0)
+    @Max(4)
+    private Integer tannin;
+
+    @Min(0)
+    @Max(4)
+    private Integer acidity;
 }
+
+
