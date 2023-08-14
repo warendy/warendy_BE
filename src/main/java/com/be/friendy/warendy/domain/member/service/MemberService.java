@@ -47,9 +47,15 @@ public class MemberService extends DefaultOAuth2UserService {
     public void updateMember(UpdateRequest request, String email) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(UserDoesNotExistException::new);
-        member.updateMemberInfo(request.getEmail(), passwordEncoder.encode(request.getPassword()), request.getNickname(), request.getAvatar(),
-                request.getBody(), request.getDry(), request.getTannin(), request.getAcidity());
-        memberRepository.save(member);
+        if(request.getPassword() == null) {
+            member.updateMemberInfo(request.getEmail(), request.getPassword(), request.getNickname(), request.getAvatar(),
+                    request.getBody(), request.getDry(), request.getTannin(), request.getAcidity());
+            memberRepository.save(member);
+        }else{
+            member.updateMemberInfo(request.getEmail(), passwordEncoder.encode(request.getPassword()), request.getNickname(), request.getAvatar(),
+                    request.getBody(), request.getDry(), request.getTannin(), request.getAcidity());
+            memberRepository.save(member);
+        }
     }
 
     public InfoResponse getMemberInfo(String email) {
