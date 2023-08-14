@@ -17,6 +17,7 @@ public class BoardUpdateResponse {
     private String winebarName;
     private String date;
     private String time;
+    private String region;
     private String wineName;
     private Integer headcount;
     private String contents;
@@ -29,6 +30,7 @@ public class BoardUpdateResponse {
                 .winebarName(board.getWinebar().getName())
                 .date(board.getDate())
                 .time(board.getTime())
+                .region(board.getRegion())
                 .wineName(board.getWineName())
                 .headcount(board.getHeadcount())
                 .contents(board.getContents())

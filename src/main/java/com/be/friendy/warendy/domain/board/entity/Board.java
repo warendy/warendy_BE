@@ -46,6 +46,7 @@ public class Board extends BaseEntity {
     private String nickname;
     private String date;
     private String time;
+    private String region;
     private String wineName;
 
     @Positive(message = "Headcount must be a positive number")
@@ -60,6 +61,7 @@ public class Board extends BaseEntity {
         nickname = request.getNickname();
         date = request.getDate();
         time = request.getTime();
+        region = request.getRegion();
         wineName = request.getWineName();
         headcount = request.getHeadcount();
         contents = request.getContents();

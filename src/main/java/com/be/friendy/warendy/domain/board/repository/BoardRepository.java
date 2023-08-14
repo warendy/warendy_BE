@@ -28,5 +28,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     Page<Board> findByTime(String time, Pageable pageable);
 
+    Page<Board> findByRegion(String region, Pageable pageable);
+
     boolean existsByName(String name);
 }

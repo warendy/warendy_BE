@@ -59,6 +59,14 @@ public class BoardController {
         return ResponseEntity.ok(boardService.searchMyBoardByEmail(email, pageable));
     }
 
+    @GetMapping("/in-party")
+    public ResponseEntity<Page<BoardSearchResponse>> boardSearchParticipantInBoards(
+            @RequestHeader("Authorization") String authorizationHeader
+    ) {
+        String email = tokenProvider.getEmailFromToken(authorizationHeader);
+        return ResponseEntity.ok(boardService.searchParticipantInBoards(email));
+    }
+
     @GetMapping("/board-name")
     public ResponseEntity<Page<BoardSearchResponse>> boardSearchByBoardName(
             @RequestParam String boardName,
@@ -71,7 +79,7 @@ public class BoardController {
     @GetMapping("/wine-name")
     public ResponseEntity<Page<BoardSearchResponse>> boardSearchByWineName(
             @RequestParam String wineName,
-            @PageableDefault(size = 3) Pageable pageable
+            @PageableDefault(size = 10) Pageable pageable
     ) {
         return ResponseEntity.ok(boardService
                 .searchBoardByWineName(wineName, pageable));
@@ -80,7 +88,7 @@ public class BoardController {
     @GetMapping("/winebar-id")
     public ResponseEntity<Page<BoardSearchResponse>> boardSearchByWinebarId(
             @RequestParam(value = "winebar-id") Long winebarId,
-            @PageableDefault(size = 3) Pageable pageable
+            @PageableDefault(size = 10) Pageable pageable
     ) {
         return ResponseEntity.ok(boardService
                 .searchBoardByWinebarId(winebarId, pageable));
@@ -89,7 +97,7 @@ public class BoardController {
     @GetMapping("/winebar-name")
     public ResponseEntity<Page<BoardSearchResponse>> boardSearchByWinebarName(
             @RequestParam String winebarName,
-            @PageableDefault(size = 3) Pageable pageable
+            @PageableDefault(size = 10) Pageable pageable
     ) {
         return ResponseEntity.ok(boardService
                 .searchBoardByWinebarName(winebarName, pageable));
@@ -98,7 +106,7 @@ public class BoardController {
     @GetMapping("/creator")
     public ResponseEntity<Page<BoardSearchResponse>> boardSearchByCreator(
             @RequestParam String creator,
-            @PageableDefault(size = 3) Pageable pageable
+            @PageableDefault(size = 10) Pageable pageable
     ) {
         return ResponseEntity.ok(
                 boardService.searchBoardByCreator(creator, pageable)
@@ -108,7 +116,7 @@ public class BoardController {
     @GetMapping("/date")
     public ResponseEntity<Page<BoardSearchResponse>> boardSearchByDate(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            @PageableDefault(size = 3) Pageable pageable
+            @PageableDefault(size = 10) Pageable pageable
     ) {
         return ResponseEntity.ok(boardService.searchBoardByDate(date, pageable));
     }
@@ -116,15 +124,17 @@ public class BoardController {
     @GetMapping("/time")
     public ResponseEntity<Page<BoardSearchResponse>> boardSearchByTime(
             @RequestParam String time,
-            @PageableDefault(size = 3) Pageable pageable
+            @PageableDefault(size = 10) Pageable pageable
     ) {
         return ResponseEntity.ok(boardService.searchBoardByTime(time, pageable));
     }
 
     @GetMapping("/region")
-    public ResponseEntity<?> boardSearchByRegion(
+    public ResponseEntity<Page<BoardSearchResponse>> boardSearchByRegion(
+            @RequestParam String region,
+            @PageableDefault(size = 10) Pageable pageable
     ) {
-        return null;
+        return ResponseEntity.ok(boardService.searchBoardByRegion(region, pageable));
     }
 
     @PutMapping("/{board-id}")

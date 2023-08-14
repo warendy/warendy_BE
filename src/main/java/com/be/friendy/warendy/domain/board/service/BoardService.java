@@ -13,13 +13,16 @@ import com.be.friendy.warendy.domain.winebar.entity.Winebar;
 import com.be.friendy.warendy.domain.winebar.repository.WinebarRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -56,6 +59,7 @@ public class BoardService {
                         .nickname(createRequest.getNickname())
                         .date(createRequest.getDate())
                         .time(createRequest.getTime())
+                        .region(createRequest.getRegion())
                         .wineName(createRequest.getWineName())
                         .headcount(createRequest.getHeadcount())
                         .contents(createRequest.getContents())
@@ -84,6 +88,33 @@ public class BoardService {
 
         return boardRepository.findByNickname(memberByEmail.getNickname(), pageable)
                 .map(BoardSearchResponse::fromEntity);
+    }
+
+    public Page<BoardSearchResponse> searchParticipantInBoards(String email
+    ) {
+        Member memberByEmail = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("user does not exist"));
+
+        if(memberByEmail.getInBoardIdList() == null) {
+            return new PageImpl<>(new ArrayList<>());
+        }
+
+        String[] boardIdList = memberByEmail.getInBoardIdList().split(",");
+        List<Board> boardInPartyList = new ArrayList<>();
+        for (String boardId : boardIdList) {
+            Long id = Long.valueOf(boardId);
+            if (!boardRepository.existsById(id)) {
+                continue;
+            }
+            Board board = boardRepository.findById(id).orElse(new Board());
+            boardInPartyList.add(board);
+        }
+        List<BoardSearchResponse> boardSearchResponseList
+                = boardInPartyList.stream()
+                .map(BoardSearchResponse::fromEntity)
+                .toList();
+        Pageable pageable = Pageable.ofSize(10).withPage(0);
+        return new PageImpl<>(boardSearchResponseList, pageable, boardSearchResponseList.size());
     }
 
     public Page<BoardSearchResponse> searchBoardByBoardName(
@@ -149,6 +180,13 @@ public class BoardService {
                 .map(BoardSearchResponse::fromEntity);
     }
 
+    public Page<BoardSearchResponse> searchBoardByRegion(
+            String region, Pageable pageable
+    ) {
+        return boardRepository.findByRegion(region, pageable)
+                .map(BoardSearchResponse::fromEntity);
+    }
+
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {RuntimeException.class})
     public BoardUpdateResponse updateBoard(String email, Long boardId, BoardUpdateRequest request) {
 
@@ -177,8 +215,11 @@ public class BoardService {
 
         Member memberByEmail = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("user does not exist"));
-        nowBoard.insertBoardParticipant(nowBoard, memberByEmail.getNickname());
 
+        memberByEmail.InBoard(boardId);
+        memberRepository.save(memberByEmail);
+
+        nowBoard.insertBoardParticipant(nowBoard, memberByEmail.getNickname());
         boardRepository.save(nowBoard);
         return BoardParticipantResponse.fromEntity(nowBoard);
     }
@@ -194,9 +235,10 @@ public class BoardService {
 //                , memberByEmail.getNickname())) {
 //            throw new RuntimeException("자기 자신은 나갈 수 없습니다.");
 //        }
+        memberByEmail.OutBoard(boardId);
+        memberRepository.save(memberByEmail);
 
         nowBoard.deleteBoardParticipant(nowBoard, memberByEmail.getNickname());
-
         boardRepository.save(nowBoard);
         return BoardParticipantResponse.fromEntity(nowBoard);
     }
