@@ -23,10 +23,11 @@ public class ApiResponse<T> {
     private T data;
     private String message;
 
+    //api 성공했을시
     public static <T> ApiResponse<T> createSuccess(T data) {
         return new ApiResponse<>(SUCCESS_STATUS, data, null);
     }
-
+    //api 성곻시 응답값이 필요없을때
     public static ApiResponse<?> createSuccessWithNoContent() {
         return new ApiResponse<>(SUCCESS_STATUS, null, null);
     }

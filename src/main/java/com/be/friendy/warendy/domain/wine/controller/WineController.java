@@ -1,6 +1,7 @@
 package com.be.friendy.warendy.domain.wine.controller;
 
 import com.be.friendy.warendy.config.jwt.TokenProvider;
+import com.be.friendy.warendy.domain.wine.dto.request.Preference;
 import com.be.friendy.warendy.domain.wine.dto.response.RecommendWineResponse;
 import com.be.friendy.warendy.domain.wine.dto.response.WineDetailSearchResponse;
 import com.be.friendy.warendy.domain.wine.service.WineService;
@@ -31,5 +32,12 @@ public class WineController {
     ) {
         String email = tokenProvider.getEmailFromToken(authorizationHeader);
         return ResponseEntity.ok(wineService.recommendWine(email));
+    }
+
+    @GetMapping("/wines/recommendations")
+    public ResponseEntity<List<RecommendWineResponse>> wineRecommendations(
+            @RequestBody Preference request
+    ) {
+        return ResponseEntity.ok(wineService.recommendWineInLanding(request));
     }
 }
