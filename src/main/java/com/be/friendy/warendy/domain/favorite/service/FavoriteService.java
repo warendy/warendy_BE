@@ -24,18 +24,24 @@ public class FavoriteService {
     private final MemberRepository memberRepository;
     private final WineRepository wineRepository;
 
-    public void addWineToFavorite(String email, GivenWineInfo givenWineInfo){
+    public String addWineToFavorite(String email, GivenWineInfo givenWineInfo){
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("user does not exist"));
 
         Wine wineData = wineRepository.findById(givenWineInfo.getWineId()).orElseThrow(() -> new RuntimeException("wine does not exist"));
 
+        Favorite exist = favoriteRepository.findByWineIdAndMember(givenWineInfo.getWineId(), member);
+        if(exist != null){
+            favoriteRepository.delete(exist);
+            return "찜 목록에서 삭제되었습니다";
+        }
         favoriteRepository.save(Favorite.builder()
                 .member(member)
                 .wine(wineData)
                 .wineName(wineData.getName())
                 .picture(wineData.getPicture())
                 .build());
+        return "찜 목록에 등록하셧습니다";
     }
 
     public void updateCategory(String email, CreateCategory request){
@@ -52,11 +58,10 @@ public class FavoriteService {
     }
 
     public void deleteFavoriteWine(String email, GivenWineInfo givenWineInfo){
-        memberRepository.findByEmail(email)
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("user does not exist"));
-        Favorite favorite = favoriteRepository.findByWineId(givenWineInfo.getWineId())
-                .orElseThrow(() -> new RuntimeException("wine does not exist in your collection"));
-        favoriteRepository.delete(favorite);
+        Favorite exist = favoriteRepository.findByWineIdAndMember(givenWineInfo.getWineId(), member);
+        favoriteRepository.delete(exist);
     }
 
     public Collection findAllWines(String email){

@@ -36,8 +36,7 @@ public class WineController {
 
     @PostMapping("/landing/recommendation")
     public ResponseEntity<List<RecommendWineResponse>> landingRecommendation(
-            @RequestBody Preference request
-    ) {
+            @RequestBody Preference request) {
         return ResponseEntity.ok(wineService.recommendWineInLanding(request));
     }
 }
