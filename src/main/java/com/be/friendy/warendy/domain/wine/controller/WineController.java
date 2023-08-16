@@ -34,7 +34,7 @@ public class WineController {
         return ResponseEntity.ok(wineService.recommendWine(email));
     }
 
-    @GetMapping("/wines/recommendations")
+    @PostMapping("/wines/recommendations")
     public ResponseEntity<List<RecommendWineResponse>> wineRecommendations(
             @RequestBody Preference request
     ) {
