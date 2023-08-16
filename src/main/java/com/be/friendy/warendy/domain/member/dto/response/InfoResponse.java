@@ -6,6 +6,7 @@ import lombok.*;
 
 @Builder
 public record InfoResponse (
+        Long id,
         String email,
         String nickname,
         String password,
@@ -21,6 +22,7 @@ public record InfoResponse (
 
     public static InfoResponse fromEntity(Member member) {
         return InfoResponse.builder()
+                .id(member.getId())
                 .email(member.getEmail())
                 .nickname(member.getNickname())
                 .avatar(member.getAvatar())
