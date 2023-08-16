@@ -12,6 +12,7 @@ import lombok.*;
 public class WineReviewSearchByWineIdResponse {
 
     private Long reviewId;
+    private Long memberId;
     String nickname;
     String contents;
     float rating;               // 유저 평점.
@@ -21,6 +22,7 @@ public class WineReviewSearchByWineIdResponse {
     public static WineReviewSearchByWineIdResponse fromEntity(Review review) {
         return WineReviewSearchByWineIdResponse.builder()
                 .reviewId(review.getId())
+                .memberId(review.getMember().getId())
                 .nickname(review.getMember().getNickname())
                 .contents(review.getContents())
                 .rating(review.getRating())
