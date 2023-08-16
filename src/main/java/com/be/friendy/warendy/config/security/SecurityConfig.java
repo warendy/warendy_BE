@@ -41,7 +41,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> {
             try {
                 authorize
-                    .requestMatchers("/login/**", "/signup/**", "/oauth2/**",
+                    .requestMatchers("/login/**", "/signup/**", "/oauth2/**", "landing/**",
                         "/**")
                     .permitAll() // 해당 경로는 인증 없이 접근 가능
                     .requestMatchers("/members/**") // 해당 경로는 인증이 필요
