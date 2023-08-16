@@ -7,7 +7,7 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @Builder
-public class Preference {
+public class PreferenceRequest {
     private int body;
     private int acidity;
     private int dry;

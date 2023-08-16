@@ -1,7 +1,7 @@
 package com.be.friendy.warendy.domain.wine.controller;
 
 import com.be.friendy.warendy.config.jwt.TokenProvider;
-import com.be.friendy.warendy.domain.wine.dto.request.Preference;
+import com.be.friendy.warendy.domain.wine.dto.request.PreferenceRequest;
 import com.be.friendy.warendy.domain.wine.dto.response.RecommendWineResponse;
 import com.be.friendy.warendy.domain.wine.dto.response.WineDetailSearchResponse;
 import com.be.friendy.warendy.domain.wine.service.WineService;
@@ -36,7 +36,7 @@ public class WineController {
 
     @PostMapping("/landing/recommendation")
     public ResponseEntity<List<RecommendWineResponse>> landingRecommendation(
-            @RequestBody Preference request) {
+            @RequestBody PreferenceRequest request) {
         return ResponseEntity.ok(wineService.recommendWineInLanding(request));
     }
 }

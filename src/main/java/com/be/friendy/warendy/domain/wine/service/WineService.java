@@ -3,7 +3,7 @@ package com.be.friendy.warendy.domain.wine.service;
 import com.be.friendy.warendy.domain.member.entity.Member;
 import com.be.friendy.warendy.domain.member.repository.MemberRepository;
 import com.be.friendy.warendy.domain.review.repository.ReviewRepository;
-import com.be.friendy.warendy.domain.wine.dto.request.Preference;
+import com.be.friendy.warendy.domain.wine.dto.request.PreferenceRequest;
 import com.be.friendy.warendy.domain.wine.dto.response.RecommendWineResponse;
 import com.be.friendy.warendy.domain.wine.dto.response.WineDetailSearchResponse;
 import com.be.friendy.warendy.domain.wine.entity.Wine;
@@ -43,7 +43,7 @@ public class WineService {
                 .map(RecommendWineResponse::fromEntity).toList();
     }
 
-    public List<RecommendWineResponse> recommendWineInLanding(Preference request) {
+    public List<RecommendWineResponse> recommendWineInLanding(PreferenceRequest request) {
         return wineRepository.findSimilarWines(
                         request.getBody(), request.getDry(),
                         request.getTannin(), request.getAcidity()).stream()
