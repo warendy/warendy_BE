@@ -8,12 +8,8 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class Preference {
-    @NonNull
     private int body;
-    @NonNull
     private int acidity;
-    @NonNull
     private int dry;
-    @NonNull
     private int tannin;
 }
