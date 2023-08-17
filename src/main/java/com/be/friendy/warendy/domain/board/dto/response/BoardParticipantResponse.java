@@ -17,6 +17,7 @@ import java.util.Set;
 public class BoardParticipantResponse {
 
     private String name;
+    private Long memberId;
     private String nickname;
     private String winebarName;
     private String date;
@@ -31,6 +32,7 @@ public class BoardParticipantResponse {
 
         return BoardParticipantResponse.builder()
                 .name(board.getName())
+                .memberId(board.getMember().getId())
                 .nickname(board.getNickname())
                 .winebarName(board.getWinebar().getName())
                 .date(board.getDate())

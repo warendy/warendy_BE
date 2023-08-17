@@ -13,6 +13,7 @@ import java.util.Set;
 @Builder
 public class BoardUpdateResponse {
     private String name;
+    private Long memberId;
     private String nickname;
     private String winebarName;
     private String date;
@@ -26,6 +27,7 @@ public class BoardUpdateResponse {
     public static BoardUpdateResponse fromEntity(Board board) {
         return BoardUpdateResponse.builder()
                 .name(board.getName())
+                .memberId(board.getMember().getId())
                 .nickname(board.getNickname())
                 .winebarName(board.getWinebar().getName())
                 .date(board.getDate())

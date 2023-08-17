@@ -17,6 +17,7 @@ public class BoardSearchResponse {
     private Long boardId;
     private String name;        // board 제목
     private String winebarName;
+    private Long memberId;
     private String nickname;
     private String date;
     private String time;
@@ -25,13 +26,14 @@ public class BoardSearchResponse {
     private Integer headcount;
     private String contents;
 
-    private Set<String> participants ;
+    private Set<String> participants;
 
     public static BoardSearchResponse fromEntity(Board board) {
         return BoardSearchResponse.builder()
                 .boardId(board.getId())
                 .name(board.getName())
                 .winebarName(board.getWinebar().getName())
+                .memberId(board.getMember().getId())
                 .nickname(board.getNickname())
                 .date(board.getDate())
                 .time(board.getTime())
@@ -39,7 +41,7 @@ public class BoardSearchResponse {
                 .wineName(board.getWineName())
                 .headcount(board.getHeadcount())
                 .contents(board.getContents())
-                .participants( board.getParticipants() )
+                .participants(board.getParticipants())
                 .build();
     }
 

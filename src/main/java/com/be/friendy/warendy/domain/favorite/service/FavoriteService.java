@@ -57,10 +57,10 @@ public class FavoriteService {
                 }});
     }
 
-    public void deleteFavoriteWine(String email, GivenWineInfo givenWineInfo){
+    public void deleteFavoriteWine(String email, Long wineId){
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("user does not exist"));
-        Favorite exist = favoriteRepository.findByWineIdAndMember(givenWineInfo.getWineId(), member);
+        Favorite exist = favoriteRepository.findByWineIdAndMember(wineId, member);
         favoriteRepository.delete(exist);
     }
 

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,8 @@ public class BoardController {
 
     @GetMapping("/all")
     public ResponseEntity<Page<BoardSearchResponse>> boardSearch(
-            @PageableDefault(size = 10) Pageable pageable
+            @PageableDefault(size = 10,
+                    sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return ResponseEntity.ok(boardService.searchBoard(pageable));
     }
@@ -53,7 +55,8 @@ public class BoardController {
     @GetMapping("")
     public ResponseEntity<Page<BoardSearchResponse>> boardSearchMyBoard(
             @RequestHeader("Authorization") String authorizationHeader,
-            @PageableDefault(size = 10) Pageable pageable
+            @PageableDefault(size = 10,
+                    sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         String email = tokenProvider.getEmailFromToken(authorizationHeader);
         return ResponseEntity.ok(boardService.searchMyBoardByEmail(email, pageable));
@@ -70,7 +73,8 @@ public class BoardController {
     @GetMapping("/board-name")
     public ResponseEntity<Page<BoardSearchResponse>> boardSearchByBoardName(
             @RequestParam String boardName,
-            @PageableDefault(size = 3) Pageable pageable
+            @PageableDefault(size = 10
+            ,sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return ResponseEntity.ok(boardService
                 .searchBoardByBoardName(boardName, pageable));
@@ -79,7 +83,8 @@ public class BoardController {
     @GetMapping("/wine-name")
     public ResponseEntity<Page<BoardSearchResponse>> boardSearchByWineName(
             @RequestParam String wineName,
-            @PageableDefault(size = 10) Pageable pageable
+            @PageableDefault(size = 10
+            ,sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return ResponseEntity.ok(boardService
                 .searchBoardByWineName(wineName, pageable));
@@ -88,7 +93,8 @@ public class BoardController {
     @GetMapping("/winebar-id")
     public ResponseEntity<Page<BoardSearchResponse>> boardSearchByWinebarId(
             @RequestParam(value = "winebar-id") Long winebarId,
-            @PageableDefault(size = 10) Pageable pageable
+            @PageableDefault(size = 10
+            ,sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return ResponseEntity.ok(boardService
                 .searchBoardByWinebarId(winebarId, pageable));
@@ -97,7 +103,8 @@ public class BoardController {
     @GetMapping("/winebar-name")
     public ResponseEntity<Page<BoardSearchResponse>> boardSearchByWinebarName(
             @RequestParam String winebarName,
-            @PageableDefault(size = 10) Pageable pageable
+            @PageableDefault(size = 10
+                    , sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return ResponseEntity.ok(boardService
                 .searchBoardByWinebarName(winebarName, pageable));
@@ -106,7 +113,8 @@ public class BoardController {
     @GetMapping("/creator")
     public ResponseEntity<Page<BoardSearchResponse>> boardSearchByCreator(
             @RequestParam String creator,
-            @PageableDefault(size = 10) Pageable pageable
+            @PageableDefault(size = 10
+                    , sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return ResponseEntity.ok(
                 boardService.searchBoardByCreator(creator, pageable)
@@ -116,7 +124,8 @@ public class BoardController {
     @GetMapping("/date")
     public ResponseEntity<Page<BoardSearchResponse>> boardSearchByDate(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            @PageableDefault(size = 10) Pageable pageable
+            @PageableDefault(size = 10
+                    , sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return ResponseEntity.ok(boardService.searchBoardByDate(date, pageable));
     }
@@ -124,7 +133,8 @@ public class BoardController {
     @GetMapping("/time")
     public ResponseEntity<Page<BoardSearchResponse>> boardSearchByTime(
             @RequestParam String time,
-            @PageableDefault(size = 10) Pageable pageable
+            @PageableDefault(size = 10
+            , sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return ResponseEntity.ok(boardService.searchBoardByTime(time, pageable));
     }
@@ -132,7 +142,8 @@ public class BoardController {
     @GetMapping("/region")
     public ResponseEntity<Page<BoardSearchResponse>> boardSearchByRegion(
             @RequestParam String region,
-            @PageableDefault(size = 10) Pageable pageable
+            @PageableDefault(size = 10
+            , sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return ResponseEntity.ok(boardService.searchBoardByRegion(region, pageable));
     }

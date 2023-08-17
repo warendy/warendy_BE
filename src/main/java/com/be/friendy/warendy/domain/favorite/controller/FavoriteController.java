@@ -46,8 +46,8 @@ public class FavoriteController {
     @DeleteMapping("/delete/wine")
     @ResponseStatus(HttpStatus.OK)
     public void deleteFromFavorite(@RequestHeader("Authorization") String authorizationHeader,
-                                   @RequestBody GivenWineInfo request){
+                                   @RequestParam(value = "wine-id") Long wineId){
         String email = tokenProvider.getEmailFromToken(authorizationHeader);
-        favoriteService.deleteFavoriteWine(email, request);
+        favoriteService.deleteFavoriteWine(email, wineId);
     }
 }
